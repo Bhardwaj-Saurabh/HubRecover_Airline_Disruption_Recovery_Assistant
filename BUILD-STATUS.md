@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated 17 October 2026. Profile: local Python/Google ADK. This is the first foundation increment, not a runnable recovery application.
+Updated 17 October 2026. Profile: local Python/Google ADK. The deterministic foundation and healthy reference-data increment are implemented; this is not yet a runnable recovery application.
 
 ## Implemented
 
@@ -10,18 +10,21 @@ Updated 17 October 2026. Profile: local Python/Google ADK. This is the first fou
 - Typed restriction events and pure single-episode monitoring reducer: strict duration/impact trigger, brief lift continuity, exact reset boundary, version deduplication, unconfirmed/late-history blocking and missing-precheck handoff.
 - RECOVERY_UNIVERSE_V1 descriptor construction: four families, ordered spare selection, round-robin cap, counts and deterministic descriptor digest. Descriptors are not validated recovery plans.
 
+- Strict schedule/resource/passenger/inventory schemas and cross-record invariants; malformed fields fail validation.
+- Reproducible healthy reference bank: 18 day-one flights, six next-day alternatives, 300 passengers in 150 parties, 12 aircraft and 12 crews. Restriction/dispatch sources and disruption trade-offs are still pending.
+
 ## Observed verification
 
 Command: `.venv/bin/python -m pytest -q`
 
-Result: **27 passed**, one third-party OpenTelemetry deprecation warning. Python 3.11.4, pytest 8.4.2. Mode: deterministic/offline; no model requests, bookings or messages.
+Result: **51 passed**, one third-party OpenTelemetry deprecation warning. Python 3.11.4, pytest 8.4.2. Mode: deterministic/offline; no model requests, bookings or messages.
 
-The suite covers 17 monitoring checks, eight universe checks and two ADK compatibility checks. The cap test independently constructs the expected 100-descriptor selection from 279 raw descriptors. The ADK spike executes two function nodes through Runner and observes a human-input pause; it also instantiates a single-turn, structured-output agent without tools. This does not validate provider output, human resume, durable session recovery or full orchestration.
+The suite covers 17 monitoring checks, eight universe checks, 24 fixture checks and two ADK compatibility checks. The cap test independently constructs the expected 100-descriptor selection from 279 raw descriptors. The ADK spike executes two function nodes through Runner and observes a human-input pause; it also instantiates a single-turn, structured-output agent without tools. This does not validate provider output, human resume, durable session recovery or full orchestration.
 
 ## Next implementation gates
 
 1. Complete compatibility evidence for human resume, SQLite sessions and provider token counting before enabling real AI; freeze a verified model then.
-2. Add complete source schemas and fixture invariants before authoring the 24-flight, 300-passenger reference set.
+2. Extend the validated healthy seed with restriction, dispatch and source envelopes; author disrupted reference trade-offs. Existing seed invariants do not establish proposed-operation feasibility.
 3. Extend monitoring with consistent late-history reconciliation and authoritative episode/scope aggregation. The current reducer conservatively sends late effective-time changes for classification; it does not reconstruct multi-record history.
 4. Implement impact propagation, feasibility, allocation, metrics, supported edits, canonical plan fingerprints and the independent calculation oracle.
 5. Add durable business ledger, approval/prerequisite/version guards, jobs/fences, global write control, atomic booking/outbox and fault tests.

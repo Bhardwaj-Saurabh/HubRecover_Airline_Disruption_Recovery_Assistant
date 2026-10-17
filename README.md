@@ -11,6 +11,7 @@ Requires Python 3.11+ and uv.
 ```sh
 uv sync --locked
 uv run pytest -q
+uv run python -m hubrecover.fixtures.reference
 ```
 
 Tests run offline without an API key. The ADK compatibility tests invoke function nodes and a human pause, but do not call a model. No credentials are required for this increment.
