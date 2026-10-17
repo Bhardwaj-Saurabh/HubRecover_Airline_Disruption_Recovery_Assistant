@@ -1,57 +1,49 @@
-# Implementation status
+# HubRecover build status
 
-Updated 17 October 2026. Profile: local Python/Google ADK. The deterministic foundation and healthy reference-data increment are implemented; this is not yet a runnable recovery application.
+Updated 17 October 2026. **The local Python/Google ADK synthetic prototype is runnable. Full PRD/architecture acceptance and pilot readiness are not claimed.**
 
-## Implemented
+## Delivered application
 
-- AGENT.md working conventions and AGENTS.md discovery entry point.
-- Python project with google-adk[db] 2.11.0, isolated environment and uv.lock.
-- Immutable initial policy constants for monitoring and descriptor selection. The full policy configuration is still pending.
-- Typed restriction events and pure single-episode monitoring reducer: strict duration/impact trigger, brief lift continuity, exact reset boundary, version deduplication, unconfirmed/late-history blocking and missing-precheck handoff.
-- RECOVERY_UNIVERSE_V1 descriptor construction: four families, ordered spare selection, round-robin cap, counts and deterministic descriptor digest. Descriptors are not validated recovery plans.
-
-- Strict schedule/resource/passenger/inventory schemas and cross-record invariants; malformed fields fail validation.
-- Reproducible healthy reference bank: 18 day-one flights, six next-day alternatives, 300 passengers in 150 parties, 12 aircraft and 12 crews. Restriction/dispatch sources and disruption trade-offs are still pending.
-
-- Pure whole-party itinerary search/allocation: exact-operation dispatch evidence, completed prefixes, connection/eligibility/assistance checks, net-seat shared-leg accounting, deterministic priority and passenger ranking metrics. This is a read-only calculation, not an executable plan.
-
-- Operational gate for resource identity, qualification, duty/rest, availability, maintenance, location continuity, overlap/turnaround, fixed completed legs, exact dispatch operations and scoped departure/arrival restrictions. Forecast release never clears an active restriction. Passing this calculation does not establish approval, source freshness or execution readiness.
+- Operations web interface with scenario selection, context, ranked options, disabled rejected evidence, supported edits, Duty Manager approval, specialist acknowledgement controls, execution progress, handoffs and trace download.
+- Strict synthetic reference-data contracts and invariant checks: 18 day-one flights, six next-day alternatives and 300 passengers in 150 parties.
+- Event-time trigger boundaries, finite descriptor selection, rotation/crew timing propagation, operational gate, whole-party itinerary search, net-seat accounting, passenger metrics and canonical action fingerprints.
+- Durable SQLite business ledger and separate ADK session database. ADK review pauses resume after restart; the business ledger owns authority.
+- Version-bound and idempotent commands; exact-plan approvals and simulated operational postcondition commits; expiry, source changes, Stop, worker leases/fencing, global write disable and evidence-bound restoration.
+- Atomic party receipts, immutable superseded booking history, outbox records, separate notification attempts, manual contact and next-day care handoffs. No live messages or bookings.
+- Optional bounded Gemini explanation/edit agents with no operational tools, strict claim/reason validation, verified token counting, persistent reservations, explicit timeouts and no silent sample fallback.
+- Separate development and held-out deterministic runners, blank human verdicts, reviewer scores, observed comparison timing, feedback records and JSON exports.
+- One-command and Mac double-click launch paths. See README.md.
 
 ## Observed verification
 
-Command: `.venv/bin/python -m pytest -q`
+| Check | Actual evidence |
+| --- | --- |
+| Python regression | **113 passed**, two third-party deprecation warnings; no provider credentials used |
+| Reference fixture | 24 flights and 300 passengers; invariant checks pass |
+| Independent oracle | All 18 selected reference descriptors agree on feasibility, party allocations and ranking; separate cap-selection oracle covers 279 raw descriptors |
+| Development demonstrations | 18/18 implemented subvariants pass automatic diagnostics; learner verdicts remain null |
+| Held-out deterministic variants | 20/20 pass. This suite was exposed during implementation and is conformance evidence, not a blind model-quality holdout |
+| Local HTTP integration | Through actual FastAPI and durable ADK: protect connection → fresh review → approve → four acknowledgements → 150 party receipts and 300 sent mock messages → COMPLETED |
+| Rebooking transaction | A next-day option produces two superseded booking records, preserves shared-leg occupancy and creates a care handoff |
+| Timing | 30/30 rules-only qualifying runs produce a card, zero failed/handoff runs; local trigger-to-card p95 0.1593 seconds. No inference of human time savings |
+| JavaScript / launch checks | `node --check`, shell syntax, Python compilation, design-block preservation and DOM-control contract checks |
 
-Result: **85 passed**, one third-party OpenTelemetry deprecation warning. Python 3.11.4, pytest 8.4.2. Mode: deterministic/offline; no model requests, bookings or messages.
+Detailed reports are in `evaluation/results/`. Every real-AI stand-in test runs in an isolated test ledger; these tests are not provider evidence. Third-party OpenTelemetry and Starlette deprecation warnings do not fail the suite.
 
-The suite covers 17 monitoring checks, eight universe checks, 24 fixture checks, 17 allocation checks, 17 operational-gate checks and two ADK compatibility checks. The cap test independently constructs the expected 100-descriptor selection from 279 raw descriptors. The ADK spike executes two function nodes through Runner and observes a human-input pause; it also instantiates a single-turn, structured-output agent without tools. This does not validate provider output, human resume, durable session recovery or full orchestration.
+## Unrun or broader acceptance work
 
-## Next implementation gates
+- **Real Gemini calls are unrun:** neither `GOOGLE_API_KEY` nor `HUBRECOVER_GEMINI_MODEL` is configured. Exact provider/model availability, token counting, structured responses, repeated quality/cost evaluation and real-AI usefulness still need observation.
+- **Browser visual/interaction QA is unrun:** the in-app browser is unavailable and computer-use access to Chrome was not approved. HTTP integration, JS syntax and DOM-contract checks passed; they do not substitute for a rendered-browser inspection.
+- Human/proxy comprehension scoring, matched manual/rules-only/AI task comparisons and actual benefit claims require user/reviewer observations. No verdict or business benefit has been invented.
+- The 18 development observations each cover one executable subvariant. They do not establish all subvariants, crash rows and acceptance thresholds in TEST-PLAN.md. A fresh independently held-out quality set is needed before final model acceptance.
 
-1. Complete compatibility evidence for human resume, SQLite sessions and provider token counting before enabling real AI; freeze a verified model then.
-2. Extend the validated healthy seed with restriction, dispatch and source envelopes; author disrupted reference trade-offs. Existing seed invariants do not establish proposed-operation feasibility.
-3. Extend monitoring with consistent late-history reconciliation and authoritative episode/scope aggregation. The current reducer conservatively sends late effective-time changes for classification; it does not reconstruct multi-record history.
-4. Add impact propagation, candidate materialisation, supported edits, canonical plan fingerprints and the independent calculation oracle. Integrate the operational gate with verified source envelopes and the full candidate pipeline. Allocation/metrics now have hand-calculated tests, including next-day retained arrivals and refusing to borrow later-party releases.
-5. Add durable business ledger, approval/prerequisite/version guards, jobs/fences, global write control, atomic booking/outbox and fault tests.
-6. Build the Operations review UI, bounded explanation/edit agents, handoff inbox and evaluation records.
+## Explicit implementation limits
 
-The 18 end-to-end development families and 20 held-out variants have not been run. Real-AI, human review, manual/rules-only comparisons, product acceptance, business value and pilot readiness remain unproven. No LMS ZIP or hosted application has been produced. Learner verdicts remain unassigned.
+- Local, single-process, synthetic-only deployment with simulated roles; no shared authentication, live airline adapters, production audit claim or LMS ZIP.
+- Source updates conservatively invalidate and hand off. The complete generic adapter envelope/field-level update protocol in architecture section 19 is not implemented. The synthetic ledger is coherent, and matching operational commits and own-batch inventory changes are guarded.
+- Monitoring conservatively requests classification for late effective-time changes rather than reconstructing arbitrary consistent multi-authority history. The UI provides the declared scripted trigger/brief-lift paths.
+- Execution has persisted state, leases/fences and resumable receipts; it does not implement the full generic durable stage-job scheduler or every cross-system crash-recovery row. An interrupted execution is resumed explicitly through the guarded control after its lease expires.
+- Handoffs record ownership, acceptance, remaining work and receipts. The full reassignment/manual-resolution workflow remains outside this local demonstration; acceptance cannot resolve a passenger or message.
+- The independent calculation oracle covers the reference graph. General spare-tail/network oracle coverage, a richer approved precedent corpus, all warning thresholds and all architecture A1–A9 acceptance evidence remain broader work.
 
-## Git delivery
-
-Each tested feature is committed and pushed to `origin/main`, as requested. The latest source and test evidence are versioned together. No force pushes.
-
-## Candidate pipeline increment
-
-The finite search now materialises delays/cancellations/swaps, propagates rotations and crew sequences, checks exact frozen synthetic dispatch evidence, allocates parties, applies supported edits, deduplicates canonical action fingerprints and ranks only after the full selected search finishes. Incomplete search publishes no options. Four additional tests cover independently calculated reference arithmetic, protected connection edits, rejection fingerprints, missing sources and timeout. Latest observed suite: 89 passed (offline).
-
-## Durable review and execution increment
-
-Implemented a SQLite business ledger with version-bound/idempotent review commands, exact specialist acknowledgements, final gate checks, transactional party receipts and outbox records, independent notification attempts, fencing/lease takeover, Stop, expiry, global disable/restoration and owned handoffs. Durable Google ADK graph sessions now pause for review and resume after restart; the business ledger remains authoritative. Observed: 102 full-suite tests passed, plus a separate passing SQLite ADK pause/restart/resume test. No real model or external operational calls were made.
-
-## Local interface and development evidence
-
-The FastAPI application now serves the Operations interface, scenario controls, review/edit/reject, matching specialist acknowledgements, mock execution progress, handoff acceptance, global write control, trace download, development diagnostics and manually entered verdicts. It binds to loopback (default port 8765). API integration and JS syntax checks passed. All 18 development demonstrations ran with passing automatic diagnostics; observed traces are in evaluation/results/development.json. Each is one implemented subvariant, not a claim that every TEST-PLAN subvariant or product gate passed. Browser visual inspection was blocked by unavailable in-app browser and unapproved Chrome computer-use access.
-
-## Bounded AI and independent evaluation increment
-
-Implemented optional server-side Gemini explanation/edit agents with no operational tools, strict typed selections, deterministic claim/comparison/reason validation, explicit token counting, disabled hidden SDK retries, persistent call/token reservations, timeout handling and no sample fallback. Server credentials/model are not configured in this environment, so provider calls remain unrun; stand-in tests are labelled tests only. Human review, comparison timing, feedback and verdict records are now supported without invented values. The independent reference oracle agrees with all 18 selected descriptors. Twenty evaluator-only deterministic boundary variants passed; this exposed suite is conformance evidence, not blind real-AI quality evidence. Thirty local rules-only trigger-to-card runs produced 30 cards, no failed/handoff runs, p95 0.1593 seconds. Latest full regression: 111 passed with two third-party deprecation warnings.
+These limits are deliberate boundaries of what is actually built, not claims that the complete architecture has been implemented. Production, business-value and full PRD safety/quality acceptance remain open.

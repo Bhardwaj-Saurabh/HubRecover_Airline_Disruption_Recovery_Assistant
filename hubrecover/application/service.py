@@ -1,5 +1,6 @@
 """Authoritative synthetic review, approval, execution and reconciliation service."""
 from collections import Counter
+from contextlib import nullcontext
 from dataclasses import asdict
 from datetime import datetime, timezone
 import json
@@ -97,9 +98,9 @@ class RecoveryService:
         run['card_digest'] = digest(run['search']['plans'])
         self.trace(run, 'CARD_READY', dict(ranking=run['search']['plans'][0]['ranking'], search=run['search']['selected']))
 
-    def create(self, scenario_name='happy'):
+    def create(self, scenario_name='happy', *, db=None):
         scenario = create_scenario(scenario_name)
-        with self.store.transaction() as db:
+        with (self.store.transaction() if db is None else nullcontext(db)) as db:
             for row in db.execute('SELECT body FROM runs'):
                 if json.loads(row['body'])['status'] not in TERMINAL:
                     raise Refusal('Stop or finish the active episode before starting another')
@@ -132,6 +133,23 @@ class RecoveryService:
                     self.handoff(run,'REQUIRED_PRECHECK_UNAVAILABLE')
             self.store.save(db,run)
             return run
+
+    def reset(self,run_id,revision,key,role):
+        fingerprint=digest(dict(action='reset',revision=revision,role=role))
+        with self.store.transaction() as db:
+            old=self.store.load(db,run_id)
+            command=db.execute('SELECT hash FROM commands WHERE run_id=? AND key=?',(run_id,key)).fetchone()
+            if command:
+                if command['hash']!=fingerprint: raise Refusal('Reset idempotency key reused')
+                return self.store.load(db,old['reset_run_id'])
+            if role!='DUTY_MANAGER' or old['revision']!=revision or old['status'] not in TERMINAL:
+                raise Refusal('Only a current stopped or finished episode can be reset by its Duty Manager')
+            child=self.create(old['scenario']['name'],db=db)
+            old['reset_run_id']=child['id'];old['revision']+=1
+            self.trace(old,'RESET',dict(new_run_id=child['id']),role)
+            self.store.save(db,old)
+            db.execute('INSERT INTO commands VALUES(?,?,?)',(run_id,key,fingerprint))
+            return child
 
     def get(self, run_id):
         with self.store.connect() as db:
@@ -376,6 +394,10 @@ class RecoveryService:
                 status='PENDING' if passengers[p]['contact_available'] else 'MANUAL_CONTACT',attempts=0)
         run['receipts'][pid]=dict(key=digest([run['id'],run['generation'],pid]),outcome=allocation['outcome'],
             passenger_ids=passenger_ids,legs=new_legs,deltas=deltas,at=self.now(run))
+        if allocation['next_day']:
+            run['handoffs'].append(dict(id=uuid.uuid4().hex,reason='NEXT_DAY_PASSENGER_CARE',owner='PASSENGER_OPERATIONS',
+                fallback='OCC_OPERATIONS_LEAD',status='OPEN',history=[],remaining_parties=[],committed_parties=[pid],
+                required_action='Review overnight passenger-care needs. No compensation or paid service has been promised.'))
         run['expected_inventory']=digest(run['inventory'])
         self.trace(run,'PARTY_COMMITTED',dict(party_id=pid,outcome=allocation['outcome']))
 

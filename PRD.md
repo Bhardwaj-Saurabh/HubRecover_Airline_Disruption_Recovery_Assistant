@@ -4,11 +4,11 @@
 
 **Product promise:** Help the OCC Duty Manager compare passenger-aware, policy-checked recovery options and approve a plan before passenger rebooking or notification.
 
-**Status:** Requirements baseline for a synthetic capstone. The airline-specific prototype, datasets, and test results have not yet been produced. Numerical policies below are adopted fictional demo defaults, not airline operating rules, legal standards, measured benefits, or production approval. They are fixed during an episode and require human-reviewed versioning to change.
+**Status:** Requirements baseline for a synthetic capstone. A local synthetic ADK prototype, dataset and deterministic test results now exist; see BUILD-STATUS.md for observed evidence and unimplemented/unverified acceptance scope. Numerical policies below are adopted fictional demo defaults, not airline operating rules, legal standards, measured benefits, or production approval. They are fixed during an episode and require human-reviewed versioning to change.
 
 This document answers all 36 supplied questions directly. It distinguishes the browser prototype from the future enterprise integration. Build the bounded loop described here; do not infer live operational authority from the demonstration.
 
-**ADK architecture:** [ARCHITECTURE-ADK.md](ARCHITECTURE-ADK.md) selects a separately run Python/Google ADK implementation of this same synthetic recovery loop. Its backend, durable ledger, and server-side Gemini calls replace the browser profile's JavaScript, visit-only memory, and PFAI mechanisms. Behavioural rules and acceptance gates remain the same. Browser-specific implementation statements below apply to the LMS profile; an ADK application cannot run inside its locked single-page upload. Neither implementation has been built or evaluated yet.
+**ADK architecture:** [ARCHITECTURE-ADK.md](ARCHITECTURE-ADK.md) selects a separately run Python/Google ADK implementation of this same synthetic recovery loop. Its backend, durable ledger, and server-side Gemini calls replace the browser profile's JavaScript, visit-only memory, and PFAI mechanisms. Behavioural rules and acceptance gates remain the same. Browser-specific implementation statements below apply to the LMS profile; an ADK application cannot run inside its locked single-page upload. The local ADK profile is runnable and has deterministic evidence; the separate LMS browser implementation and full acceptance remain outstanding.
 
 ## Discovery
 
@@ -481,7 +481,7 @@ The final evaluation adds twenty frozen held-out variants of these mechanisms. S
 
 **Question:** What happened when you tested the agent? Where did it pass, fail, or need a human?
 
-The airline-specific prototype and its datasets have not yet been implemented or tested. No airline case has an observed pass/fail result, and no latency or business improvement has been measured. The work so far is a requirements review and rewrite, not behavioural validation.
+The local synthetic ADK profile has observed deterministic evidence: 18 development demonstrations, 20 exposed deterministic boundary variants, an independent reference oracle, transaction/API regression tests and a completed HTTP recovery loop. Thirty rules-only runs produced 30 cards with local p95 trigger-to-card time of 0.1593 seconds. See BUILD-STATUS.md and evaluation/results/ for exact scope. No real-AI quality, human benefit, airline business improvement or full acceptance is claimed.
 
 After implementation, report each development and held-out case's mode, input/configuration versions, independent expected result, actual result, diagnostic checks, learner verdict, trace evidence, latency, and human intervention. Separate sample/stand-in verification from real-AI evidence and explicitly list failures and unrun cases.
 
@@ -491,7 +491,7 @@ Human approval is mandatory on all passenger-execution paths. Classification, ed
 
 **Question:** What did you change after testing, and why?
 
-No implementation changes have resulted from executed airline tests, because none have run. The specification review has replaced unrelated managed-services requirements and added explicit operational prerequisites, source/approval revalidation, deterministic candidate ranking, schema and capacity invariants, passenger-party/assistance handling, communication recovery, architecture boundaries, and acceptance gates.
+Implementation and tests now exist; no failed-before/passing-after benefit is invented. Final verification includes idempotent Reset, explicit next-day care handoffs, closed database connections and preserved design/DOM contracts. The specification review has replaced unrelated managed-services requirements and added explicit operational prerequisites, source/approval revalidation, deterministic candidate ranking, schema and capacity invariants, passenger-party/assistance handling, communication recovery, architecture boundaries, and acceptance gates.
 
 These are design decisions addressing identified gaps, not evidence that defects have been fixed in a working system. The earlier conversational notes and inconsistent metrics have been replaced with explicit requirements.
 
@@ -501,7 +501,7 @@ After testing, record each actual change as failing evidence → cause → chang
 
 **Question:** What does the prototype not do yet? Be honest and specific.
 
-The airline-specific prototype is not built. Proposed fixture names, states, calculations, controls, and metrics are requirements rather than implemented assets or results.
+The local synthetic ADK profile is runnable. BUILD-STATUS.md distinguishes delivered behaviour from unimplemented generic source/job/handoff contracts and unrun provider, browser and human acceptance.
 
 The intended prototype covers one synthetic weather episode at one hub. It uses embedded data, in-memory adapters, a browser approval card, local playbook retrieval, simulated operational acknowledgements, mock passenger writes/messages, and downloadable logs. These do not demonstrate Azure AI Search, Teams/Copilot Studio, a production PSS, enterprise identity, or durable audit integration.
 
@@ -515,7 +515,7 @@ Live identity/roles, secure passenger-data processing, durable transactions, inv
 
 **Question:** Describe what the working prototype shows. A reviewer should understand the demo loop from this text.
 
-This is the planned demo; a working airline version has not yet been verified.
+The local synthetic HTTP/API loop has been verified through edit, approval, matching acknowledgements, 150 party receipts and 300 mock message receipts. Rendered-browser inspection and real-provider validation are still unrun. The description below remains the wider intended demonstration and must be read with BUILD-STATUS.md limitations.
 
 The opening screen identifies HubRecover and the OCC Duty Manager, labels the data and mode, and offers case chips. A scoped weather restriction delays inbound resources and crosses the trigger after a brief lift. The Context stage shows the verified precheck and consolidated aircraft, crew, dispatch, passenger, and inventory records.
 

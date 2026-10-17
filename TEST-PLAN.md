@@ -1,6 +1,6 @@
 # HubRecover test plan
 
-**Everything on this page is a plan. None of it has been run yet.** The requirements are synchronised with the revised PRD; the airline-specific prototype has not been built or evaluated.
+**This page is the acceptance plan, not a blanket pass report.** A runnable local ADK prototype and observed deterministic results now exist; see BUILD-STATUS.md and evaluation/results/. The broader case subvariants, real-AI and human/value gates below are not all verified.
 
 **Runtime profiles:** These product cases and acceptance gates apply to both the LMS browser demonstration and the separately run ADK prototype designed in ARCHITECTURE-ADK.md. Browser-specific runtime descriptions below refer to the LMS profile. The ADK profile loads backend fixtures, uses server-side Gemini, and additionally tests durable approval, worker restart, transactions, and API role/version boundaries. Record results separately by profile; one runtime's pass does not prove the other.
 

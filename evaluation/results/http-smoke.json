@@ -1,0 +1,11 @@
+{
+  "profile": "local HTTP + durable ADK",
+  "mode": "RULES_ONLY",
+  "status": "COMPLETED",
+  "generation": 2,
+  "parties": 150,
+  "messages_sent": 300,
+  "run_id": "9fe51bc7702f4c35964aff95d7c676ea",
+  "browser_visual_check": "BLOCKED_BY_COMPUTER_USE_ACCESS",
+  "real_ai": "NOT_CONFIGURED"
+}

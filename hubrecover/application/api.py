@@ -128,11 +128,10 @@ def create_app(data_dir=None):
             async with workflow_lock:
                 return await workflow.resume(run_id)
         if action=='reset':
-            old=service.get(run_id)
-            if body.role!='DUTY_MANAGER' or body.revision!=old['revision'] or old['status'] not in TERMINAL:
-                raise Refusal('Only a stopped or finished episode can be reset by the Duty Manager')
             async with workflow_lock:
-                return await workflow.start(old['scenario']['name'])
+                child=await asyncio.to_thread(service.reset,run_id,body.revision,body.key,body.role)
+                if child.get('adk'): return child
+                return await workflow.start(child['scenario']['name'],run_id=child['id'])
         run=await asyncio.to_thread(service.command,run_id,action,revision=body.revision,key=body.key,role=body.role,payload=body.payload)
         if action=='execute' and run['status']=='EXECUTING':
             async def execute_and_resume():

@@ -21,10 +21,15 @@ class Store:
             db.execute('INSERT OR IGNORE INTO control VALUES(1,?)', (json.dumps(dict(
                 mode='SYNTHETIC', writes_enabled=True, version=1, history=[])),))
 
+    @contextmanager
     def connect(self):
         db = sqlite3.connect(self.path, timeout=30)
         db.row_factory = sqlite3.Row
-        return db
+        try:
+            with db:
+                yield db
+        finally:
+            db.close()
 
     @contextmanager
     def transaction(self):

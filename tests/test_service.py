@@ -165,6 +165,16 @@ def test_actual_rebooking_net_seats_and_history(service):
     run=cmd(service,run,'execute');final=service.execute(run['id'],run['fence'])
     assert final['status']=='COMPLETED'
     assert len(final['booking_history'])==2
+    assert any(h['reason']=='NEXT_DAY_PASSENGER_CARE' for h in final['handoffs'])
     assert final['inventory']['SYN-F-0-1-0']['occupied']==70
     assert final['inventory']['SYN-F-0-1-1']['occupied']==68
     assert final['inventory']['SYN-F-0-2-0']['occupied']==22
+
+
+def test_reset_idempotency_and_no_inherited_authority(service):
+    run=service.create();run=cmd(service,run,'stop')
+    child=service.reset(run['id'],run['revision'],'reset-once','DUTY_MANAGER')
+    duplicate=service.reset(run['id'],run['revision'],'reset-once','DUTY_MANAGER')
+    assert child['id']==duplicate['id'] and child['id']!=run['id']
+    assert child['approval'] is None and child['receipts']=={}
+    with pytest.raises(Refusal):service.reset(run['id'],run['revision'],'reset-twice','DUTY_MANAGER')

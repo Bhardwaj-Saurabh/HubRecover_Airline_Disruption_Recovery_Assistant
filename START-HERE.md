@@ -1,12 +1,12 @@
 # Start here
 
-This is the build kit for **HubRecover — Airline Disruption Recovery Assistant**. The revised PRD contains all 36 workflow questions and the decisions needed to create the synthetic data and bounded recovery prototype. The airline-specific prototype and its evaluation have not been built or run yet.
+This is the build kit for **HubRecover — Airline Disruption Recovery Assistant**. The revised PRD contains all 36 workflow questions and the decisions needed to create the synthetic data and bounded recovery prototype. A local Python/Google ADK synthetic prototype is now implemented. Start it using [README.md](README.md) or `Start HubRecover.command`; observed evidence and remaining acceptance limits are in [BUILD-STATUS.md](BUILD-STATUS.md). The LMS browser deliverable below remains a separate profile.
 
 PRD.md is the current product baseline. TEST-PLAN.md mirrors its cases and evaluation gates. ARCHITECTURE-ADK.md designs the requested Python/Google ADK backend. BUILD-INSTRUCTIONS.md explains the separate LMS browser implementation, DESIGN.md sets the appearance, and HOSTING-CONTRACT.md sets LMS packaging/browser restrictions. PRD-REVIEW.md records the historical review that informed the revision. manifest.json preserves the original LMS export provenance; its answer IDs and fingerprint are not a record of the later local edits.
 
 ## Requested ADK prototype
 
-Read [ARCHITECTURE-ADK.md](ARCHITECTURE-ADK.md) for the selected backend architecture and implementation order. It uses ADK graph workflows, deterministic Python recovery rules, a web review interface, and durable synthetic booking/approval records. Sections 17–25 address all nine architecture-review findings; section 26 lists the implementation checks still required. This is a design, not a built application. The ADK prototype requires a local server or separate hosting and cannot be packaged into the LMS single-page ZIP. Both profiles follow the PRD's product rules and shared acceptance gates, with separate runtime evidence.
+Read [ARCHITECTURE-ADK.md](ARCHITECTURE-ADK.md) for the selected backend architecture and implementation order. It uses ADK graph workflows, deterministic Python recovery rules, a web review interface, and durable synthetic booking/approval records. Sections 17–25 address all nine architecture-review findings; section 26 lists the implementation checks still required. The document remains the design baseline; the implemented local subset and unverified broader contracts are recorded in BUILD-STATUS.md. The ADK prototype requires a local server or separate hosting and cannot be packaged into the LMS single-page ZIP. Both profiles follow the PRD's product rules and shared acceptance gates, with separate runtime evidence.
 
 The instructions below and BUILD-PROMPT.txt describe the LMS browser deliverable only. Use the ADK architecture when building the requested backend prototype.
 
