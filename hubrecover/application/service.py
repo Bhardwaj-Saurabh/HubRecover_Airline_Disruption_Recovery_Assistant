@@ -10,6 +10,7 @@ from hubrecover.domain.allocation import DispatchEvidence, Position
 from hubrecover.domain.gate import RestrictionWindow, validate_operations
 from hubrecover.domain.monitoring import Monitor, RestrictionEvent, ingest, tick, Decision
 from hubrecover.domain.planning import build_plans, digest, validate_constraints
+from hubrecover.domain.policy import POLICY
 from hubrecover.domain.schemas import SeedSnapshot, Flight
 from hubrecover.fixtures.scenarios import Scenario, create_scenario
 from .store import Store
@@ -41,6 +42,15 @@ class RecoveryService:
         self.store = Store(path)
         self.clock = clock
 
+    def recover_interrupted_ai(self):
+        with self.store.transaction() as db:
+            for row in db.execute('SELECT body FROM runs').fetchall():
+                run=json.loads(row['body'])
+                if run['status']=='EXPLAINING':
+                    self.handoff(run,'MODEL_OUTCOME_UNKNOWN_AFTER_RESTART')
+                    run['revision']+=1
+                    self.store.save(db,run)
+
     def now(self, run):
         return self.clock()+run.get('clock_offset', 0)
 
@@ -66,6 +76,7 @@ class RecoveryService:
             self.handoff(run, 'REGENERATION_BUDGET_EXHAUSTED')
             return
         run['generation'] += 1
+        run['mode'] = 'RULES_ONLY'
         run['approval'] = None
         run['acknowledgements'] = {}
         run['selected_plan'] = None
@@ -94,7 +105,7 @@ class RecoveryService:
                     raise Refusal('Stop or finish the active episode before starting another')
             control = self.store.control(db)
             run = dict(id=uuid.uuid4().hex, status='MONITORING', revision=1, generation=0,
-                mode='RULES_ONLY', scenario=encode_scenario(scenario), source_version=1,
+                mode='RULES_ONLY', policy_version=POLICY.version, scenario=encode_scenario(scenario), source_version=1,
                 source_verified_at=self.clock(), control_version=control['version'], clock_offset=0,
                 constraints=[], rejected=[], search={}, approval=None, acknowledgements={}, selected_plan=None,
                 trace=[], handoffs=[], receipts={}, outbox={}, booking_history=[], fence=0, lease_until=0,
@@ -136,6 +147,8 @@ class RecoveryService:
 
     def guard(self, db, run, *, approval=False):
         control=self.store.control(db)
+        if run.get('policy_version')!=POLICY.version:
+            raise Refusal('Policy version changed; old cards cannot execute')
         if not control['writes_enabled'] or control['version']!=run['control_version']:
             raise Refusal('Application write control changed or disabled')
         if run['status'] in TERMINAL:
@@ -154,6 +167,8 @@ class RecoveryService:
                 raise Refusal('Matching operational prerequisites are missing')
             if any(v['fingerprint']!=plan['fingerprint'] or v['operations_digest']!=digest(plan['operations']) for v in run['acknowledgements'].values()):
                 raise Refusal('Operational acknowledgement does not match approved postconditions')
+            if run.get('committed_operations_digest')!=digest(plan['operations']):
+                raise Refusal('Approved operational postconditions are not committed in the simulated source')
             if digest(run['inventory']) != run['expected_inventory']:
                 raise Refusal('Unexpected inventory change')
             scenario=decode_scenario(run['scenario'])
@@ -213,6 +228,9 @@ class RecoveryService:
                         raise Refusal('Specialist role and exact approved postcondition evidence required')
                     run['acknowledgements'][role]=dict(fingerprint=plan['fingerprint'],operations_digest=digest(plan['operations']),at=self.now(run),simulated=True)
                     if set(run['acknowledgements'])==set(plan['prerequisites']):
+                        run['committed_schedule']=plan['flights']
+                        run['committed_operations_digest']=digest(plan['operations'])
+                        self.trace(run,'SIMULATED_OPERATIONAL_COMMIT',dict(fingerprint=plan['fingerprint'],source='SYN-OPERATIONAL-ACKS'))
                         run['status']='REVALIDATING'
                 elif action=='execute':
                     if role!='DUTY_MANAGER' or run['status'] not in ('REVALIDATING','EXECUTING'):
@@ -252,7 +270,11 @@ class RecoveryService:
                 elif action=='resume_monitor':
                     if run['status']!='MONITORING':
                         raise Refusal('Not monitoring')
-                    run['monitor']['duration_minutes']=61
+                    monitor=Monitor(**run['monitor']['state'])
+                    start=run['scenario']['seed']['day_start_ms']+5*60*60_000
+                    monitor,decision=tick(monitor,start+61*60_000,downline_flights=run['monitor']['downline_flights'],crew_conflict=False,precheck_verified=run['scenario']['sources_verified'])
+                    run['monitor'].update(duration_minutes=61,decision=decision.value,state=asdict(monitor))
+                    if decision!=Decision.TRIGGER: raise Refusal('Trigger did not qualify')
                     self.plan(run)
                 elif action=='accept_handoff':
                     packet=next((h for h in run['handoffs'] if h['id']==payload.get('handoff_id')),None)

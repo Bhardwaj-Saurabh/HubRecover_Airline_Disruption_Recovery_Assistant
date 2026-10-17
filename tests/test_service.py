@@ -153,3 +153,18 @@ def test_handoff_acceptance_does_not_resolve_work(service):
     run=cmd(service,run,'accept_handoff',handoff_id=run['handoffs'][0]['id'])
     assert run['status']=='MANUAL_HANDOFF' and run['handoffs'][0]['status']=='ACKNOWLEDGED'
     assert not run['receipts']
+
+
+def test_actual_rebooking_net_seats_and_history(service):
+    run=service.create()
+    run=cmd(service,run,'reject',request_id=run['request_id'],reason='Compare alternative passenger trade-offs')
+    plan=next(p for p in run['search']['plans'] if any(a['outcome']=='REBOOKED_NEXT_DAY' for a in p['allocations']))
+    run=cmd(service,run,'approve',request_id=run['request_id'],plan_id=plan['id'])
+    for role in plan['prerequisites']:
+        run=cmd(service,run,'acknowledge',role=role,fingerprint=plan['fingerprint'],operations_digest=digest(plan['operations']))
+    run=cmd(service,run,'execute');final=service.execute(run['id'],run['fence'])
+    assert final['status']=='COMPLETED'
+    assert len(final['booking_history'])==2
+    assert final['inventory']['SYN-F-0-1-0']['occupied']==70
+    assert final['inventory']['SYN-F-0-1-1']['occupied']==68
+    assert final['inventory']['SYN-F-0-2-0']['occupied']==22

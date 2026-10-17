@@ -1,0 +1,192 @@
+{
+  "mode": "RULES_ONLY",
+  "requested_runs": 30,
+  "successful_cards": 30,
+  "failed_or_handoff": 0,
+  "p95_seconds": 0.15925192832946777,
+  "includes": "Actual local elapsed trigger-to-first-card; excludes human waiting and execution",
+  "model_requests": 0,
+  "business_value": "UNPROVEN",
+  "runs": [
+    {
+      "repeat": 1,
+      "run_id": "8b33fa82c6894bf281b2a6395096c468",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.14852499961853027
+    },
+    {
+      "repeat": 2,
+      "run_id": "e6517eaf80354cafb9b74de5b1afab5f",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.14821887016296387
+    },
+    {
+      "repeat": 3,
+      "run_id": "fb3f9b95fba94f8fb0cb3460d90a5c1c",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.17680001258850098
+    },
+    {
+      "repeat": 4,
+      "run_id": "f098f7487deb418f863feb780a6e900f",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.15039896965026855
+    },
+    {
+      "repeat": 5,
+      "run_id": "7c61042073324149a88179f603b894f3",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.15120506286621094
+    },
+    {
+      "repeat": 6,
+      "run_id": "c8feed60ebf544f0898d71abc5911ef0",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.1521310806274414
+    },
+    {
+      "repeat": 7,
+      "run_id": "c9ba7b3af486413abbcae76677c52e9f",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.14993691444396973
+    },
+    {
+      "repeat": 8,
+      "run_id": "c6c7b3c4e7054e79aef3e602a84961e7",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.15016818046569824
+    },
+    {
+      "repeat": 9,
+      "run_id": "087ccf8eeece4b3b9551237aa60904ea",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.1496436595916748
+    },
+    {
+      "repeat": 10,
+      "run_id": "b4f4419f5ddd4c48b311303470f43420",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.14875507354736328
+    },
+    {
+      "repeat": 11,
+      "run_id": "a4ca6a378ba5476fb23a066c98f4b5c3",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.15325593948364258
+    },
+    {
+      "repeat": 12,
+      "run_id": "1e275365f8d34394aac623668c2c5e37",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.15051579475402832
+    },
+    {
+      "repeat": 13,
+      "run_id": "3b5ba66dbe8d4a2281fbb48be2ebc5b7",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.15136408805847168
+    },
+    {
+      "repeat": 14,
+      "run_id": "30473918744c4a23826b42147b42c8bc",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.15105414390563965
+    },
+    {
+      "repeat": 15,
+      "run_id": "16a35e8128ae4e81a8780f46c3e97f3a",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.14997196197509766
+    },
+    {
+      "repeat": 16,
+      "run_id": "a7bd13809ce54db4ad861543a5813a8d",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.1491258144378662
+    },
+    {
+      "repeat": 17,
+      "run_id": "3137ba2064004ec4ba070aed5f02c783",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.15018010139465332
+    },
+    {
+      "repeat": 18,
+      "run_id": "e239e80b96c64077be2f2bb29218d6c6",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.14950990676879883
+    },
+    {
+      "repeat": 19,
+      "run_id": "6a27f27c5b3c46659e72bdeb6fea1c1e",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.15009689331054688
+    },
+    {
+      "repeat": 20,
+      "run_id": "a2797f5e0d24472c8c1e2587ac261dca",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.14820194244384766
+    },
+    {
+      "repeat": 21,
+      "run_id": "91fcba96f53f4ce885ae0afda578467a",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.15096020698547363
+    },
+    {
+      "repeat": 22,
+      "run_id": "e58f0c885f45424eb5f666b4405f6f4c",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.1507129669189453
+    },
+    {
+      "repeat": 23,
+      "run_id": "ce54ccf317f44af9adf534d391f6012a",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.14969372749328613
+    },
+    {
+      "repeat": 24,
+      "run_id": "b092eea41c7d4cb6867d339ce9b8594c",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.14848899841308594
+    },
+    {
+      "repeat": 25,
+      "run_id": "5ed5cabd09dd4c2c864de409e947bc78",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.1505720615386963
+    },
+    {
+      "repeat": 26,
+      "run_id": "d29071ba5af64848836f627401ac0075",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.1557309627532959
+    },
+    {
+      "repeat": 27,
+      "run_id": "5585c9ffd3824aa3bc01f5175569adb3",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.15925192832946777
+    },
+    {
+      "repeat": 28,
+      "run_id": "b053ecb16d1748bba06ad6b064858c57",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.14897608757019043
+    },
+    {
+      "repeat": 29,
+      "run_id": "1b2f0f8db82d49f49f407d8d0abaf15d",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.14961004257202148
+    },
+    {
+      "repeat": 30,
+      "run_id": "af1844be76b147b7a0322ca22b9dcc1b",
+      "status": "AWAITING_APPROVAL",
+      "seconds": 0.15569710731506348
+    }
+  ]
+}

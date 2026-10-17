@@ -51,8 +51,6 @@ def run_case(name):
             old=run['request_id']
             run=command(service,run,'edit',request_id=old,constraint=dict(kind='protectConnection',target='SYN-CONNECTION-INTERNATIONAL'))
             expected='Fresh review request; all 50 protected passengers keep the connection'
-            diagnostic=run['request_id']!=old and all(a['itinerary']==['SYN-F-0-1-0','SYN-F-0-1-1'] for p in run['search']['plans'] for a in p['allocations'] if a['party_id'].startswith('SYN-PARTY-0-'))
-            # First in-memory return uses tuples; JSON ledger uses lists.
             diagnostic=run['request_id']!=old and all(tuple(a['itinerary'] or ())==('SYN-F-0-1-0','SYN-F-0-1-1') for p in run['search']['plans'] for a in p['allocations'] if a['party_id'].startswith('SYN-PARTY-0-'))
         elif name=='near_miss':
             expected='MONITORING at exactly 60 minutes; zero writes'

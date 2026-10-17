@@ -10,10 +10,12 @@ import uuid
 from fastapi import FastAPI, Request, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+from typing import Literal
 
 from .service import RecoveryService, Refusal, TERMINAL
 from .workflow import RecoveryWorkflow
+from .ai import BoundedAI
 from hubrecover.domain.planning import digest
 from hubrecover.fixtures.scenarios import CASES
 
@@ -37,11 +39,35 @@ class Verdict(Body):
     actor: str=Field(min_length=1,max_length=100)
 
 
+class ResearchRecord(Body):
+    kind: Literal['review','comparison','feedback']
+    run_id: str
+    actor: str=Field(min_length=1,max_length=100)
+    expertise: str=Field(min_length=1,max_length=200)
+    notes: str=Field(min_length=1,max_length=4000)
+    clarity: int | None=Field(default=None,ge=1,le=5)
+    evidence: int | None=Field(default=None,ge=1,le=5)
+    tradeoffs: int | None=Field(default=None,ge=1,le=5)
+    task_id: str | None=None
+    mode: Literal['MANUAL','RULES_ONLY','REAL_AI'] | None=None
+    started_ms: int | None=Field(default=None,ge=0)
+    ended_ms: int | None=Field(default=None,ge=0)
+    @model_validator(mode='after')
+    def required_fields(self):
+        if self.kind=='review' and any(v is None for v in (self.clarity,self.evidence,self.tradeoffs)):
+            raise ValueError('All three review scores required')
+        if self.kind=='comparison' and (not self.task_id or not self.mode or self.started_ms is None or self.ended_ms is None or self.ended_ms<self.started_ms):
+            raise ValueError('Matched task, mode and chronological observed timing required')
+        return self
+
+
 def create_app(data_dir=None):
     folder=Path(data_dir or os.environ.get('HUBRECOVER_DATA_DIR','.hubrecover')).resolve()
     service=RecoveryService(folder/'business.sqlite')
+    service.recover_interrupted_ai()
     workflow=RecoveryWorkflow(service,folder/'adk.sqlite')
     workflow_lock=asyncio.Lock()
+    ai=BoundedAI(service)
     eval_state={'running':False,'completed':0,'total':len(CASES),'error':None}
 
     @asynccontextmanager
@@ -77,6 +103,8 @@ def create_app(data_dir=None):
     app.mount('/assets',StaticFiles(directory=WEB),name='assets')
     @app.get('/health')
     def health(): return dict(status='ok',mode='SYNTHETIC',ai='RULES_ONLY',workflow='hubrecover_v1')
+    @app.get('/api/ai')
+    def ai_status(): return ai.status()
     @app.get('/api/cases')
     def cases(): return [dict(id=i,title=t) for i,t in CASES]
     @app.get('/api/runs')
@@ -94,6 +122,11 @@ def create_app(data_dir=None):
         return run
     @app.post('/api/runs/{run_id}/{action}')
     async def mutate(run_id:str,action:str,body:Command,background:BackgroundTasks):
+        if action in ('ai_explain','ai_edit'):
+            if body.role!='DUTY_MANAGER': raise Refusal('Duty Manager role required')
+            run=await ai.request(run_id,body.revision,'explanation' if action=='ai_explain' else 'edit',body.payload.get('text'),body.key)
+            async with workflow_lock:
+                return await workflow.resume(run_id)
         if action=='reset':
             old=service.get(run_id)
             if body.role!='DUTY_MANAGER' or body.revision!=old['revision'] or old['status'] not in TERMINAL:
@@ -123,11 +156,13 @@ def create_app(data_dir=None):
     def change_control(action:str,body:ControlCommand):
         return service.control(action,role=body.role,evidence=body.evidence)
 
-    def evaluate():
+    def evaluate(suite='development'):
         from evaluation.runner import run_case
+        from evaluation.held_out import run_held_case
+        cases=list(range(20)) if suite=='held_out' else [name for name,_ in CASES]
         try:
-            for case,_ in CASES:
-                result=run_case(case)
+            for case in cases:
+                result=run_held_case(case) if suite=='held_out' else run_case(case)
                 with service.store.transaction() as db:
                     db.execute('INSERT INTO observations VALUES(?,?)',(result['id'],json.dumps(result)))
                 eval_state['completed']+=1
@@ -138,15 +173,33 @@ def create_app(data_dir=None):
     @app.post('/api/evaluations')
     def start_evaluation(background:BackgroundTasks):
         if eval_state['running']: raise Refusal('Evaluation already running')
-        eval_state.update(running=True,completed=0,error=None)
+        eval_state.update(running=True,completed=0,total=18,error=None)
         background.add_task(evaluate)
         return eval_state
+    @app.post('/api/evaluations/held-out')
+    def held_out(background:BackgroundTasks):
+        if eval_state['running']: raise Refusal('Evaluation already running')
+        eval_state.update(running=True,completed=0,total=20,error=None)
+        background.add_task(evaluate,'held_out')
+        return eval_state
+    @app.get('/api/research')
+    def research():
+        with service.store.connect() as db:
+            return [json.loads(row['body']) for row in db.execute('SELECT body FROM research ORDER BY rowid')]
+    @app.post('/api/research')
+    def record_research(body:ResearchRecord):
+        run=service.get(body.run_id)
+        record=dict(**body.model_dump(),id=uuid.uuid4().hex,at=service.clock(),generation=run['generation'],
+                    card_digest=run.get('card_digest'),source_version=run['source_version'],review_status='RECORDED_NOT_VERIFIED')
+        with service.store.transaction() as db:
+            db.execute('INSERT INTO research VALUES(?,?)',(record['id'],json.dumps(record)))
+        return record
     @app.get('/api/evaluations')
     def evaluations():
         with service.store.connect() as db:
             results=[json.loads(r['body']) for r in db.execute('SELECT body FROM observations ORDER BY rowid')]
-        return dict(progress=eval_state,results=results,held_out=dict(status='NOT_RUN',cases=20),
-                    human_review='PENDING',real_ai='NOT_RUN',value_comparison='PENDING')
+        return dict(progress=eval_state,results=results,held_out=dict(status='OBSERVED' if any(r.get('suite')=='held_out_v1' for r in results) else 'NOT_RUN',cases=20),
+                    human_review='REQUIRES_REVIEW',real_ai='NOT_RUN',value_comparison='REQUIRES_MATCHED_ANALYSIS',research=research())
     @app.post('/api/evaluations/{result_id}/verdict')
     def verdict(result_id:str,body:Verdict):
         if body.verdict not in ('PASS','NEEDS_WORK','FAIL'): raise HTTPException(422,'Unknown verdict')

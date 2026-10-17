@@ -1,0 +1,451 @@
+{
+  "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+  "results": [
+    {
+      "id": "1a36d5666e504be781400921c9aca692",
+      "case": "H01",
+      "title": "crew rest one minute short",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "CREW_REST",
+      "actual": {
+        "codes": [
+          "CREW_REST"
+        ],
+        "passed": false
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.003228333021979779,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "ea8a4798044e498ab510c99888fb86c0",
+      "case": "H02",
+      "title": "crew duty one minute over",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "CREW_DUTY",
+      "actual": {
+        "codes": [
+          "CREW_DUTY"
+        ],
+        "passed": false
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.003046667028684169,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "d3f3cbce5c64494fa3dc738a3c9a69f4",
+      "case": "H03",
+      "title": "wrong type qualification",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "CREW_QUALIFICATION",
+      "actual": {
+        "codes": [
+          "CREW_QUALIFICATION"
+        ],
+        "passed": false
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.002495833032298833,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "28359cc99482483cae8dbb67d70a0eb7",
+      "case": "H04",
+      "title": "maintenance on the second rotation",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "MAINTENANCE",
+      "actual": {
+        "codes": [
+          "MAINTENANCE"
+        ],
+        "passed": false
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.0025522499927319586,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "7f327f909efd4eaba966f43e9b7a64ae",
+      "case": "H05",
+      "title": "swapped origin locations on two resource graphs",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "LOCATION_CONTINUITY",
+      "actual": {
+        "codes": [
+          "LOCATION_CONTINUITY"
+        ],
+        "passed": false
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.0024592920090071857,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "a050edace2ea45ff9d56ef1a3a13bcd1",
+      "case": "H06",
+      "title": "unavailable next-day aircraft",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "RESOURCE_AVAILABILITY",
+      "actual": {
+        "codes": [
+          "RESOURCE_AVAILABILITY"
+        ],
+        "passed": false
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.002857874962501228,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "4e21ebecd40b4ef1b4686d0db2ee5684",
+      "case": "H07",
+      "title": "changed verified block duration",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "BLOCK_DURATION",
+      "actual": {
+        "codes": [
+          "BLOCK_DURATION"
+        ],
+        "passed": false
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.002780374954454601,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "6c21dc8cdb8541be946cff25f1d5f98e",
+      "case": "H08",
+      "title": "invented crew reassignment",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "UNSUPPORTED_OPERATION",
+      "actual": {
+        "codes": [
+          "CREW_OVERLAP",
+          "LOCATION_CONTINUITY",
+          "UNSUPPORTED_OPERATION"
+        ],
+        "passed": false
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.0027782919933088124,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "0aafa5cd85f1498791c57d5d2ffe5c71",
+      "case": "H09",
+      "title": "cancel middle leg without relocation",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "LOCATION_CONTINUITY",
+      "actual": {
+        "codes": [
+          "LOCATION_CONTINUITY"
+        ],
+        "passed": false
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.002544208022300154,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "a39ec795aba84ab2bd521f5a163e0906",
+      "case": "H10",
+      "title": "runway arrival blocked at boundary",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "ACTIVE_RESTRICTION",
+      "actual": {
+        "codes": [
+          "ACTIVE_RESTRICTION"
+        ],
+        "passed": false
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.0027009170153178275,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "4201d40af8a5479c8ec309abfb290c24",
+      "case": "H11",
+      "title": "forecast release cannot clear",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "ACTIVE_RESTRICTION",
+      "actual": {
+        "codes": [
+          "ACTIVE_RESTRICTION"
+        ],
+        "passed": false
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.0026359169860370457,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "ab03e8c216c54ca898350395e050d840",
+      "case": "H12",
+      "title": "missing dispatch for next-day leg",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "DISPATCH_UNVERIFIED",
+      "actual": {
+        "codes": [
+          "DISPATCH_UNVERIFIED"
+        ],
+        "passed": false
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.0024877500254660845,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "448e60c5ce944351a7ea086e50269bf8",
+      "case": "H13",
+      "title": "exact confirmed release",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "PASS",
+      "actual": {
+        "codes": [],
+        "passed": true
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.0025563330273143947,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "a4687aebc5e0466eb04cce232befd24e",
+      "case": "H14",
+      "title": "unrelated flight scope",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "PASS",
+      "actual": {
+        "codes": [],
+        "passed": true
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.005843583028763533,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "b94c8e047f034af6bb4ee8a367f075c5",
+      "case": "H15",
+      "title": "stop before first effect",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "MANUAL_HANDOFF",
+      "actual": {
+        "status": "MANUAL_HANDOFF",
+        "parties": 0
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.18922804202884436,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "c65c9642ccae4e1f8db13c9dd94e38a2",
+      "case": "H16",
+      "title": "stop after two effects",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "PARTIAL_MANUAL",
+      "actual": {
+        "status": "PARTIAL_MANUAL",
+        "parties": 2
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.22071516700088978,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "a08e838dc9614c6289a2d36cc7bd60c5",
+      "case": "H17",
+      "title": "disable after one effect across restart",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "PARTIAL_MANUAL",
+      "actual": {
+        "status": "PARTIAL_MANUAL",
+        "parties": 1
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.20516445802059025,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "fb0c7155f6df4351a81e5f7ec40fe5b6",
+      "case": "H18",
+      "title": "expired card at exact TTL",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "MANUAL_HANDOFF",
+      "actual": {
+        "status": "MANUAL_HANDOFF",
+        "parties": 0
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.19453091599280015,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "dce5565e156c41508fac2b38b8f65334",
+      "case": "H19",
+      "title": "new control revision cannot revive authority",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "MANUAL_HANDOFF",
+      "actual": {
+        "status": "MANUAL_HANDOFF",
+        "parties": 0
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.20542737504001707,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    },
+    {
+      "id": "8c798504d834469d9168b7158a58f169",
+      "case": "H20",
+      "title": "wrong-request replay",
+      "suite": "held_out_v1",
+      "mode": "RULES_ONLY",
+      "expected": "REFUSED",
+      "actual": {
+        "status": "REFUSED",
+        "parties": 0
+      },
+      "diagnostic": "PASS",
+      "elapsed_seconds": 0.19227895903168246,
+      "verdict": null,
+      "verdict_history": [],
+      "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
+      "limitations": [
+        "Deterministic boundary variants only; no model/human evidence",
+        "Not a substitute for the full PRD held-out quality gate"
+      ]
+    }
+  ]
+}

@@ -15,6 +15,7 @@ class Store:
             CREATE TABLE IF NOT EXISTS runs(id TEXT PRIMARY KEY, body TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS commands(run_id TEXT, key TEXT, hash TEXT, PRIMARY KEY(run_id,key));
             CREATE TABLE IF NOT EXISTS control(id INTEGER PRIMARY KEY CHECK(id=1), body TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS research(id TEXT PRIMARY KEY, body TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS observations(id TEXT PRIMARY KEY, body TEXT NOT NULL);
             ''')
             db.execute('INSERT OR IGNORE INTO control VALUES(1,?)', (json.dumps(dict(

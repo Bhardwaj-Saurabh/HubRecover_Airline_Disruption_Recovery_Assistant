@@ -20,3 +20,14 @@ def test_api_browser_flow_and_security(tmp_path):
         assert run['status']=='AWAITING_OPERATIONAL_ACK'
         assert run['adk']['pending']['id']=='finish-'+run['id']
         assert client.get('/api/runs/'+run['id']+'/trace/export').status_code==200
+
+
+def test_research_records_remain_explicit_human_observations(tmp_path):
+    with TestClient(create_app(tmp_path)) as client:
+        run=client.post('/api/runs',json={}).json()
+        body=dict(kind='review',run_id=run['id'],actor='SYN-REVIEWER',expertise='Test proxy',notes='Synthetic test of recording only',clarity=4,evidence=3,tradeoffs=4)
+        response=client.post('/api/research',json=body)
+        assert response.status_code==200
+        assert response.json()['review_status']=='RECORDED_NOT_VERIFIED'
+        assert client.get('/api/evaluations').json()['results']==[]
+        assert len(client.get('/api/research').json())==1
