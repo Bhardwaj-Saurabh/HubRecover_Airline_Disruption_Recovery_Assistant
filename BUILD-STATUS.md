@@ -39,3 +39,7 @@ The 18 end-to-end development families and 20 held-out variants have not been ru
 ## Git delivery
 
 Each tested feature is committed and pushed to `origin/main`, as requested. The latest source and test evidence are versioned together. No force pushes.
+
+## Candidate pipeline increment
+
+The finite search now materialises delays/cancellations/swaps, propagates rotations and crew sequences, checks exact frozen synthetic dispatch evidence, allocates parties, applies supported edits, deduplicates canonical action fingerprints and ranks only after the full selected search finishes. Incomplete search publishes no options. Four additional tests cover independently calculated reference arithmetic, protected connection edits, rejection fingerprints, missing sources and timeout. Latest observed suite: 89 passed (offline).
