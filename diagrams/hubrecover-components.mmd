@@ -1,0 +1,44 @@
+graph TB
+    UI["OCC review interface"]
+    API["FastAPI command and role validation"]
+    JOBS["Durable stage jobs"]
+    WORKFLOW["Google ADK recovery workflow"]
+    DOMAIN["Deterministic Python recovery engine"]
+    AI["Explanation and edit agents"]
+    GEMINI["Gemini model"]
+    READ["Read-only snapshot adapters"]
+    FIXTURES["Immutable synthetic seeds"]
+    CONTEXT["Approved playbooks and claim catalog"]
+    CLAIMS["Typed claim validator and renderer"]
+    GUARD["Approval and execution guard"]
+    CONTROL["Durable application write control"]
+    EXECUTION["Mock bookings and notifications"]
+    LEDGER[("Active state and business ledger")]
+    SESSIONS[("ADK sessions and checkpoints")]
+    RECORDS["Handoffs and evaluation records"]
+    EVALUATOR["Independent evaluation and oracle"]
+
+    UI --> API
+    API --> JOBS
+    JOBS --> WORKFLOW
+    WORKFLOW --> DOMAIN
+    DOMAIN --> READ
+    READ --> LEDGER
+    FIXTURES -->|Seed once| LEDGER
+    WORKFLOW --> AI
+    CONTEXT --> AI
+    AI --> GEMINI
+    AI --> CLAIMS
+    CLAIMS --> WORKFLOW
+    WORKFLOW --> GUARD
+    CONTROL --> GUARD
+    CONTROL --> LEDGER
+    GUARD --> EXECUTION
+    EXECUTION --> LEDGER
+    DOMAIN --> LEDGER
+    API --> LEDGER
+    JOBS --> LEDGER
+    WORKFLOW --> SESSIONS
+    API --> RECORDS
+    RECORDS --> LEDGER
+    EVALUATOR --> API

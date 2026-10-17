@@ -1,0 +1,56 @@
+graph TD
+    M["Monitor authority and precheck"]
+    T{"Trigger qualifies?"}
+    TC["Clarify restriction history"]
+    I["Verify fresh impact snapshot"]
+    P["Generate recovery options"]
+    V["Check feasibility and rank"]
+    E["Explain and validate evidence"]
+    R["Duty Manager review"]
+    C["Clarify requested edit"]
+    A{"Operational prerequisites?"}
+    W["Wait for operational acknowledgements"]
+    Q["Revalidate approval and current data"]
+    X["Execute guarded mock passenger actions"]
+    F{"Recovery fully reconciled?"}
+    H["MANUAL_HANDOFF"]
+    D["COMPLETED"]
+    PM["PARTIAL_MANUAL"]
+    G["Common guard exit: Stop, expiry, source or material failure"]
+    B{"Passenger effects already committed?"}
+    N{"Safe replan allowed and budget remains?"}
+
+    M --> T
+    T -->|No| M
+    T -->|Ambiguous| TC
+    TC -->|Classified| M
+    TC -->|Timeout or unverifiable| H
+    T -->|Yes| I
+    I --> P
+    I -->|Required source failure| G
+    P --> V
+    V -->|No viable plan or source failure| H
+    V -->|Viable| E
+    E -->|Invalid after retry| H
+    E -->|Valid| R
+    R -->|Edit or reject within budget| P
+    R -->|Ambiguous edit| C
+    C -->|Resolved within budget| P
+    C -->|Timeout or unsupported| H
+    R -->|Approve| A
+    R -->|Stop, expiry or material change| G
+    A -->|Required| W
+    A -->|None| Q
+    W -->|Matching acknowledgements| Q
+    W -->|Failed, mismatched or expired| G
+    Q -->|All execution checks pass| X
+    Q -->|Guard fails| G
+    X -->|Guard or action failure| G
+    X --> F
+    F -->|All resolved and messages sent| D
+    F -->|Unresolved or manual work| PM
+    G --> B
+    B -->|Yes| PM
+    B -->|No| N
+    N -->|Yes| P
+    N -->|No| H

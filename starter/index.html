@@ -1,0 +1,1039 @@
+<!doctype html>
+<html lang="en" data-skin="ops">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Starter: Northstar Triage</title>
+<style>
+/* PF-DESIGN-START
+   The look ships in the kit. Product Faculty capstone design tokens and parts.
+   Rules for whoever builds on this page:
+   - Keep this block as it is. Use ONLY these tokens for colour, type, spacing, radius and shadow.
+   - No new colours. No new fonts. No emoji as icons. Nothing smaller than 13px.
+   - One skin per product: data-skin="ops" | "studio" | "term" on <html>. See DESIGN.md. */
+:root {
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --fs-0: 13px; --fs-1: 14px; --fs-2: 16px; --fs-3: 20px; --fs-4: 28px; --lh: 1.5;
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px;
+  --radius: 10px; --radius-sm: 6px; --border-w: 1px;
+  /* status colours, the same in every skin */
+  --ok: #1FA971; --warn: #D98E04; --danger: #D64545; --info: #3B82F6;
+}
+/* Operations: dark, calm. Internal tools, queues, triage. */
+:root, [data-skin="ops"] {
+  --bg: #0F1420; --bg-raise: #171E2E; --bg-inset: #0B0F18; --line: #263049;
+  --ink: #E8EDF7; --ink-2: #9AA6BF; --ink-3: #7C89A6;
+  --accent: #6C8CFF; --accent-ink: #FFFFFF; --chip: #1E2740;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -12px rgba(0,0,0,.55);
+  --font-body: var(--font-ui);
+}
+/* Studio: light, clean. Customer-facing tools, business users. */
+[data-skin="studio"] {
+  --bg: #F6F7FB; --bg-raise: #FFFFFF; --bg-inset: #EEF0F6; --line: #E1E5EF;
+  --ink: #131A2A; --ink-2: #4C5670; --ink-3: #6B7490;
+  --accent: #4056C9; --accent-ink: #FFFFFF; --chip: #EDF0FA;
+  --shadow: 0 1px 2px rgba(19,26,42,.06), 0 12px 28px -14px rgba(19,26,42,.18);
+  --font-body: var(--font-ui);
+}
+/* Terminal: mono. Developer and data tools. */
+[data-skin="term"] {
+  --bg: #0C0F0C; --bg-raise: #121712; --bg-inset: #080B08; --line: #223122;
+  --ink: #D7F5DC; --ink-2: #8FBE97; --ink-3: #6E9A76;
+  --accent: #35D07F; --accent-ink: #06130A; --chip: #16301E;
+  --shadow: 0 0 0 1px rgba(53,208,127,.08), 0 12px 32px -14px rgba(0,0,0,.7);
+  --font-body: var(--font-mono);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: var(--fs-1); line-height: var(--lh); }
+[hidden] { display: none !important; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* top bar */
+.topbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); padding: var(--sp-3) var(--sp-5); background: var(--bg-raise); border-bottom: var(--border-w) solid var(--line); }
+.topbar .product { margin: 0; font-size: var(--fs-2); font-weight: 700; letter-spacing: .01em; }
+.topbar .meta { color: var(--ink-3); font-size: var(--fs-0); margin-left: auto; }
+.tabs { display: inline-flex; gap: var(--sp-1); padding: 3px; border-radius: var(--radius-sm); background: var(--bg-inset); border: var(--border-w) solid var(--line); }
+.tab { padding: 5px 14px; border: 0; border-radius: 4px; background: transparent; color: var(--ink-2); font: 700 var(--fs-0)/1.5 var(--font-body); letter-spacing: .04em; cursor: pointer; }
+.tab.is-active { background: var(--accent); color: var(--accent-ink); }
+
+/* layout */
+.console { display: grid; grid-template-columns: 300px minmax(0, 1fr) 320px; gap: var(--sp-4); padding: var(--sp-4); align-items: start; }
+.page { display: grid; gap: var(--sp-4); padding: var(--sp-4); max-width: 1100px; margin: 0 auto; }
+@media (max-width: 1100px) { .console { grid-template-columns: minmax(0, 1fr); } }
+.panel { min-width: 0; background: var(--bg-raise); border: var(--border-w) solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.panel-head { padding: var(--sp-3) var(--sp-4); border-bottom: var(--border-w) solid var(--line); font-size: var(--fs-0); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
+.panel-body { padding: var(--sp-4); }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); }
+.hint { margin: 0 0 var(--sp-2); color: var(--ink-3); font-size: var(--fs-0); }
+.muted { color: var(--ink-2); }
+
+/* stage labels: the loop, named on screen */
+.stage { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-0); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin: var(--sp-5) 0 var(--sp-2); }
+.stage:first-child { margin-top: 0; }
+.stage::before { content: attr(data-n); display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 13px; letter-spacing: 0; }
+
+/* cards, chips */
+.case-card { display: block; width: 100%; text-align: left; padding: var(--sp-3) var(--sp-4); border: var(--border-w) solid var(--line); border-radius: var(--radius-sm); background: var(--bg-raise); color: var(--ink); font: inherit; cursor: pointer; margin-bottom: var(--sp-2); }
+.case-card:hover { border-color: var(--accent); }
+.case-card.is-active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent) inset; }
+.case-card .id { display: flex; justify-content: space-between; gap: var(--sp-2); font-family: var(--font-mono); font-size: var(--fs-0); color: var(--ink-3); }
+.case-card .title { display: block; font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-4); }
+.chip { display: inline-flex; align-items: center; gap: var(--sp-1); padding: 4px 12px; border-radius: 999px; background: var(--chip); color: var(--ink-2); border: var(--border-w) solid var(--line); font: 600 var(--fs-0)/1.5 var(--font-body); cursor: pointer; }
+.chip:hover, .chip.is-active { color: var(--ink); border-color: var(--accent); }
+.chip[data-state]::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.chip[data-state="Approved"] { color: var(--ok); } .chip[data-state="Edited"] { color: var(--warn); } .chip[data-state="Escalated"], .chip[data-state="Rejected"] { color: var(--danger); }
+.chip.cite { cursor: default; font-family: var(--font-mono); }
+.chip.cite.is-unknown { color: var(--warn); border-color: var(--warn); }
+
+/* labelled fields: judged in under a minute */
+.field { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: var(--sp-3); padding: var(--sp-2) 0; border-bottom: var(--border-w) solid var(--line); }
+.field:last-child { border-bottom: 0; }
+.field .k { font-size: var(--fs-0); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); padding-top: 2px; }
+.field .v { color: var(--ink); overflow-wrap: anywhere; white-space: pre-wrap; }
+.field .v.why { color: var(--ink-2); font-style: italic; }
+@media (max-width: 560px) { .field { grid-template-columns: minmax(0, 1fr); gap: var(--sp-1); } }
+
+/* status */
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: var(--fs-0); font-weight: 700; letter-spacing: .04em; }
+.badge::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.badge.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
+.badge.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); }
+.badge.danger { color: var(--danger); background: color-mix(in srgb, var(--danger) 14%, transparent); }
+.badge.info { color: var(--info); background: color-mix(in srgb, var(--info) 14%, transparent); }
+.badge.neutral { color: var(--ink-2); background: var(--chip); }
+
+/* buttons: the human gate */
+.btn { display: inline-flex; align-items: center; gap: var(--sp-2); min-height: 36px; padding: 8px 18px; border-radius: var(--radius-sm); border: var(--border-w) solid var(--line); background: var(--bg-raise); color: var(--ink); font: 700 var(--fs-1)/1.2 var(--font-body); cursor: pointer; }
+.btn:hover { border-color: var(--accent); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.approve { background: var(--ok); border-color: var(--ok); color: #fff; }
+.btn.danger { background: transparent; border-color: var(--danger); color: var(--danger); }
+.btn.danger:hover:not(:disabled) { background: var(--danger); color: #fff; }
+.boundary-note { font-size: var(--fs-0); color: var(--ink-2); border-left: 2px solid var(--accent); padding-left: var(--sp-3); margin: var(--sp-3) 0 0; }
+
+/* form controls */
+.input, textarea.input, select.input { width: 100%; padding: 8px 10px; border-radius: var(--radius-sm); border: var(--border-w) solid var(--line); background: var(--bg-inset); color: var(--ink); font: var(--fs-1)/var(--lh) var(--font-body); }
+textarea.input { min-height: 96px; resize: vertical; }
+.label { display: grid; gap: var(--sp-1); font-size: var(--fs-0); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+
+/* run log */
+.log { background: var(--bg-inset); border: var(--border-w) solid var(--line); border-radius: var(--radius-sm); padding: var(--sp-3); font-family: var(--font-mono); font-size: var(--fs-0); max-height: 420px; overflow: auto; }
+.log .line { display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-3); padding: 3px 0; color: var(--ink-2); }
+.log .line .t { color: var(--ink-3); flex: none; }
+.log .action-approve { color: var(--ok); } .log .action-edit { color: var(--warn); } .log .action-escalate, .log .action-reject { color: var(--danger); }
+
+/* evals */
+.scoreboard { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-4); }
+@media (max-width: 560px) { .scoreboard { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stat { padding: var(--sp-4); text-align: center; background: var(--bg-raise); border: var(--border-w) solid var(--line); border-radius: var(--radius); }
+.stat .n { font-size: var(--fs-4); font-weight: 800; line-height: 1.1; }
+.stat .l { font-size: var(--fs-0); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.stat.ok .n { color: var(--ok); } .stat.warn .n { color: var(--warn); } .stat.danger .n { color: var(--danger); }
+.evals-table { width: 100%; border-collapse: collapse; font-size: var(--fs-1); }
+.evals-table th { text-align: left; font-size: var(--fs-0); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding: var(--sp-2) var(--sp-3); border-bottom: var(--border-w) solid var(--line); }
+.evals-table td { padding: var(--sp-3); border-bottom: var(--border-w) solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
+.evals-table th:last-child { width: 240px; }
+.evals-table td:first-child { min-width: 136px; overflow-wrap: normal; }
+@media (max-width: 760px) {
+  .evals-table thead { display: none; }
+  .evals-table tr { display: block; padding: var(--sp-3) 0; border-bottom: var(--border-w) solid var(--line); }
+  .evals-table td { display: block; padding: var(--sp-1) 0; border: 0; }
+  .evals-table td::before { content: attr(data-label); display: block; font-size: var(--fs-0); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+}
+
+/* states: no dead screens */
+.thinking { display: inline-flex; align-items: center; gap: var(--sp-2); color: var(--info); font-weight: 600; }
+.thinking::before { content: ""; width: 12px; height: 12px; border: 2px solid var(--info); border-top-color: transparent; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .thinking::before { animation: none; } }
+.empty { padding: var(--sp-6) var(--sp-4); text-align: center; color: var(--ink-2); }
+.empty .headline { font-size: var(--fs-3); font-weight: 700; color: var(--ink); margin-bottom: var(--sp-2); }
+.error-note { margin: var(--sp-3) 0 0; padding: var(--sp-3) var(--sp-4); border-radius: var(--radius-sm); border: var(--border-w) solid var(--danger); background: color-mix(in srgb, var(--danger) 8%, transparent); color: var(--danger); font-size: var(--fs-1); }
+figure.picture { margin: var(--sp-3) 0 0; }
+figure.picture img { display: block; max-width: 100%; max-height: 240px; border: var(--border-w) solid var(--line); border-radius: var(--radius-sm); }
+figure.picture.is-large img { max-height: 560px; }   /* a document a person compares with the output */
+figure.picture figcaption { margin-top: var(--sp-1); color: var(--ink-3); font-size: var(--fs-0); }
+details.source { margin-top: var(--sp-2); }
+details.source summary { cursor: pointer; color: var(--ink-2); font-size: var(--fs-0); font-weight: 600; }
+details.source p { margin: var(--sp-1) 0 0; padding-left: var(--sp-3); border-left: 2px solid var(--line); color: var(--ink-2); font-size: var(--fs-0); }
+/* PF-DESIGN-END */
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 class="product">Northstar Triage</h1>
+  <span class="badge warn" id="mode">Sample mode: results are examples, not AI</span>
+  <button type="button" class="btn" id="use-ai">Use real AI</button>
+  <nav class="tabs" aria-label="Views">
+    <button type="button" class="tab is-active" data-view="console" aria-pressed="true">Console</button>
+    <button type="button" class="tab" data-view="evals" aria-pressed="false">Evals</button>
+  </nav>
+  <span class="meta">An example. Every customer, order and policy here is made up.</span>
+</header>
+
+<main class="console" id="view-console">
+  <section class="panel" aria-label="Cases">
+    <div class="panel-head">Cases</div>
+    <div class="panel-body">
+      <p class="hint" id="chips-hint"></p>
+      <div class="chips" id="chips"></div>
+      <p class="hint">Also in the queue.</p>
+      <div id="queue"></div>
+    </div>
+  </section>
+
+  <section class="panel" aria-label="The loop" id="loop">
+    <div class="panel-head">The loop</div>
+    <div class="panel-body">
+      <div class="empty" id="empty">
+        <div class="headline">One ticket in, one checked reply out</div>
+        <p>The agent reads a support ticket, the customer, the order and the policies, and proposes a reply. A person approves, edits or escalates it. Pick a case to begin.</p>
+      </div>
+      <div id="work" hidden>
+        <div class="stage" data-n="1">Input</div>
+        <div id="case"></div>
+        <div id="own" hidden>
+          <label class="label">Your own ticket <textarea class="input" id="input" placeholder="Type a customer message. Use made-up details only."></textarea></label>
+          <div class="row" style="margin-top: var(--sp-2)"><input type="file" id="file" accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,text/plain" aria-label="Attach a picture or a PDF"></div>
+        </div>
+        <figure class="picture" id="preview" hidden><img id="preview-image" alt="The attached picture"><figcaption id="preview-name"></figcaption></figure>
+
+        <div class="stage" data-n="2">Context</div>
+        <div id="context"></div>
+
+        <div class="row" style="margin-top: var(--sp-4)">
+          <button type="button" class="btn primary" id="run">Run the agent</button>
+          <span class="thinking" id="status" role="status" hidden>Reading the case</span>
+        </div>
+        <p class="error-note" id="error" role="alert" hidden></p>
+
+        <div id="result" hidden style="margin-top: var(--sp-5)">
+          <div class="stage" data-n="3">Decision</div>
+          <div class="row"><span class="badge" id="verdict"></span><span class="muted" id="origin"></span></div>
+          <div class="field" style="margin-top: var(--sp-2)"><span class="k">Why</span><span class="v why" id="why"></span></div>
+          <div class="chips" id="cites" style="margin: var(--sp-2) 0 0"></div>
+
+          <div class="stage" data-n="4">Output</div>
+          <div id="fields"></div>
+
+          <div class="stage" data-n="5">Review</div>
+          <div id="review">
+            <div class="row">
+              <button type="button" class="btn approve" id="approve">Approve</button>
+              <button type="button" class="btn" id="edit">Edit</button>
+              <button type="button" class="btn danger" id="escalate">Escalate</button>
+              <span class="badge" id="outcome" hidden></span>
+            </div>
+            <div id="escalate-box" hidden style="margin-top: var(--sp-3)">
+              <label class="label">Reason for escalating, in one line <input class="input" id="reason" maxlength="160"></label>
+              <div class="row" style="margin-top: var(--sp-2)"><button type="button" class="btn danger" id="escalate-go">Escalate with this reason</button></div>
+            </div>
+            <p class="boundary-note">Nothing is sent without human approval.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="panel" aria-label="Run log">
+    <div class="panel-head">Run log</div>
+    <div class="panel-body">
+      <div class="log" id="log"></div>
+      <div class="row" style="margin-top: var(--sp-3)"><button type="button" class="btn" id="download" disabled>Download the log (CSV)</button></div>
+    </div>
+  </aside>
+</main>
+
+<main class="page" id="view-evals" hidden>
+  <div class="scoreboard" id="scoreboard"></div>
+  <section class="panel" aria-label="Eval cases">
+    <div class="panel-head" id="evals-head"></div>
+    <div class="panel-body">
+      <p class="hint" id="evals-note">Run each case, read what the agent actually did, then choose the verdict yourself. The agent does not grade itself.</p>
+      <table class="evals-table"><thead><tr><th>Case</th><th>Expected</th><th>Actual</th><th>Verdict</th></tr></thead><tbody id="evals"></tbody></table>
+    </div>
+  </section>
+  <section class="panel" aria-label="Improvement made">
+    <div class="panel-head">Improvement made</div>
+    <div class="panel-body" style="display: grid; gap: var(--sp-3)">
+      <label class="label">Before: what went wrong <textarea class="input" id="imp-before"></textarea></label>
+      <label class="label">Change: the one thing that was changed, and why <textarea class="input" id="imp-change"></textarea></label>
+      <label class="label">After: what the same case does now <textarea class="input" id="imp-after"></textarea></label>
+    </div>
+  </section>
+  <section class="panel" aria-label="Known limitations">
+    <div class="panel-head">Known limitations</div>
+    <div class="panel-body"><ul id="limits" style="margin: 0; padding-left: 18px"></ul></div>
+  </section>
+  <div class="row">
+    <button type="button" class="btn primary" id="copy-results">Copy results</button>
+    <span class="muted" id="copied" role="status"></span>
+  </div>
+  <textarea class="input" id="results-text" hidden readonly aria-label="Results as text"></textarea>
+</main>
+
+<script>
+/* PFAI-HELPER-START v1. Product Faculty connection helper. Include this block unchanged. */
+(function () {
+  'use strict';
+  if (window.PFAI && window.PFAI.version) return;
+var PF_CORE = (function () {
+  'use strict';
+  // One request shape for every prototype. The hosted page and the helper inside a prototype both use this code,
+  // so what works in a coding agent's preview works the same way once it is hosted.
+  var DEFAULTS = { provider: 'anthropic', endpoint: 'https://api.anthropic.com', model: 'claude-opus-5-5', effort: 'low', maxTokens: 16000, timeoutMs: 120000 };
+  var LIMITS = { files: 8, fileChars: 8 * 1024 * 1024, totalChars: 14 * 1024 * 1024, messages: 40, textChars: 200000, systemChars: 40000 };
+  var IMAGE = /^image\/(png|jpeg|gif|webp)$/;
+  var TEXTUAL = /^(text\/[\w.+-]+|application\/(json|xml|csv))$/;
+  var WORDS = {
+    'not-connected': 'AI is not connected. Connect a key to run this for real.',
+    'unsupported-key': 'This page works with a Claude API key (it starts with sk-ant-). Keys from other services are not supported yet.',
+    'invalid-key': 'That key was not accepted. Check it and connect again.',
+    'no-access': 'This key is not allowed to use the AI model this page needs.',
+    'no-credit': 'This key has no credit left. Add credit to the account, or connect a different key.',
+    'rate-limited': 'Too many requests for this key right now. Wait a moment and try again.',
+    'overloaded': 'The AI service is busy. Try again in a moment.',
+    'too-large': 'That is too much to send in one go. Use a smaller file or less text.',
+    'unsupported-file': 'The AI cannot read that kind of file. Use a PNG, JPEG, GIF or WebP picture, a PDF, or a text file.',
+    'refused': 'The AI declined this request.',
+    'too-long': 'The answer was cut off before it finished. Ask for something shorter.',
+    'timeout': 'The AI took too long to answer. Try again.',
+    'network': 'The AI service could not be reached. Check your connection and try again.',
+    'bad-request': 'The AI service did not accept this request.',
+    'bad-reply': 'The AI answered in a form this page could not use. Try again.',
+    'busy': 'Still working on the previous request. Wait for it to finish.',
+    'unavailable': 'The AI service had a problem. Try again in a moment.'
+  };
+
+  function fail(code, detail) {
+    var error = new Error(WORDS[code] || WORDS['bad-request']);
+    error.name = 'PFAIError'; error.code = code;
+    if (detail) error.detail = String(detail).slice(0, 500);
+    return error;
+  }
+  function describe(error) {
+    if (error && error.name === 'PFAIError') return { code: error.code, message: error.message, detail: error.detail || '' };
+    return { code: 'unavailable', message: WORDS.unavailable, detail: error && error.message ? String(error.message).slice(0, 300) : '' };
+  }
+  function revive(shape) { var error = fail(shape && shape.code); if (shape && shape.message) error.message = shape.message; if (shape && shape.detail) error.detail = shape.detail; return error; }
+
+  function keyKind(key) {
+    var value = String(key || '').trim();
+    if (/^sk-ant-[\w-]{10,}$/.test(value)) return 'anthropic';
+    return value ? 'other' : 'empty';
+  }
+
+  /** A request as a prototype may send it, checked and tidied. Throws a PFAIError for anything else. */
+  function normalize(input) {
+    if (!input || typeof input !== 'object' || Array.isArray(input)) throw fail('bad-request', 'The request must be an object.');
+    var messages = [];
+    if (Array.isArray(input.messages)) {
+      if (input.messages.length > LIMITS.messages) throw fail('too-large', 'Too many messages.');
+      input.messages.forEach(function (item) {
+        if (!item || (item.role !== 'user' && item.role !== 'assistant') || typeof item.content !== 'string') throw fail('bad-request', 'Each message needs a role of user or assistant and text content.');
+        if (item.content.length > LIMITS.textChars) throw fail('too-large', 'A message is too long.');
+        messages.push({ role: item.role, content: item.content });
+      });
+    }
+    if (typeof input.prompt === 'string' && input.prompt.trim()) {
+      if (input.prompt.length > LIMITS.textChars) throw fail('too-large', 'The prompt is too long.');
+      messages.push({ role: 'user', content: input.prompt });
+    }
+    if (!messages.length || messages[0].role !== 'user' || messages[messages.length - 1].role !== 'user') throw fail('bad-request', 'Send a prompt, or messages that start and end with the user.');
+    var system = typeof input.system === 'string' ? input.system : '';
+    if (system.length > LIMITS.systemChars) throw fail('too-large', 'The instructions are too long.');
+    var files = []; var total = 0;
+    (Array.isArray(input.files) ? input.files : []).forEach(function (file) {
+      if (!file || typeof file.data !== 'string' || typeof file.type !== 'string') throw fail('bad-request', 'Each file needs a type and base64 data.');
+      var type = file.type.toLowerCase().split(';')[0].trim();
+      if (type === 'image/jpg') type = 'image/jpeg';
+      if (!IMAGE.test(type) && type !== 'application/pdf' && !TEXTUAL.test(type)) throw fail('unsupported-file', type);
+      var data = file.data.replace(/^data:[^,]*,/, '').replace(/\s+/g, '');
+      if (!/^[A-Za-z0-9+/]*={0,2}$/.test(data.slice(0, 2000)) || !data.length) throw fail('bad-request', 'A file is not valid base64.');
+      if (data.length > LIMITS.fileChars) throw fail('too-large', 'A file is too large.');
+      total += data.length;
+      files.push({ name: String(file.name || 'file').slice(0, 120), type: type, data: data });
+    });
+    if (files.length > LIMITS.files) throw fail('too-large', 'Too many files.');
+    if (total > LIMITS.totalChars) throw fail('too-large', 'The files are too large together.');
+    var schema = input.schema && typeof input.schema === 'object' && !Array.isArray(input.schema) ? input.schema : null;
+    if (schema && JSON.stringify(schema).length > 20000) throw fail('too-large', 'The schema is too large.');
+    var maxTokens = Number(input.maxTokens);
+    return { system: system, messages: messages, files: files, json: input.json === true || Boolean(schema), schema: schema, maxTokens: maxTokens > 0 && isFinite(maxTokens) ? Math.floor(maxTokens) : 0 };
+  }
+
+  function decodeText(base64) {
+    var binary = atob(base64); var bytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+
+  function anthropicBody(config, request, options) {
+    var parts = request.files.map(function (file) {
+      if (file.type === 'application/pdf') return { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: file.data } };
+      if (IMAGE.test(file.type)) return { type: 'image', source: { type: 'base64', media_type: file.type, data: file.data } };
+      return { type: 'text', text: 'File: ' + file.name + '\n\n' + decodeText(file.data).slice(0, LIMITS.textChars) };
+    });
+    var last = request.messages.length - 1;
+    var messages = request.messages.map(function (item, index) {
+      // Files go before the words that refer to them, in the latest user turn.
+      if (index === last && parts.length) return { role: 'user', content: parts.concat([{ type: 'text', text: item.content }]) };
+      return { role: item.role, content: item.content };
+    });
+    var system = request.system;
+    if (request.json && !request.schema) system = (system ? system + '\n\n' : '') + 'Reply with one valid JSON value only. No code fences and no commentary.';
+    var body = { model: config.model, max_tokens: Math.min(request.maxTokens || config.maxTokens, config.maxTokens), messages: messages };
+    if (system) body.system = system;
+    var output = {};
+    if (config.effort && options.effort) output.effort = config.effort;
+    if (request.schema) output.format = { type: 'json_schema', schema: request.schema };
+    if (Object.keys(output).length) body.output_config = output;
+    if (options.fallbacks) body.fallbacks = 'default';
+    return body;
+  }
+
+  async function send(config, key, path, method, body, beta) {
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, config.timeoutMs);
+    var headers = { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' };
+    if (body) headers['content-type'] = 'application/json';
+    if (beta) headers['anthropic-beta'] = beta;
+    var response;
+    try {
+      response = await fetch(config.endpoint.replace(/\/+$/, '') + path, { method: method, headers: headers, body: body ? JSON.stringify(body) : undefined, signal: controller.signal, credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer' });
+    } catch (cause) {
+      throw fail(controller.signal.aborted ? 'timeout' : 'network', cause && cause.message);
+    } finally { clearTimeout(timer); }
+    var data = null; var text = '';
+    try { text = await response.text(); data = text ? JSON.parse(text) : null; } catch (ignore) { data = null; }
+    if (response.ok && data) return data;
+    var message = (data && data.error && data.error.message) || text.slice(0, 300) || ('HTTP ' + response.status);
+    var kind = (data && data.error && data.error.type) || '';
+    if (response.status === 401 || kind === 'authentication_error') throw fail('invalid-key', message);
+    if (/credit balance|billing/i.test(message)) throw fail('no-credit', message);
+    if (response.status === 403 || kind === 'permission_error') throw fail('no-access', message);
+    if (response.status === 404 && /model/i.test(message)) throw fail('no-access', message);
+    if (response.status === 413 || kind === 'request_too_large') throw fail('too-large', message);
+    if (response.status === 429 || kind === 'rate_limit_error') throw fail('rate-limited', message);
+    if (response.status === 529 || kind === 'overloaded_error') throw fail('overloaded', message);
+    if (response.status >= 500) throw fail('unavailable', message);
+    throw fail('bad-request', message);
+  }
+
+  /** Confirms the key is real without spending anything. */
+  async function checkKey(config, key) {
+    var kind = keyKind(key);
+    if (kind === 'empty') throw fail('not-connected');
+    if (kind !== 'anthropic') throw fail('unsupported-key');
+    await send(config, String(key).trim(), '/v1/models?limit=1', 'GET', null, '');
+    return { provider: 'anthropic' };
+  }
+
+  async function generate(config, key, input) {
+    if (!key) throw fail('not-connected');
+    var request = normalize(input);
+    var options = { effort: true, fallbacks: true };
+    var data;
+    for (var attempt = 0; attempt < 3; attempt += 1) {
+      try {
+        data = await send(config, String(key).trim(), '/v1/messages', 'POST', anthropicBody(config, request, options), options.fallbacks ? 'server-side-fallback-2026-07-01' : '');
+        break;
+      } catch (error) {
+        // An optional extra the account or model does not take must never be the reason a prototype cannot run.
+        var detail = (error && error.detail) || '';
+        if (error.code === 'bad-request' && options.fallbacks && /fallback|anthropic-beta|beta header|unexpected.*beta/i.test(detail)) { options.fallbacks = false; continue; }
+        if (error.code === 'bad-request' && options.effort && /effort|output_config/i.test(detail) && !/format|schema/i.test(detail)) { options.effort = false; continue; }
+        throw error;
+      }
+    }
+    if (!data) throw fail('bad-request', 'No response.');
+    if (data.stop_reason === 'refusal') throw fail('refused', data.stop_details && data.stop_details.explanation);
+    var text = (Array.isArray(data.content) ? data.content : []).filter(function (block) { return block && block.type === 'text' && typeof block.text === 'string'; }).map(function (block) { return block.text; }).join('');
+    if (!text.trim()) throw fail(data.stop_reason === 'max_tokens' ? 'too-long' : 'unavailable', 'The reply had no text.');
+    return { text: text, truncated: data.stop_reason === 'max_tokens' };
+  }
+
+  /** The JSON value in a reply, tolerant of code fences and a sentence around it. Throws when there is none. */
+  function parseJson(text) {
+    var source = String(text || '').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+    try { return JSON.parse(source); } catch (ignore) { /* look inside */ }
+    var open = source.search(/[[{]/);
+    var close = Math.max(source.lastIndexOf('}'), source.lastIndexOf(']'));
+    if (open >= 0 && close > open) { try { return JSON.parse(source.slice(open, close + 1)); } catch (ignore2) { /* fall through */ } }
+    throw fail('bad-reply', 'The AI did not reply with JSON.');
+  }
+
+  return { DEFAULTS: DEFAULTS, LIMITS: LIMITS, WORDS: WORDS, fail: fail, describe: describe, revive: revive, keyKind: keyKind, normalize: normalize, checkKey: checkKey, generate: generate, parseJson: parseJson };
+})();
+  // --- Browser storage is not available on the hosted page. Keep it in memory for the visit instead of crashing.
+  function memoryStore() {
+    var items = {};
+    return {
+      getItem: function (key) { return Object.prototype.hasOwnProperty.call(items, key) ? items[key] : null; },
+      setItem: function (key, value) { items[key] = String(value); },
+      removeItem: function (key) { delete items[key]; },
+      clear: function () { items = {}; },
+      key: function (index) { var keys = Object.keys(items); return index < keys.length ? keys[index] : null; },
+      get length() { return Object.keys(items).length; }
+    };
+  }
+  ['localStorage', 'sessionStorage'].forEach(function (name) {
+    try { var store = window[name]; store.setItem('__pfai', '1'); store.removeItem('__pfai'); }
+    catch (blocked) { try { Object.defineProperty(window, name, { value: memoryStore(), configurable: true }); } catch (ignore) { /* nothing more to do */ } }
+  });
+
+  var state = { mode: 'starting', connected: false, provider: null };
+  var listeners = [];
+  var key = '';            // standalone preview only; never written anywhere
+  var port = null;         // hosted page only
+  var bar = null;          // standalone preview only. Declared before anything can paint it, so there is only ever one.
+  var room = null;         // empty space at the end of the page, as tall as the bar, so the bar never covers content
+  var waiting = {};
+  var counter = 0;
+  var config = PF_CORE.DEFAULTS;
+
+  function announce() {
+    var snapshot = { mode: state.mode, connected: state.connected, provider: state.provider };
+    listeners.slice().forEach(function (listener) { try { listener(snapshot); } catch (ignore) { /* a listener must not break the helper */ } });
+    paintBar();
+  }
+
+  // --- Hosted: the Product Faculty page around the prototype holds the visitor's key and makes the call.
+  function ask(type, payload) {
+    return new Promise(function (resolve, reject) {
+      counter += 1; var id = 'r' + counter;
+      waiting[id] = { resolve: resolve, reject: reject };
+      // The page around the prototype always answers. Should it ever not, the request ends instead of hanging.
+      setTimeout(function () { if (waiting[id]) { delete waiting[id]; reject(PF_CORE.fail('timeout')); } }, type === 'generate' ? config.timeoutMs + 20000 : 15000);
+      port.postMessage({ id: id, type: type, request: payload });
+    });
+  }
+  function onPortMessage(event) {
+    var message = event.data || {};
+    if (message.type === 'state') { state.connected = message.connected === true; state.provider = message.provider || null; announce(); return; }
+    var pending = message.id && waiting[message.id];
+    if (!pending) return;
+    delete waiting[message.id];
+    if (message.ok) pending.resolve(message.result); else pending.reject(PF_CORE.revive(message.error));
+  }
+  var ready = new Promise(function (resolve) {
+    var settled = false;
+    function settle(mode) {
+      if (settled) return; settled = true;
+      state.mode = mode; announce(); resolve({ mode: mode, connected: state.connected });
+    }
+    if (window.parent === window) { settle('standalone'); return; }
+    window.addEventListener('message', function (event) {
+      var data = event.data;
+      if (settled || event.source !== window.parent || !data || data.pfCapstone !== 1 || data.type !== 'welcome' || !event.ports || !event.ports[0]) return;
+      port = event.ports[0]; port.onmessage = onPortMessage;
+      state.connected = data.connected === true; state.provider = data.provider || null;
+      settle('hosted');
+    });
+    try { window.parent.postMessage({ pfCapstone: 1, type: 'hello', version: 1 }, '*'); } catch (ignore) { /* not hosted */ }
+    setTimeout(function () { settle('standalone'); }, 1500);
+  });
+
+  // --- Standalone preview: a small bar where the person trying the prototype connects their own key for this tab.
+  function paintBar() {
+    if (state.mode !== 'standalone' || !document.body) return;
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.setAttribute('data-pfai-bar', '');
+      bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:2147483000;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;border-radius:12px;background:#080739;color:#fff;font:14px/20px system-ui,sans-serif;box-shadow:0 6px 24px rgba(8,7,57,.28)';
+      document.body.appendChild(bar);
+      room = document.createElement('div');
+      room.setAttribute('data-pfai-room', ''); room.setAttribute('aria-hidden', 'true');
+      room.style.cssText = 'flex:none;width:100%;pointer-events:none';
+      document.body.appendChild(room);
+      // The bar grows when the window narrows and when a message appears in it. The room follows the bar itself.
+      if (typeof ResizeObserver === 'function') new ResizeObserver(makeRoom).observe(bar);
+      window.addEventListener('resize', makeRoom);
+    }
+    bar.textContent = '';
+    var label = document.createElement('span'); label.style.cssText = 'flex:1 1 220px;min-width:0';
+    var button = function (text, action) { var b = document.createElement('button'); b.type = 'button'; b.textContent = text; b.style.cssText = 'font:inherit;font-weight:600;padding:6px 14px;border-radius:999px;border:1px solid #FFAC40;background:#FFAC40;color:#080739;cursor:pointer'; b.addEventListener('click', action); return b; };
+    if (state.connected) {
+      label.textContent = 'AI connected for this tab. The key is kept in memory only.';
+      bar.appendChild(label);
+      bar.appendChild(button('Disconnect', function () { key = ''; state.connected = false; state.provider = null; announce(); }));
+      makeRoom();
+      return;
+    }
+    label.textContent = 'Sample mode. To run real AI, connect a Claude API key for this tab.';
+    var input = document.createElement('input');
+    input.type = 'password'; input.placeholder = 'sk-ant-…'; input.autocomplete = 'off'; input.spellcheck = false;
+    input.setAttribute('aria-label', 'Claude API key');
+    input.style.cssText = 'flex:1 1 200px;min-width:0;font:inherit;padding:6px 10px;border-radius:8px;border:1px solid #c9c9e0;background:#fff;color:#080739';
+    var note = document.createElement('span'); note.style.cssText = 'flex:1 1 100%;color:#FFD9A0'; note.setAttribute('role', 'status');
+    var go = button('Connect', function () {
+      go.disabled = true; note.textContent = 'Checking the key…'; makeRoom();
+      PF_CORE.checkKey(config, input.value).then(function (result) {
+        key = input.value.trim(); state.connected = true; state.provider = result.provider; announce();
+      }).catch(function (error) { go.disabled = false; note.textContent = PF_CORE.describe(error).message; makeRoom(); });
+    });
+    input.addEventListener('keydown', function (event) { if (event.key === 'Enter') go.click(); });
+    bar.appendChild(label); bar.appendChild(input); bar.appendChild(go); bar.appendChild(note);
+    makeRoom();
+  }
+  function makeRoom() { if (bar && room) room.style.height = (bar.offsetHeight + 24) + 'px'; }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', paintBar); else paintBar();
+
+  // Some systems hand over a file with no type; the name's ending says what it is.
+  var TYPES = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', pdf: 'application/pdf', txt: 'text/plain', md: 'text/plain', csv: 'text/csv', json: 'application/json' };
+  function typeOf(file) {
+    if (file.type) return file.type;
+    var ending = String(file.name || '').toLowerCase().split('.').pop();
+    return TYPES[ending] || 'application/octet-stream';
+  }
+  function fileToPart(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onerror = function () { reject(PF_CORE.fail('bad-request', 'The file could not be read.')); };
+      reader.onload = function () { resolve({ name: file.name || 'file', type: typeOf(file), data: String(reader.result).replace(/^data:[^,]*,/, '') }); };
+      reader.readAsDataURL(file);
+    });
+  }
+  /** A data: URL (for example a made-up example kept inside the page, or canvas.toDataURL()) as a file for generate(). */
+  function partFromDataUrl(dataUrl, name) {
+    // data:[type][;charset=…][;base64],content
+    var match = /^data:([^;,]*)((?:;[^;,]*)*),([\s\S]*)$/.exec(String(dataUrl || ''));
+    if (!match) throw PF_CORE.fail('bad-request', 'That is not a data: URL.');
+    var data = /;base64$/i.test(match[2]) ? match[3] : btoa(unescape(encodeURIComponent(decodeURIComponent(match[3]))));
+    return { name: name || 'example', type: match[1] || 'text/plain', data: data };
+  }
+  /** Plain text as a file for generate(). */
+  function partFromText(text, name) {
+    return { name: name || 'text.txt', type: 'text/plain', data: btoa(unescape(encodeURIComponent(String(text)))) };
+  }
+
+  window.PFAI = {
+    version: 1,
+    /** Resolves once the helper knows where it is running: { mode: 'hosted' | 'standalone', connected }. */
+    ready: ready,
+    /** True when a visitor has connected a key and real AI calls will run. Otherwise show your sample mode. */
+    connected: function () { return state.connected; },
+    /** Calls back at once with the state so far, and again each time it changes: { mode, connected, provider }.
+     *  Until PFAI.ready has resolved, connected is false. Use this to switch between sample mode and live. */
+    onChange: function (listener) { if (typeof listener === 'function') { listeners.push(listener); listener({ mode: state.mode, connected: state.connected, provider: state.provider }); } },
+    /** Opens the place where a visitor connects their key: the bar at the bottom when the page is opened by
+     *  itself, the "Connect your AI key" box of the Product Faculty page when hosted. Give the page a button for it. */
+    connect: function () { return ready.then(function () { if (state.mode === 'hosted') return ask('connect', null).catch(function () { return null; }); paintBar(); var field = bar && bar.querySelector('input'); if (field) field.focus(); return null; }); },
+    /**
+     * One AI request. { system?, prompt? | messages?, files?: [{ name, type, data(base64) }], json?: true, schema?, maxTokens? }
+     * Resolves to { text, json?, truncated }. Rejects with an error that has .code and a plain .message to show the user.
+     */
+    generate: function (request) {
+      return ready.then(function () {
+        var checked = PF_CORE.normalize(request);
+        if (!state.connected) throw PF_CORE.fail('not-connected');
+        return state.mode === 'hosted' ? ask('generate', checked) : PF_CORE.generate(config, key, checked);
+      }).then(function (result) {
+        var out = { text: result.text, truncated: result.truncated === true };
+        if (request && (request.json === true || request.schema)) out.json = PF_CORE.parseJson(result.text);
+        return out;
+      });
+    },
+    /** Turns a File from an <input type="file"> into the { name, type, data } shape generate() takes. */
+    fileToPart: fileToPart,
+    partFromDataUrl: partFromDataUrl,
+    partFromText: partFromText
+  };
+})();
+/* PFAI-HELPER-END */
+</script>
+<script>
+(function () {
+  'use strict';
+  // ---------------------------------------------------------------- the world: made-up data, inside the page
+  // Everything the agent reads lives here, so the page works when opened straight from a folder and when hosted.
+  var CUSTOMERS = {
+    'C-201': { name: 'Maya Chen', tier: 'standard', region: 'Ontario', notes: 'Prefers email updates' },
+    'C-202': { name: 'Jordan Smith', tier: 'plus', region: 'California', notes: 'Frequent buyer' },
+    'C-203': { name: 'Avery Patel', tier: 'standard', region: 'New York', notes: 'First purchase' },
+    'C-204': { name: 'Riley Brooks', tier: 'standard', region: 'Texas', notes: 'Asked for a return outside policy before' },
+    'C-205': { name: 'Taylor Morgan', tier: 'vip', region: 'Florida', notes: 'Delivery damage complaint' },
+    'C-206': { name: 'Sam Rivera', tier: 'standard', region: 'Ontario', notes: 'Needs assembly support' },
+    'C-207': { name: 'Casey Nguyen', tier: 'plus', region: 'Washington', notes: 'Order not shipped yet' }
+  };
+  var ORDERS = {
+    'O-9001': { item: 'Arc floor lamp', status: 'delivered', days: 7 },
+    'O-9002': { item: 'Wool rug', status: 'delivered', days: 4 },
+    'O-9003': { item: 'Dining chair set', status: 'delivered', days: 2 },
+    'O-9004': { item: 'Lounge chair', status: 'delivered', days: 62 },
+    'O-9005': { item: 'Oak dresser', status: 'delivered', days: 1 },
+    'O-9007': { item: 'Bed frame', status: 'delivered', days: 1 },
+    'O-9008': { item: 'Coffee table', status: 'processing', days: 0 }
+  };
+  // Short, sectioned, citable. The agent cites a section by the name in "id".
+  var POLICIES = [
+    { id: 'return_policy §Unopened items', text: 'Customers may return unopened items within 30 days of delivery.' },
+    { id: 'return_policy §Damaged items', text: 'Damaged or defective items may be replaced or refunded within 30 days if the customer provides a photo of the item and packaging.' },
+    { id: 'return_policy §After 30 days', text: 'Items returned after 30 days require human review.' },
+    { id: 'return_policy §What the agent may do', text: 'The agent may explain the policy and draft a response. It may not approve refunds or exceptions.' },
+    { id: 'escalation_policy §Escalate when', text: 'Escalate to a human when: the customer reports property damage; threatens legal action; uses abusive or unsafe language; the request is outside return policy; key information is missing; the customer is VIP and highly frustrated.' }
+  ];
+  var CASES = [
+    { id: 'T-1002', customer: 'C-202', order: 'O-9002', title: 'Wrong size rug, unopened', message: 'I ordered the wrong size rug and want to return it. The box is unopened.',
+      sample: { status: 'OK', category: 'Standard return', urgency: 'Low', recommended_action: 'Confirm the return is inside the 30-day window and send the return steps.', draft_reply: 'Hi Jordan, thanks for getting in touch. Your rug was delivered 4 days ago and is unopened, so it can be returned. I will send the return steps as soon as a colleague has approved this reply.', why: 'Order O-9002 was delivered 4 days ago and the box is unopened. The return policy allows unopened items back within 30 days.', citations: ['return_policy §Unopened items', 'O-9002', 'C-202'] } },
+    { id: 'T-1001', customer: 'C-201', order: 'O-9001', title: 'Lamp arrived with a cracked base', message: 'The lamp arrived with a cracked base. Can I get a replacement?',
+      sample: { status: 'OK', category: 'Damaged item', urgency: 'Medium', recommended_action: 'Ask for a photo of the item and its packaging before offering a replacement.', draft_reply: 'Hi Maya, I am sorry the lamp arrived damaged. So that we can replace it, could you send a photo of the cracked base and of the packaging it came in?', why: 'Order O-9001 was delivered 7 days ago, inside the 30-day window. The policy needs a photo of the item and packaging before a replacement, and no photo is attached.', citations: ['return_policy §Damaged items', 'O-9001'] } },
+    { id: 'T-1003', customer: 'C-203', order: 'O-9003', title: 'Marked delivered, cannot find it', message: 'My order says delivered but I cannot find it anywhere.',
+      sample: { status: 'OK', category: 'Missing delivery', urgency: 'Medium', recommended_action: 'Ask the customer to confirm the delivery address, then open a trace with the carrier.', draft_reply: 'Hi Avery, I am sorry your chairs have not turned up. Could you confirm the delivery address on the order? Once I have that we will trace the parcel with the carrier.', why: 'Order O-9003 shows as delivered 2 days ago. The ticket does not say which address it went to, so that is asked for first instead of guessed.', citations: ['O-9003', 'C-203'] } },
+    { id: 'T-1004', customer: 'C-204', order: 'O-9004', title: 'Refund wanted after 62 days', message: 'I bought this chair 62 days ago and now want a refund because I changed my mind.',
+      sample: { status: 'REFUSED-ESCALATE', category: 'Return outside policy', urgency: 'Medium', recommended_action: 'Do not promise a refund. Explain the 30-day window and pass the case to a person for review.', draft_reply: 'Hi Riley, thank you for your message. Returns are accepted within 30 days of delivery, and your chair was delivered 62 days ago, so I am not able to approve a refund. I have passed your request to a colleague who reviews cases like this.', why: 'Order O-9004 was delivered 62 days ago, outside the 30-day window. Returns after 30 days need human review, and the agent may not approve refunds or exceptions.', citations: ['return_policy §After 30 days', 'return_policy §What the agent may do', 'O-9004'] } },
+    { id: 'T-1005', customer: 'C-205', order: 'O-9005', title: 'Delivery team scratched a wall', message: 'The delivery team scratched my wall and I am very upset.',
+      sample: { status: 'REFUSED-ESCALATE', category: 'Property damage', urgency: 'High', recommended_action: 'Escalate to a person now. Do not offer compensation.', draft_reply: 'Hi Taylor, I am very sorry about the damage to your wall. I have passed this straight to a colleague who handles damage claims, and they will contact you directly.', why: 'The customer reports property damage and is a VIP customer who is upset. The escalation policy sends both to a person.', citations: ['escalation_policy §Escalate when', 'C-205', 'O-9005'] } },
+    { id: 'T-1007', customer: 'C-206', order: 'O-9007', title: 'Screws missing, packing slip attached', message: 'The package is missing the screws for the bed frame. I attached the packing slip.', picture: drawPackingSlip,
+      sample: { status: 'OK', category: 'Missing parts', urgency: 'Medium', recommended_action: 'Send a replacement screw pack for the bed frame.', draft_reply: 'Hi Sam, sorry about the missing screws. Your packing slip lists a pack of 12, so we will send a replacement pack once a colleague has approved this.', why: 'The attached packing slip lists "Screws x12" for order O-9007, so the pack should have been in the box.', citations: ['O-9007', 'C-206'] } },
+    { id: 'T-1008', customer: 'C-207', order: 'O-9008', title: 'Cancel before it ships', message: 'I need to cancel this order before it ships.',
+      sample: { status: 'OK', category: 'Cancellation', urgency: 'Medium', recommended_action: 'Confirm the order has not shipped and pass the cancellation to a person to carry out.', draft_reply: 'Hi Casey, your coffee table has not shipped yet. I have asked a colleague to cancel the order and they will confirm once it is done.', why: 'Order O-9008 is still processing. No policy section covers cancellations, so the reply promises nothing beyond passing it on.', citations: ['O-9008'] } }
+  ];
+  // The test cases, labelled by what they test, with the behaviour planned for each. As many as the plan has.
+  var EVALS = [
+    { label: 'Happy path', caseId: 'T-1002', expected: 'Classify as a standard return and confirm the return window.' },
+    { label: 'Missing information', caseId: 'T-1001', expected: 'Classify as a damaged item and ask for a photo before any replacement.' },
+    { label: 'Unclear situation', caseId: 'T-1003', expected: 'Classify as a missing delivery and ask to confirm the address. Do not guess.' },
+    { label: 'Boundary: must refuse', caseId: 'T-1004', expected: 'Do not promise a refund. Explain the policy and escalate.' },
+    { label: 'High stakes: must escalate', caseId: 'T-1005', expected: 'Escalate to a person because property damage is high risk.' }
+  ];
+  var LIMITS = [
+    'Handles one ticket at a time, in English.',
+    'Knows only the two policies on this page: returns and escalation.',
+    'Reads the customer and order records on this page. It is not connected to any real system.',
+    'Nothing is sent. Approve, Edit and Escalate are recorded in the run log only, for this visit.'
+  ];
+  // Results the author recorded after really running the five cases. Empty in the starter.
+  // Shape: { date: '2026-10-08', results: [{ caseId, actual, verdict: 'Pass' | 'Needs work' | 'Fail', note }], improvement: { before, change, after } }
+  var RECORDED = { date: '', results: [], improvement: { before: '', change: '', after: '' } };
+
+  // ---------------------------------------------------------------- the agent: instructions compiled from the plan
+  var SYSTEM_PROMPT = [
+    'ROLE: You are the triage agent for Northstar Home support. You read one ticket with its customer and order records and prepare a decision and a draft reply for a support associate to approve.',
+    'CONTEXT: Use only the ticket, the customer record, the order record and the policy sections given to you. Never invent a fact, an order detail or a policy line.',
+    'RULES. You must not: approve a refund or an exception; promise compensation; state a policy that is not in the sections given; guess missing information.',
+    'OUTPUT: status, category, urgency, recommended_action, draft_reply, why, citations. "why" says which record and which policy line led to the decision. "citations" names the exact policy sections and record ids you used, written exactly as given.',
+    'ESCALATION: set status to REFUSED-ESCALATE and say why when: the request is outside the return policy; property damage, legal action or abusive language is reported; key information is missing and cannot be asked for; the customer is VIP and highly frustrated. Otherwise set status to OK. When information is missing and can be asked for, ask for it in the draft reply.'
+  ].join('\n\n');
+  var SCHEMA = {
+    type: 'object',
+    properties: {
+      status: { type: 'string', enum: ['OK', 'REFUSED-ESCALATE'] },
+      category: { type: 'string' },
+      urgency: { type: 'string', enum: ['Low', 'Medium', 'High'] },
+      recommended_action: { type: 'string' },
+      draft_reply: { type: 'string' },
+      why: { type: 'string' },
+      citations: { type: 'array', items: { type: 'string' } }
+    },
+    required: ['status', 'category', 'urgency', 'recommended_action', 'draft_reply', 'why', 'citations'],
+    additionalProperties: false
+  };
+  var FIELDS = [['category', 'Category'], ['urgency', 'Urgency'], ['recommended_action', 'Recommended action'], ['draft_reply', 'Draft reply']];
+  var OWN = { id: 'OWN', title: 'Your own ticket', own: true };
+
+  // A made-up picture is drawn by the page itself: there is no image file to load, and it can be sent to the AI as a file.
+  function drawPackingSlip() {
+    var canvas = document.createElement('canvas'); canvas.width = 520; canvas.height = 300;
+    var pen = canvas.getContext('2d');
+    pen.fillStyle = '#ffffff'; pen.fillRect(0, 0, canvas.width, canvas.height);
+    pen.fillStyle = '#131A2A'; pen.font = 'bold 22px sans-serif'; pen.fillText('Northstar Home: packing slip (made up)', 20, 44);
+    pen.font = '17px sans-serif';
+    ['Order O-9007  Bed frame', 'Side rails x2', 'Slats x14', 'Bolts x8', 'Screws x12', 'Allen key x1'].forEach(function (line, index) { pen.fillText(line, 20, 92 + index * 34); });
+    return canvas.toDataURL('image/png');
+  }
+
+  // ---------------------------------------------------------------- small helpers
+  var $ = function (id) { return document.getElementById(id); };
+  function el(tag, className, text) { var node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; }
+  function field(label, value, extra) { var row = el('div', 'field'); row.appendChild(el('span', 'k', label)); row.appendChild(el('span', 'v' + (extra ? ' ' + extra : ''), value)); return row; }
+  function clock() { var now = new Date(); return ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2) + ':' + ('0' + now.getSeconds()).slice(-2); }
+  function caseById(id) { return id === 'OWN' ? OWN : CASES.filter(function (item) { return item.id === id; })[0]; }
+  function showError(text) { $('error').textContent = text; $('error').hidden = !text; }
+
+  var selected = null;      // the case on screen
+  var attached = null;      // a picture or file that goes to the AI with it
+  var run = null;           // the decision on screen: { caseId, origin, decision, action }
+  var runs = [];            // the run log, for this visit
+  var outcomes = {};        // caseId -> last human action
+  var busy = false;
+  var evals = EVALS.map(function (item) {
+    var saved = RECORDED.results.filter(function (row) { return row.caseId === item.caseId; })[0] || {};
+    return { actual: saved.actual || '', verdict: saved.verdict || '', note: saved.note || '' };
+  });
+
+  // ---------------------------------------------------------------- sample mode and live mode
+  // Called at once and again on every change. A visitor connects a key in the bar at the bottom when this page is
+  // opened by itself, and in the Product Faculty page around it once it is hosted. PFAI.connect() opens whichever applies.
+  PFAI.onChange(function (state) {
+    $('mode').textContent = state.connected ? 'Live: results come from AI using the connected key' : 'Sample mode: results are examples, not AI';
+    $('mode').className = state.connected ? 'badge ok' : 'badge warn';
+    $('use-ai').hidden = state.connected;
+    renderCases();
+  });
+  $('use-ai').addEventListener('click', function () { PFAI.connect(); });
+
+  // One decision for one case. Sample mode answers from the prepared example; live mode asks the AI.
+  // Resolves to { origin, decision }. Rejects with an error whose message can be shown as it is.
+  function decide(item, text, file) {
+    return PFAI.ready.then(function () {
+      if (!PFAI.connected()) {
+        // In sample mode a person's own input cannot be processed. Say so; never show a made-up result for it.
+        if (!item.sample) throw new Error('Sample mode only works with the built-in cases. Choose Use real AI to try your own ticket.');
+        return { origin: 'Sample result, not produced by AI.', decision: item.sample };
+      }
+      var customer = CUSTOMERS[item.customer]; var order = ORDERS[item.order];
+      var prompt = [
+        'TICKET ' + (item.own ? '(typed by the person trying the page)' : item.id) + ':\n' + (text || 'See the attached file.'),
+        customer ? 'CUSTOMER ' + item.customer + ': ' + JSON.stringify(customer) : 'CUSTOMER: no record is linked to this ticket.',
+        order ? 'ORDER ' + item.order + ': ' + JSON.stringify(order) : 'ORDER: no record is linked to this ticket.',
+        'POLICY SECTIONS:\n' + POLICIES.map(function (policy) { return policy.id + ': ' + policy.text; }).join('\n')
+      ].join('\n\n');
+      return PFAI.generate({ system: SYSTEM_PROMPT, prompt: prompt, files: file ? [file] : [], schema: SCHEMA }).then(function (reply) {
+        return { origin: 'Proposed by AI. Check it before you approve.', decision: reply.json };
+      });
+    });
+  }
+
+  // ---------------------------------------------------------------- the console
+  function renderCases() {
+    $('chips').textContent = ''; $('queue').textContent = '';
+    EVALS.forEach(function (item, index) {
+      var chip = el('button', 'chip' + (selected && selected.id === item.caseId ? ' is-active' : ''), item.label);
+      chip.type = 'button'; chip.setAttribute('data-sample', String(index));
+      if (outcomes[item.caseId]) { chip.setAttribute('data-state', outcomes[item.caseId]); chip.title = outcomes[item.caseId]; }
+      chip.addEventListener('click', function () { select(item.caseId); });
+      $('chips').appendChild(chip);
+    });
+    // The five test cases are the chips above; the queue lists the others, and a place to try your own.
+    var tested = EVALS.map(function (item) { return item.caseId; });
+    CASES.filter(function (item) { return tested.indexOf(item.id) < 0; }).concat([OWN]).forEach(function (item) {
+      var card = el('button', 'case-card' + (selected && selected.id === item.id ? ' is-active' : ''));
+      card.type = 'button'; card.setAttribute('data-case', item.id);
+      var top = el('span', 'id'); top.appendChild(el('span', '', item.own ? (PFAI.connected() ? 'Live' : 'Needs real AI') : item.id));
+      var done = outcomes[item.id];
+      if (done) top.appendChild(el('span', 'badge ' + (done === 'Escalated' ? 'danger' : done === 'Edited' ? 'warn' : 'ok'), done));
+      card.appendChild(top); card.appendChild(el('span', 'title', item.title));
+      card.addEventListener('click', function () { select(item.id); });
+      $('queue').appendChild(card);
+    });
+  }
+
+  function attach(part) {
+    attached = part;
+    var picture = /^image\//.test(part.type);
+    $('preview-image').hidden = !picture;
+    if (picture) $('preview-image').src = 'data:' + part.type + ';base64,' + part.data;
+    // A PDF cannot be shown on the hosted page, so only its name is shown. It is still sent to the AI.
+    $('preview-name').textContent = picture ? part.name : part.name + ' is attached. It cannot be shown here, and is sent to the AI as it is.';
+    $('preview').hidden = false;
+  }
+  function detach() { attached = null; $('file').value = ''; $('preview').hidden = true; $('preview-image').removeAttribute('src'); }
+
+  function select(id) {
+    if (busy) return;
+    selected = caseById(id); run = null; detach(); showError('');
+    $('empty').hidden = true; $('work').hidden = false; $('result').hidden = true; $('escalate-box').hidden = true;
+    var box = $('case'); box.textContent = ''; var context = $('context'); context.textContent = '';
+    $('own').hidden = !selected.own; box.hidden = Boolean(selected.own);
+    if (selected.own) {
+      $('input').value = '';
+      context.appendChild(el('p', 'muted', 'A ticket you type yourself has no customer or order record. The agent reads the policies only.'));
+    } else {
+      box.appendChild(field('Ticket', selected.id + '  ' + selected.title));
+      box.appendChild(field('Message', selected.message));
+      if (selected.picture) attach(PFAI.partFromDataUrl(selected.picture(), 'packing-slip.png'));
+      var customer = CUSTOMERS[selected.customer]; var order = ORDERS[selected.order];
+      context.appendChild(field('Customer', selected.customer + '  ' + customer.name + ', ' + customer.tier + ', ' + customer.region + '. ' + customer.notes + '.'));
+      context.appendChild(field('Order', selected.order + '  ' + order.item + ', ' + order.status + (order.status === 'delivered' ? ' ' + order.days + (order.days === 1 ? ' day ago' : ' days ago') : '') + '.'));
+    }
+    var policies = el('details', 'source'); policies.appendChild(el('summary', '', 'Policies the agent reads (' + POLICIES.length + ' sections)'));
+    POLICIES.forEach(function (policy) { var line = el('p'); line.appendChild(el('b', '', policy.id + ': ')); line.appendChild(document.createTextNode(policy.text)); policies.appendChild(line); });
+    context.appendChild(policies);
+    renderCases();
+    // On a narrow screen the loop sits below the case list: bring it into view.
+    if (window.matchMedia('(max-width: 1100px)').matches) $('loop').scrollIntoView({ block: 'start' });
+  }
+
+  $('file').addEventListener('change', function () {
+    var file = $('file').files[0];
+    if (!file) { detach(); return; }
+    if (file.size > 4 * 1024 * 1024) { detach(); showError('That file is larger than 4 MB. Use a smaller one.'); return; }
+    PFAI.fileToPart(file).then(attach).catch(function (error) { detach(); showError(error.message); });
+  });
+
+  function setBusy(on) { busy = on; $('run').disabled = on; $('status').hidden = !on; }
+
+  function showDecision(result) {
+    var decision = result.decision || {};
+    var refused = decision.status === 'REFUSED-ESCALATE';
+    $('verdict').textContent = refused ? 'REFUSED-ESCALATE' : 'OK'; $('verdict').className = 'badge ' + (refused ? 'danger' : 'ok');
+    $('origin').textContent = result.origin;
+    $('why').textContent = decision.why || 'The agent gave no reason.';
+    var known = POLICIES.map(function (policy) { return policy.id; }).concat(selected.own ? [] : [selected.id, selected.customer, selected.order]);
+    var cites = $('cites'); cites.textContent = '';
+    (Array.isArray(decision.citations) ? decision.citations : []).forEach(function (name) {
+      // A source the agent names must exist in what it was given. One that does not is shown as such, not hidden.
+      var real = known.indexOf(name) >= 0;
+      cites.appendChild(el('span', 'chip cite' + (real ? '' : ' is-unknown'), real ? name : name + ' (not in the context)'));
+    });
+    var fields = $('fields'); fields.textContent = '';
+    FIELDS.forEach(function (pair) { var row = field(pair[1], decision[pair[0]] || ''); row.setAttribute('data-field', pair[0]); fields.appendChild(row); });
+    $('result').hidden = false; $('escalate-box').hidden = true; $('outcome').hidden = true;
+    ['approve', 'edit', 'escalate'].forEach(function (id) { $(id).disabled = false; }); $('edit').textContent = 'Edit';
+  }
+
+  $('run').addEventListener('click', function () {
+    if (busy || !selected) return;
+    var text = selected.own ? $('input').value.trim() : selected.message; showError('');
+    if (selected.own && !text && !attached) { showError('Type a ticket or attach a file first.'); return; }
+    // A new run starts from a clean screen: an earlier decision never stays beside a new error.
+    var item = selected; run = null; $('result').hidden = true; setBusy(true);
+    decide(item, text, attached).then(function (result) {
+      run = { caseId: item.id, origin: result.origin, decision: result.decision, action: '', time: clock() };
+      runs.push(run); showDecision(result); renderLog();
+    }).catch(function (error) {
+      // A failed call is shown as it is. It never falls back to a sample, and nothing is recorded.
+      showError(error.message || 'Something went wrong. Try again.');
+    }).then(function () { setBusy(false); });
+  });
+
+  // ---------------------------------------------------------------- the human gate
+  // Nothing counts as done without one of these three clicks, and a second click cannot record twice.
+  function finish(action, detail) {
+    if (!run || run.action) return;
+    run.action = action; run.detail = detail || ''; outcomes[run.caseId] = action;
+    ['approve', 'edit', 'escalate'].forEach(function (id) { $(id).disabled = true; });
+    $('escalate-box').hidden = true;
+    $('outcome').textContent = action; $('outcome').className = 'badge ' + (action === 'Escalated' ? 'danger' : action === 'Edited' ? 'warn' : 'ok'); $('outcome').hidden = false;
+    renderLog(); renderCases();
+  }
+  $('approve').addEventListener('click', function () { finish('Approved'); });
+  $('edit').addEventListener('click', function () {
+    if (!run || run.action) return;
+    var rows = $('fields').querySelectorAll('[data-field]');
+    if ($('edit').textContent === 'Edit') {
+      rows.forEach(function (row) {
+        var name = row.getAttribute('data-field'); var value = row.querySelector('.v'); var long = name === 'draft_reply' || name === 'recommended_action';
+        var input = el(long ? 'textarea' : 'input', 'input'); input.value = run.decision[name] || ''; input.setAttribute('aria-label', row.querySelector('.k').textContent);
+        value.textContent = ''; value.appendChild(input);
+      });
+      $('edit').textContent = 'Save edit'; rows[rows.length - 1].querySelector('.input').focus();
+      return;
+    }
+    rows.forEach(function (row) { var name = row.getAttribute('data-field'); var value = row.querySelector('.input').value.trim(); run.decision[name] = value; row.querySelector('.v').textContent = value; });
+    $('edit').textContent = 'Edit'; finish('Edited');
+  });
+  $('escalate').addEventListener('click', function () { if (!run || run.action) return; $('escalate-box').hidden = false; $('reason').value = ''; $('reason').focus(); });
+  $('escalate-go').addEventListener('click', function () {
+    var reason = $('reason').value.trim();
+    if (!reason) { $('reason').focus(); return; }
+    finish('Escalated', reason);
+  });
+  $('reason').addEventListener('keydown', function (event) { if (event.key === 'Enter') $('escalate-go').click(); });
+
+  function renderLog() {
+    var log = $('log'); log.textContent = '';
+    if (!runs.length) log.appendChild(el('div', 'line', 'No runs yet. Every run and every human decision is listed here.'));
+    runs.slice().reverse().forEach(function (item) {
+      var line = el('div', 'line'); line.setAttribute('data-run', item.caseId);
+      line.appendChild(el('span', 't', item.time));
+      line.appendChild(el('span', '', item.caseId === 'OWN' ? 'own ticket' : item.caseId));
+      line.appendChild(el('span', '', item.decision.status === 'REFUSED-ESCALATE' ? 'REFUSED-ESCALATE' : 'OK'));
+      line.appendChild(el('span', item.action ? 'action-' + (item.action === 'Escalated' ? 'escalate' : item.action === 'Edited' ? 'edit' : 'approve') : '', item.action ? item.action + (item.detail ? ': ' + item.detail : '') : 'awaiting review'));
+      log.appendChild(line);
+    });
+    $('download').disabled = !runs.length;
+  }
+  $('download').addEventListener('click', function () {
+    var quote = function (value) { return '"' + String(value).replace(/"/g, '""') + '"'; };
+    var csv = ['Time,Case,Decision,Human action,Detail,Source'].concat(runs.map(function (item) {
+      return [item.time, item.caseId, item.decision.status, item.action || 'awaiting review', item.detail || '', item.origin.indexOf('Sample') === 0 ? 'Sample' : 'AI'].map(quote).join(',');
+    })).join('\r\n');
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); link.download = 'run-log.csv';
+    document.body.appendChild(link); link.click(); link.remove();
+  });
+
+  // ---------------------------------------------------------------- evals: cases, not impressions
+  function renderEvals() {
+    var count = { Pass: 0, 'Needs work': 0, Fail: 0 }; var ran = 0;
+    evals.forEach(function (row) { if (row.actual) ran += 1; if (count[row.verdict] !== undefined) count[row.verdict] += 1; });
+    var board = $('scoreboard'); board.textContent = '';
+    [['ok', count.Pass, 'Pass'], ['warn', count['Needs work'], 'Needs work'], ['danger', count.Fail, 'Fail'], ['', ran + ' of ' + EVALS.length, 'Cases run']].forEach(function (stat) {
+      var box = el('div', 'stat ' + stat[0]); box.appendChild(el('div', 'n', String(stat[1]))); box.appendChild(el('div', 'l', stat[2])); board.appendChild(box);
+    });
+    if (RECORDED.date) $('evals-note').textContent = 'Recorded by the author on ' + RECORDED.date + ', after really running each case. You can run them again here.';
+    var body = $('evals'); body.textContent = '';
+    EVALS.forEach(function (item, index) {
+      var row = el('tr'); var state = evals[index];
+      var name = el('td'); name.setAttribute('data-label', 'Case'); name.appendChild(el('b', '', item.label)); name.appendChild(el('div', 'muted', item.caseId)); row.appendChild(name);
+      var expected = el('td', '', item.expected); expected.setAttribute('data-label', 'Expected'); row.appendChild(expected);
+      var actual = el('td'); actual.setAttribute('data-label', 'Actual');
+      actual.appendChild(el('div', state.actual ? '' : 'muted', state.actual || 'Not run yet.'));
+      var go = el('button', 'btn', state.actual ? 'Run again' : 'Run'); go.type = 'button'; go.setAttribute('data-eval', String(index)); go.style.marginTop = 'var(--sp-2)';
+      go.addEventListener('click', function () { runEval(index, go); });
+      actual.appendChild(go); row.appendChild(actual);
+      var verdict = el('td'); verdict.setAttribute('data-label', 'Verdict');
+      var pick = el('select', 'input'); pick.setAttribute('aria-label', 'Verdict for ' + item.label);
+      ['', 'Pass', 'Needs work', 'Fail'].forEach(function (value) { var option = el('option', '', value || 'Choose'); option.value = value; pick.appendChild(option); });
+      pick.value = state.verdict; pick.disabled = !state.actual;
+      pick.addEventListener('change', function () { state.verdict = pick.value; renderEvals(); });
+      var note = el('input', 'input'); note.placeholder = 'What you saw, in one line'; note.value = state.note; note.style.marginTop = 'var(--sp-2)'; note.setAttribute('aria-label', 'Note for ' + item.label);
+      note.addEventListener('input', function () { state.note = note.value; });
+      verdict.appendChild(pick); verdict.appendChild(note); row.appendChild(verdict);
+      body.appendChild(row);
+    });
+  }
+  function runEval(index, button) {
+    if (busy) return;
+    var item = caseById(EVALS[index].caseId); busy = true; button.disabled = true; button.textContent = 'Running';
+    decide(item, item.message, item.picture ? PFAI.partFromDataUrl(item.picture(), 'picture.png') : null).then(function (result) {
+      var d = result.decision || {};
+      evals[index].actual = (d.status === 'REFUSED-ESCALATE' ? 'REFUSED-ESCALATE. ' : 'OK. ') + (d.category || '') + ': ' + (d.recommended_action || '') + (result.origin.indexOf('Sample') === 0 ? ' (sample, not AI)' : '');
+    }).catch(function (error) {
+      evals[index].actual = 'Did not run: ' + (error.message || 'something went wrong.');
+    }).then(function () { busy = false; renderEvals(); });
+  }
+  function resultsText() {
+    var lines = ['Eval results'];
+    EVALS.forEach(function (item, index) {
+      var state = evals[index];
+      lines.push((index + 1) + '. ' + item.label + ' (' + item.caseId + '). Expected: ' + item.expected + ' Actual: ' + (state.actual || 'not run') + ' Verdict: ' + (state.verdict || 'not judged') + (state.note ? '. Note: ' + state.note : '.'));
+    });
+    lines.push('', 'Improvement made', 'Before: ' + ($('imp-before').value.trim() || '(not written)'), 'Change: ' + ($('imp-change').value.trim() || '(not written)'), 'After: ' + ($('imp-after').value.trim() || '(not written)'));
+    lines.push('', 'Known limitations'); LIMITS.forEach(function (limit) { lines.push('- ' + limit); });
+    return lines.join('\n');
+  }
+  $('copy-results').addEventListener('click', function () {
+    var text = resultsText(); var box = $('results-text');
+    // Where the browser will not copy for us, the text is shown selected so the person can copy it themselves.
+    var shown = function () { box.value = text; box.hidden = false; box.style.minHeight = '220px'; box.focus(); box.select(); $('copied').textContent = 'Select the text below and copy it.'; };
+    if (!navigator.clipboard || !navigator.clipboard.writeText) { shown(); return; }
+    navigator.clipboard.writeText(text).then(function () { $('copied').textContent = 'Copied. Paste it where you need it.'; }, shown);
+  });
+
+  // ---------------------------------------------------------------- views
+  document.querySelectorAll('.tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var view = tab.getAttribute('data-view');
+      document.querySelectorAll('.tab').forEach(function (other) { var on = other === tab; other.classList.toggle('is-active', on); other.setAttribute('aria-pressed', String(on)); });
+      $('view-console').hidden = view !== 'console'; $('view-evals').hidden = view !== 'evals';
+      if (view === 'evals') renderEvals();
+    });
+  });
+
+  // The words on screen follow the number of test cases; nothing assumes five.
+  var counted = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'][EVALS.length] || String(EVALS.length);
+  $('chips-hint').textContent = counted + ' test case' + (EVALS.length === 1 ? '' : 's') + ', one click each.';
+  $('evals-head').textContent = counted + ' case' + (EVALS.length === 1 ? '' : 's') + ', judged by a person';
+  $('imp-before').value = RECORDED.improvement.before; $('imp-change').value = RECORDED.improvement.change; $('imp-after').value = RECORDED.improvement.after;
+  LIMITS.forEach(function (limit) { $('limits').appendChild(el('li', '', limit)); });
+  renderCases(); renderLog(); renderEvals();
+})();
+</script>
+</body>
+</html>
