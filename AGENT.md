@@ -30,3 +30,7 @@ Build the local Python/Google ADK profile first. The LMS browser ZIP is a separa
 Run `.venv/bin/python -m pytest` for implemented domain checks. Keep independent expected calculations outside runtime model context. Test exact boundaries and rejected paths, not just the happy path. Do not expose held-out labels during tuning. Human verdicts start empty.
 
 Record actual checks and remaining gaps in BUILD-STATUS.md. A passing unit suite does not establish completion of the 18 development families, 20 held-out cases, real-AI validation, human review, value gates or pilot readiness. Keep commits focused; never overwrite user changes or force-push.
+
+## Delivery preference
+
+The user requests continuing development with a commit and push to `origin/main` after each tested feature or functionality. Run appropriate checks, update BUILD-STATUS.md with actual results, and push each coherent increment. Ordinary feature pushes are authorised; do not force-push or claim unimplemented gates are complete.

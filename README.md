@@ -2,7 +2,7 @@
 
 Synthetic Airline Disruption Recovery Assistant for a fictional OCC Duty Manager.
 
-The selected implementation is a local Python/Google ADK backend with a web review interface. Development has started with the deterministic domain foundation; the interface and end-to-end recovery loop are not yet built. See [BUILD-STATUS.md](BUILD-STATUS.md) for observed checks and remaining work.
+The selected implementation is a local Python/Google ADK backend with a web review interface. Implemented so far: trigger monitoring, bounded descriptor selection, validated synthetic data, whole-party allocation and the configured operational gate; the interface and end-to-end recovery loop are not yet built. See [BUILD-STATUS.md](BUILD-STATUS.md) for observed checks and remaining work.
 
 ## Development
 
