@@ -43,3 +43,7 @@ Each tested feature is committed and pushed to `origin/main`, as requested. The 
 ## Candidate pipeline increment
 
 The finite search now materialises delays/cancellations/swaps, propagates rotations and crew sequences, checks exact frozen synthetic dispatch evidence, allocates parties, applies supported edits, deduplicates canonical action fingerprints and ranks only after the full selected search finishes. Incomplete search publishes no options. Four additional tests cover independently calculated reference arithmetic, protected connection edits, rejection fingerprints, missing sources and timeout. Latest observed suite: 89 passed (offline).
+
+## Durable review and execution increment
+
+Implemented a SQLite business ledger with version-bound/idempotent review commands, exact specialist acknowledgements, final gate checks, transactional party receipts and outbox records, independent notification attempts, fencing/lease takeover, Stop, expiry, global disable/restoration and owned handoffs. Durable Google ADK graph sessions now pause for review and resume after restart; the business ledger remains authoritative. Observed: 102 full-suite tests passed, plus a separate passing SQLite ADK pause/restart/resume test. No real model or external operational calls were made.
