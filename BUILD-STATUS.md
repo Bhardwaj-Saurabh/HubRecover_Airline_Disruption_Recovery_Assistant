@@ -1,0 +1,30 @@
+# Implementation status
+
+Updated 17 October 2026. Profile: local Python/Google ADK. This is the first foundation increment, not a runnable recovery application.
+
+## Implemented
+
+- AGENT.md working conventions and AGENTS.md discovery entry point.
+- Python project with google-adk[db] 2.11.0, isolated environment and uv.lock.
+- Immutable initial policy constants for monitoring and descriptor selection. The full policy configuration is still pending.
+- Typed restriction events and pure single-episode monitoring reducer: strict duration/impact trigger, brief lift continuity, exact reset boundary, version deduplication, unconfirmed/late-history blocking and missing-precheck handoff.
+- RECOVERY_UNIVERSE_V1 descriptor construction: four families, ordered spare selection, round-robin cap, counts and deterministic descriptor digest. Descriptors are not validated recovery plans.
+
+## Observed verification
+
+Command: `.venv/bin/python -m pytest -q`
+
+Result: **27 passed**, one third-party OpenTelemetry deprecation warning. Python 3.11.4, pytest 8.4.2. Mode: deterministic/offline; no model requests, bookings or messages.
+
+The suite covers 17 monitoring checks, eight universe checks and two ADK compatibility checks. The cap test independently constructs the expected 100-descriptor selection from 279 raw descriptors. The ADK spike executes two function nodes through Runner and observes a human-input pause; it also instantiates a single-turn, structured-output agent without tools. This does not validate provider output, human resume, durable session recovery or full orchestration.
+
+## Next implementation gates
+
+1. Complete compatibility evidence for human resume, SQLite sessions and provider token counting before enabling real AI; freeze a verified model then.
+2. Add complete source schemas and fixture invariants before authoring the 24-flight, 300-passenger reference set.
+3. Extend monitoring with consistent late-history reconciliation and authoritative episode/scope aggregation. The current reducer conservatively sends late effective-time changes for classification; it does not reconstruct multi-record history.
+4. Implement impact propagation, feasibility, allocation, metrics, supported edits, canonical plan fingerprints and the independent calculation oracle.
+5. Add durable business ledger, approval/prerequisite/version guards, jobs/fences, global write control, atomic booking/outbox and fault tests.
+6. Build the Operations review UI, bounded explanation/edit agents, handoff inbox and evaluation records.
+
+The 18 end-to-end development families and 20 held-out variants have not been run. Real-AI, human review, manual/rules-only comparisons, product acceptance, business value and pilot readiness remain unproven. No LMS ZIP or hosted application has been produced. Learner verdicts remain unassigned.

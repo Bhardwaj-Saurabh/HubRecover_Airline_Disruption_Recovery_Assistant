@@ -1,1 +1,10 @@
 .DS_Store
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env
+.env.*
+!.env.example
+*.sqlite*
+*.db
