@@ -47,3 +47,7 @@ The finite search now materialises delays/cancellations/swaps, propagates rotati
 ## Durable review and execution increment
 
 Implemented a SQLite business ledger with version-bound/idempotent review commands, exact specialist acknowledgements, final gate checks, transactional party receipts and outbox records, independent notification attempts, fencing/lease takeover, Stop, expiry, global disable/restoration and owned handoffs. Durable Google ADK graph sessions now pause for review and resume after restart; the business ledger remains authoritative. Observed: 102 full-suite tests passed, plus a separate passing SQLite ADK pause/restart/resume test. No real model or external operational calls were made.
+
+## Local interface and development evidence
+
+The FastAPI application now serves the Operations interface, scenario controls, review/edit/reject, matching specialist acknowledgements, mock execution progress, handoff acceptance, global write control, trace download, development diagnostics and manually entered verdicts. It binds to loopback (default port 8765). API integration and JS syntax checks passed. All 18 development demonstrations ran with passing automatic diagnostics; observed traces are in evaluation/results/development.json. Each is one implemented subvariant, not a claim that every TEST-PLAN subvariant or product gate passed. Browser visual inspection was blocked by unavailable in-app browser and unapproved Chrome computer-use access.
