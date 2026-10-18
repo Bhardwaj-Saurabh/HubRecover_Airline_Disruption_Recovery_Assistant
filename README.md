@@ -30,11 +30,11 @@ The **Evaluations** view runs 18 development demonstrations and a separate 20-va
 
 ## Optional Gemini
 
-Set `GOOGLE_API_KEY` and an available exact `HUBRECOVER_GEMINI_MODEL` identifier in the server environment before starting. Do not put secrets in the repository, browser forms or chat. The app does not load a credentials file. An example variable list without credentials is in `.env.example`.
+Set `GOOGLE_API_KEY` and an available exact `HUBRECOVER_GEMINI_MODEL` identifier in the server environment before starting. Do not put secrets in the repository, browser forms or chat. You can also put these two settings in the repository-local `.env` file, which Git ignores. The app launcher and live evaluator load it automatically; existing terminal environment settings take precedence. An example without credentials is in `.env.example`.
 
 When configured, the review panel enables bounded explanation and edit interpretation. ADK agents have no operational tools. Provider token counting, strict output schemas and deterministic fact/claim checks are mandatory. Failures hand off without silently switching to rules-only output. New deterministic edits are labelled rules-only; AI-interpreted edits with code-generated explanations have their own explicit mode label.
 
-**Real-provider calls were not run in this environment:** neither the Gemini key nor model identifier is configured. Stand-in tests do not establish real-model correctness or usefulness. Confirm model availability and run the real-AI evaluation before claiming provider compatibility or quality.
+Real-provider conformance results and limitations are recorded in BUILD-STATUS.md. Stand-in tests do not establish real-model correctness or usefulness. Run the real-AI evaluation before claiming provider compatibility or quality.
 
 Run the explicit provider conformance check after configuring the environment:
 

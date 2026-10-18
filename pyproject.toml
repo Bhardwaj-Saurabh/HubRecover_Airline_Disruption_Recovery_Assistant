@@ -3,7 +3,7 @@ name = "hubrecover"
 version = "0.1.0"
 description = "Synthetic airline disruption recovery prototype"
 requires-python = ">=3.11"
-dependencies = ["google-adk[db]==2.11.0", "pydantic>=2.12,<3", "fastapi>=0.141,<1", "uvicorn>=0.54,<1"]
+dependencies = ["python-dotenv>=1.2.4,<2", "google-adk[db]==2.11.0", "pydantic>=2.12,<3", "fastapi>=0.141,<1", "uvicorn>=0.54,<1"]
 
 [dependency-groups]
 dev = ["pytest>=8,<9"]

@@ -79,6 +79,8 @@ def main():
     parser.add_argument('--repeats',type=int,choices=(1,2,3),default=3)
     parser.add_argument('--output',type=Path,default=Path('.hubrecover/evaluation/live-ai.json'))
     args=parser.parse_args()
+    from hubrecover.config import load_local_environment
+    load_local_environment()
     report=asyncio.run(evaluate(args.repeats))
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(report,indent=2)+'\n')
