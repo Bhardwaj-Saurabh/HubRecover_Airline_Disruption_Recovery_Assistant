@@ -16,6 +16,7 @@ from hubrecover.domain.policy import POLICY
 from hubrecover.domain.schemas import SeedSnapshot, Flight
 from hubrecover.fixtures.scenarios import Scenario, create_scenario
 from .store import Store
+from . import sources
 
 TERMINAL = {'COMPLETED', 'MANUAL_HANDOFF', 'PARTIAL_MANUAL'}
 ROLES = {'DUTY_MANAGER','OCC_OPERATIONS_LEAD','AIRCRAFT_CONTROLLER','CREW_CONTROLLER','DISPATCHER','PASSENGER_OPERATIONS'}
@@ -52,6 +53,18 @@ class RecoveryService:
                     self.handoff(run,'MODEL_OUTCOME_UNKNOWN_AFTER_RESTART')
                     run['revision']+=1
                     self.store.save(db,run)
+
+    def expire_waiting_work(self):
+        expired=[]
+        with self.store.transaction() as db:
+            for row in db.execute('SELECT body FROM runs').fetchall():
+                run=json.loads(row['body'])
+                if run['status'] in ('AWAITING_APPROVAL','AWAITING_OPERATIONAL_ACK','NEEDS_CLARIFICATION','REVALIDATING') and self.now(run)>=run.get('expires_at',float('inf')):
+                    self.handoff(run,'WAIT_DEADLINE_EXPIRED')
+                    run['revision']+=1
+                    self.store.save(db,run)
+                    expired.append(run['id'])
+        return expired
 
     def reclaim_interrupted_execution(self):
         """Claim one abandoned execution from the durable ledger, never renew its budget."""
@@ -98,10 +111,13 @@ class RecoveryService:
             return
         run['generation'] += 1
         run['mode'] = 'RULES_ONLY'
+        run.pop('clarification',None)
+        run.pop('clarification_resume',None)
         run['approval'] = None
         run['acknowledgements'] = {}
         run['selected_plan'] = None
         run['status'] = 'GENERATING'
+        sources.snapshot(run,self.now(run))
         scenario = decode_scenario(run['scenario'])
         if not scenario.sources_verified:
             self.handoff(run, 'REQUIRED_SOURCE_UNAVAILABLE')
@@ -133,6 +149,7 @@ class RecoveryService:
                 created_at=self.clock(), faults={}, inventory={r.flight_id:r.model_dump() for r in scenario.seed.inventory},
                 bookings={p.id:dict(legs=p.itinerary, version=1) for p in scenario.seed.passengers})
             run['expected_inventory'] = digest(run['inventory'])
+            sources.initialize(run,self.now(run))
             self.trace(run, 'START', 'Synthetic sources loaded; all effects are local simulations')
             if not control['writes_enabled']:
                 self.handoff(run, 'APPLICATION_WRITES_DISABLED')
@@ -197,6 +214,8 @@ class RecoveryService:
             raise Refusal('Required source changed or is unavailable')
         if self.now(run)-run['source_verified_at'] > 300:
             raise Refusal('Synthetic source verification is stale')
+        if run.get('expected_material') and sources.material(run)!=run['expected_material']:
+            raise Refusal('Unexpected material source content')
         if approval:
             a=run['approval']; plan=self.selected(run)
             if not a or not plan or a['generation']!=run['generation'] or a['fingerprint']!=plan['fingerprint'] or a['constraints_digest']!=digest(run['constraints']):
@@ -231,7 +250,7 @@ class RecoveryService:
             try:
                 if type(revision) is not int or run['revision']!=revision:
                     raise Refusal('Stale episode version; refresh before acting')
-                if action in ('approve','edit','reject','stop','advance','source_change','fault','resume_monitor') and role!='DUTY_MANAGER':
+                if action in ('approve','edit','reject','stop','advance','source_change','source_update','fault','resume_monitor','clarify') and role!='DUTY_MANAGER':
                     raise Refusal('Duty Manager role required')
                 if action in ('approve','edit','reject'):
                     if run['status']!='AWAITING_APPROVAL':
@@ -252,6 +271,16 @@ class RecoveryService:
                     validate_constraints([constraint],decode_scenario(run['scenario']).seed)
                     run['constraints'].append(constraint)
                     self.plan(run)
+                elif action=='clarify':
+                    if run['status']!='NEEDS_CLARIFICATION' or run.get('clarification_resume')!='SUPPORTED_EDIT':
+                        raise Refusal('No supported edit clarification is pending')
+                    self.guard(db,run)
+                    if payload.get('request_id')!=run['request_id'] or self.now(run)>=run['clarification_deadline']:
+                        raise Refusal('Clarification request is stale or expired')
+                    constraint=payload.get('constraint')
+                    validate_constraints([constraint],decode_scenario(run['scenario']).seed)
+                    run['constraints'].append(constraint)
+                    self.plan(run)
                 elif action=='reject':
                     if not isinstance(payload.get('reason'),str) or not payload['reason'].strip():
                         raise Refusal('Rejection feedback required')
@@ -268,6 +297,7 @@ class RecoveryService:
                     if set(run['acknowledgements'])==set(plan['prerequisites']):
                         run['committed_schedule']=plan['flights']
                         run['committed_operations_digest']=digest(plan['operations'])
+                        sources.expected_change(run,'EXPECTED_PREREQUISITE',plan['fingerprint'],self.now(run))
                         self.trace(run,'SIMULATED_OPERATIONAL_COMMIT',dict(fingerprint=plan['fingerprint'],source='SYN-OPERATIONAL-ACKS'))
                         run['status']='REVALIDATING'
                 elif action=='execute':
@@ -294,6 +324,21 @@ class RecoveryService:
                         raise Refusal('Episode is terminal')
                     run['source_version']+=1
                     self.handoff(run,'UNEXPECTED_MATERIAL_SOURCE_CHANGE')
+                elif action=='source_update':
+                    if run['status'] in TERMINAL: raise Refusal('Episode is terminal')
+                    original=json.loads(json.dumps(run))
+                    try:
+                        classification=sources.apply(run,payload,self.now(run))
+                    except ValueError as exc:
+                        run=original
+                        run['scenario']['sources_verified']=False
+                        run['source_version']+=1
+                        run['source_updates'].append(dict(classification='INVALID_UNKNOWN',source=payload.get('source'),reason=str(exc),at=self.now(run)))
+                        self.handoff(run,'INVALID_SOURCE_UPDATE: '+str(exc))
+                    else:
+                        if classification=='UNEXPECTED_MATERIAL':
+                            run['source_version']+=1
+                            self.handoff(run,'UNEXPECTED_MATERIAL_SOURCE_CHANGE: '+payload['source'])
                 elif action=='fault':
                     allowed={'booking_fail_after','notification_fail','missing_ack'}
                     if payload.get('kind') not in allowed or run['status'] in TERMINAL:
@@ -417,6 +462,7 @@ class RecoveryService:
                 self.now(run),parties=[pid],required_action=
                 'Review overnight passenger-care needs. No compensation or paid service has been promised.'))
         run['expected_inventory']=digest(run['inventory'])
+        sources.expected_change(run,'OWN_BATCH_EFFECT',run['receipts'][pid]['key'],self.now(run))
         self.trace(run,'PARTY_COMMITTED',dict(party_id=pid,outcome=allocation['outcome']))
 
     def execute(self, run_id, fence):

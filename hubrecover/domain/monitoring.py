@@ -3,7 +3,7 @@
 The caller supplies validated scope/precheck evidence. This reducer grants no
 booking authority. Ambiguous histories stay blocked for human classification.
 """
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
 from enum import Enum
 
 from .policy import POLICY
@@ -53,6 +53,8 @@ class Monitor:
     triggered: bool = False
     blocked: bool = False
     versions: tuple[tuple[str, int], ...] = ()
+    history: tuple[dict, ...] = ()
+    latest_tick_ms: int = -1
 
 
 def ingest(state: Monitor, event: RestrictionEvent) -> tuple[Monitor, Decision]:
@@ -61,27 +63,43 @@ def ingest(state: Monitor, event: RestrictionEvent) -> tuple[Monitor, Decision]:
     versions = dict(state.versions)
     if event.version <= versions.get(event.event_id, 0):
         return state, Decision.IGNORED
-    # A late status change requires history reconciliation, never blind overwrite.
-    if event.effective_ms < state.latest_effective_ms:
-        return replace(state, blocked=True), Decision.CLASSIFY
-    versions[event.event_id] = event.version
-    next_state = replace(state, versions=tuple(sorted(versions.items())),
-                         latest_effective_ms=event.effective_ms)
-    if not event.confirmed:
-        return replace(next_state, blocked=True), Decision.CLASSIFY
-    qualifying = event.applicable and event.weather and event.kind != "WEATHER_ADVISORY"
-    if not qualifying:
-        # Unrelated/advisory records cannot lift an existing qualifying restriction.
-        return next_state, Decision.MONITOR
-    if not event.active:
-        return replace(next_state, active=False,
-                       lift_ms=state.lift_ms if state.lift_ms is not None else event.effective_ms), Decision.MONITOR
-    reset = state.lift_ms is not None and (
-        event.effective_ms - state.lift_ms >= POLICY.lift_reset_minutes * 60_000
-    )
-    return replace(next_state, active=True, lift_ms=None,
-                   start_ms=event.effective_ms if reset or state.start_ms is None else state.start_ms,
-                   triggered=False if reset else state.triggered), Decision.MONITOR
+    history=[RestrictionEvent(**raw) for raw in state.history]
+    # Same-authority version chronology cannot run backwards. Different mapped
+    # authorities may arrive late and are reconciled by effective time.
+    previous=next((e for e in reversed(history) if e.event_id==event.event_id),None)
+    if previous and (event.effective_ms<previous.effective_ms or
+                     (event.effective_ms==previous.effective_ms and event.active!=previous.active)):
+        return replace(state,blocked=True),Decision.CLASSIFY
+    if not event.confirmed or (not history and state.latest_effective_ms>=0):
+        return replace(state,blocked=True),Decision.CLASSIFY
+    history.append(event)
+    ordered=sorted(history,key=lambda e:(e.effective_ms,e.event_id,e.version))
+    active_by_authority={}
+    start=None;lift=None;active=False
+    for item in ordered:
+        qualifying=item.applicable and item.weather and item.kind!='WEATHER_ADVISORY'
+        if not qualifying:
+            continue  # An advisory cannot lift a verified restriction.
+        active_by_authority[item.event_id]=item.active
+        next_active=any(active_by_authority.values())
+        if next_active and not active:
+            reset=lift is not None and item.effective_ms-lift>=POLICY.lift_reset_minutes*60_000
+            if start is None or reset: start=item.effective_ms
+            lift=None
+        elif active and not next_active:
+            lift=item.effective_ms
+        active=next_active
+    now=max(state.latest_tick_ms,event.effective_ms,state.latest_effective_ms)
+    if not active and lift is not None and now-lift>=POLICY.lift_reset_minutes*60_000:
+        start=None
+    # Previously emitted decisions are never retroactively changed by late data.
+    if state.triggered and event.effective_ms<state.latest_effective_ms and start!=state.start_ms:
+        return replace(state,blocked=True),Decision.CLASSIFY
+    versions[event.event_id]=event.version
+    return replace(state,versions=tuple(sorted(versions.items())),
+        latest_effective_ms=max(state.latest_effective_ms,event.effective_ms),
+        history=tuple(asdict(e) for e in ordered),active=active,start_ms=start,lift_ms=lift,
+        triggered=state.triggered if start==state.start_ms else False),Decision.MONITOR
 
 
 def tick(state: Monitor, now_ms: int, *, downline_flights: int,
@@ -94,6 +112,7 @@ def tick(state: Monitor, now_ms: int, *, downline_flights: int,
         raise ValueError("Precheck flags must be booleans")
     if state.blocked:
         return state, Decision.CLASSIFY
+    state=replace(state,latest_tick_ms=now_ms)
     if not state.active:
         if state.lift_ms is not None and now_ms - state.lift_ms >= POLICY.lift_reset_minutes * 60_000:
             return replace(state, start_ms=None, triggered=False), Decision.MONITOR

@@ -139,6 +139,10 @@ class BoundedAI:
                     current['card_digest']=digest(current['search']['plans'])
                 elif result.kind=='CLARIFY':
                     current['clarification']=result.clarification or 'AMBIGUOUS_REFERENCE'
+                    current['status']='NEEDS_CLARIFICATION'
+                    current['request_id']=uuid.uuid4().hex
+                    current['clarification_resume']='SUPPORTED_EDIT'
+                    current['clarification_deadline']=current['expires_at']
                 else:
                     current['constraints'].append(proposal)
                     self.service.plan(current)

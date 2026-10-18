@@ -56,3 +56,24 @@ def test_provider_failure_no_sample_fallback(tmp_path):
         assert state['status']=='MANUAL_HANDOFF' and state['mode']=='REAL_AI'
         assert state['ai_budget']['reserved_tokens']==14048
     asyncio.run(exercise())
+
+
+def test_ambiguous_edit_requires_versioned_clarification_without_renewing_wait(tmp_path):
+    from hubrecover.domain.claims import EditProposal
+    from test_service import cmd
+    async def exercise():
+        service=RecoveryService(tmp_path/'clarify.sqlite');run=service.create()
+        ai=BoundedAI(service);ai.enabled=True;ai.model='STANDIN_TEST_ONLY'
+        async def generate(*args): return EditProposal(kind='CLARIFY',clarification='AMBIGUOUS_REFERENCE')
+        ai.generate=generate
+        pending=await ai.request(run['id'],run['revision'],'edit',text='Protect that connection',key='clarify')
+        assert pending['status']=='NEEDS_CLARIFICATION' and pending['expires_at']==run['expires_at']
+        assert pending['request_id']!=run['request_id']
+        with pytest.raises(Refusal): cmd(service,pending,'approve',request_id=pending['request_id'],plan_id=pending['search']['plans'][0]['id'])
+        with pytest.raises(Refusal): cmd(service,pending,'clarify',request_id=run['request_id'],constraint={})
+        restarted=RecoveryService(service.store.path)
+        result=cmd(restarted,pending,'clarify',request_id=pending['request_id'],constraint=dict(kind='protectConnection',target='SYN-CONNECTION-INTERNATIONAL'))
+        assert result['status']=='AWAITING_APPROVAL' and result['generation']==2
+        assert not result.get('clarification') and result['approval'] is None
+        assert result['ai_budget']['calls']==1
+    asyncio.run(exercise())

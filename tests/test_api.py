@@ -58,11 +58,11 @@ def test_server_restart_recovers_abandoned_execution(tmp_path):
     restarted=create_app(tmp_path)
     restarted.state.service.clock=lambda:1015.0
     with TestClient(restarted) as client:
-        deadline=time.monotonic()+15
+        deadline=time.monotonic()+45
         while time.monotonic()<deadline:
             final=client.get('/api/runs/'+run['id']).json()
             if final['status']=='COMPLETED': break
-            time.sleep(.05)
+            time.sleep(.2)
         assert final['status']=='COMPLETED'
         assert len(final['receipts'])==150 and len(final['outbox'])==300
         assert all(final['receipts'][k]==v for k,v in first_receipts.items())

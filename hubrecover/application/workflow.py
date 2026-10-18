@@ -24,7 +24,7 @@ class RecoveryWorkflow:
 
         def human_review(ctx: Context):
             run=service.get(ctx.state['domain_run_id'])
-            if run['status']=='AWAITING_APPROVAL':
+            if run['status'] in ('AWAITING_APPROVAL','NEEDS_CLARIFICATION'):
                 return RequestInput(interrupt_id=run['request_id'],message='Duty Manager review required',
                                     payload=dict(run_id=run['id'],generation=run['generation']))
             return dict(status=run['status'])

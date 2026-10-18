@@ -71,3 +71,31 @@ def test_unconfirmed_requires_classification():
 def test_strict_event_validation(change):
     with pytest.raises(ValueError):
         event(**change)
+
+
+def test_late_mapped_authority_history_reconciles_overlap_once():
+    state,_=ingest(Monitor(),event())
+    state,_=ingest(state,event(55,2,active=False))
+    # Another explicitly mapped authority was active during the first one's lift.
+    state,result=ingest(state,event(50,event_id='SYN-SECOND',received_ms=60*60_000))
+    assert result==Decision.MONITOR and state.start_ms==0 and state.active
+    state,result=advance(state,61)
+    assert result==Decision.TRIGGER
+    assert advance(state,62)[1]==Decision.MONITOR
+    state,_=ingest(state,event(65,2,event_id='SYN-SECOND',active=False))
+    assert not state.active
+    assert advance(state,80)[0].start_ms is None
+
+
+def test_one_authority_lift_does_not_lift_other_active_authority():
+    state,_=ingest(Monitor(),event())
+    state,_=ingest(state,event(10,event_id='SYN-SECOND'))
+    state,_=ingest(state,event(55,2,active=False))
+    assert state.active and advance(state,61)[1]==Decision.TRIGGER
+
+
+def test_late_history_cannot_rewrite_already_emitted_trigger():
+    state,_=ingest(Monitor(),event(10))
+    state,_=advance(state,71)
+    state,result=ingest(state,event(0,event_id='SYN-SECOND',received_ms=72*60_000))
+    assert result==Decision.CLASSIFY and state.triggered

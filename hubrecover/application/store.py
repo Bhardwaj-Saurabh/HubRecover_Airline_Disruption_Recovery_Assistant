@@ -17,6 +17,7 @@ class Store:
             CREATE TABLE IF NOT EXISTS control(id INTEGER PRIMARY KEY CHECK(id=1), body TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS research(id TEXT PRIMARY KEY, body TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS observations(id TEXT PRIMARY KEY, body TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS snapshots(id TEXT PRIMARY KEY, run_id TEXT NOT NULL, body TEXT NOT NULL);
             ''')
             db.execute('INSERT OR IGNORE INTO control VALUES(1,?)', (json.dumps(dict(
                 mode='SYNTHETIC', writes_enabled=True, version=1, history=[])),))
@@ -44,6 +45,11 @@ class Store:
         return json.loads(row['body'])
 
     def save(self, db, run):
+        for snapshot in run.get('snapshots',[]):
+            if 'content' in snapshot:
+                db.execute('INSERT OR IGNORE INTO snapshots VALUES(?,?,?)',
+                           (snapshot['id'],run['id'],json.dumps(snapshot)))
+                del snapshot['content']
         db.execute('INSERT INTO runs VALUES(?,?) ON CONFLICT(id) DO UPDATE SET body=excluded.body',
                    (run['id'], json.dumps(run, separators=(',', ':'))))
 

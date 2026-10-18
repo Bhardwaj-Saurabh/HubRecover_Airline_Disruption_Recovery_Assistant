@@ -256,3 +256,14 @@ def test_recovery_cannot_revive_invalid_execution(tmp_path,failure):
     service.reclaim_interrupted_execution()
     final=service.get(run['id'])
     assert final['status']=='MANUAL_HANDOFF' and not final['receipts']
+
+
+def test_wait_deadline_expires_after_restart_without_incoming_command(tmp_path):
+    now=[1000.0];service=RecoveryService(tmp_path/'deadline.sqlite',clock=lambda:now[0])
+    run=service.create()
+    now[0]=1300.0
+    restarted=RecoveryService(service.store.path,clock=lambda:now[0])
+    assert restarted.expire_waiting_work()==[run['id']]
+    assert restarted.expire_waiting_work()==[]
+    final=restarted.get(run['id'])
+    assert final['status']=='MANUAL_HANDOFF' and not final['receipts']

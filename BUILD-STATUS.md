@@ -14,6 +14,8 @@ Updated 18 October 2026. **The local Python/Google ADK synthetic prototype is ru
 - Separate development and held-out deterministic runners, blank human verdicts, reviewer scores, observed comparison timing, feedback records and JSON exports.
 - One-command and Mac double-click launch paths. See README.md.
 
+Ambiguous AI edits now enter a version-bound clarification wait, with a supported-constraint submission and original expiry. Persistent review/acknowledgement deadlines are checked by the server without needing another user command.
+
 ## Observed verification
 
 | Check | Actual evidence |
@@ -24,6 +26,7 @@ Updated 18 October 2026. **The local Python/Google ADK synthetic prototype is ru
 | Development demonstrations | 18/18 implemented subvariants pass automatic diagnostics; learner verdicts remain null |
 | Held-out deterministic variants | 20/20 pass. This suite was exposed during implementation and is conformance evidence, not a blind model-quality holdout |
 | Local HTTP integration | Through actual FastAPI and durable ADK: protect connection → fresh review → approve → four acknowledgements → 150 party receipts and 300 sent mock messages → COMPLETED |
+| Source and monitoring additions | 11 source/restart checks and 20 monitoring boundary checks passed; source snapshots stored separately from mutable execution records |
 | Handoff lifecycle | Return, coordinator reassignment, owner acceptance and evidence-backed manual handling survive restart; stale/wrong-role requests and authority revival are refused |
 | Automatic execution recovery | Server restart resumes from one committed party to 150 receipts/300 mock messages; original deadlines, fencing, Stop/source/disable boundaries verified |
 | Rebooking transaction | A next-day option produces two superseded booking records, preserves shared-leg occupancy and creates a care handoff |
@@ -42,8 +45,8 @@ Detailed reports are in `evaluation/results/`. Every real-AI stand-in test runs 
 ## Explicit implementation limits
 
 - Local, single-process, synthetic-only deployment with simulated roles; no shared authentication, live airline adapters, production audit claim or LMS ZIP.
-- Source updates conservatively invalidate and hand off. The complete generic adapter envelope/field-level update protocol in architecture section 19 is not implemented. The synthetic ledger is coherent, and matching operational commits and own-batch inventory changes are guarded.
-- Monitoring conservatively requests classification for late effective-time changes rather than reconstructing arbitrary consistent multi-authority history. The UI provides the declared scripted trigger/brief-lift paths.
+- Typed local source adapters now persist per-source revisions, verified timestamps, material digests, immutable planning snapshots and classified update history. Server-verified refreshes/display labels preserve cards; unexpected material and invalid changes hand off. Exact prerequisite and own-batch changes have transaction-bound evidence. Live external adapters remain outside this synthetic application.
+- Monitoring reconstructs consistent late history across explicitly mapped authority streams, preserves overlapping active restrictions and refuses contradictory or retroactively changed emitted decisions. The UI retains the scripted trigger/brief-lift paths.
 - Execution now automatically reclaims expired worker leases from the durable ledger on server startup and while running. Recovery preserves original deadlines and receipts, rechecks authority and fences old workers. The full generic scheduler for every planning/model stage and every cross-system crash row remain unimplemented.
 - Handoffs now support assigned-owner acceptance/return, coordinator reassignment and evidence-backed manual-handling records, with immutable history and frozen receipt/communication evidence. These records never change passenger outcomes or revive execution authority; verified external outcome adapters remain outside the synthetic profile.
 - The independent calculation oracle covers the reference graph. General spare-tail/network oracle coverage, a richer approved precedent corpus, all warning thresholds and all architecture A1–A9 acceptance evidence remain broader work.

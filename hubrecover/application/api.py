@@ -72,6 +72,10 @@ def create_app(data_dir=None):
 
     async def recovery_worker(stopping):
         while not stopping.is_set():
+            expired=await asyncio.to_thread(service.expire_waiting_work)
+            for run_id in expired:
+                async with workflow_lock:
+                    await workflow.resume(run_id)
             recovered=await asyncio.to_thread(service.reclaim_interrupted_execution)
             if recovered:
                 if recovered['status']=='EXECUTING':
@@ -144,6 +148,12 @@ def create_app(data_dir=None):
         for plan in run.get('search',{}).get('plans',[]):
             plan['operations_digest']=digest(plan['operations'])
         return run
+    @app.get('/api/runs/{run_id}/snapshots/{snapshot_id}')
+    def get_snapshot(run_id:str,snapshot_id:str):
+        with service.store.connect() as db:
+            row=db.execute('SELECT body FROM snapshots WHERE id=? AND run_id=?',(snapshot_id,run_id)).fetchone()
+            if row is None: raise HTTPException(404,'Snapshot not found')
+            return json.loads(row['body'])
     @app.post('/api/runs/{run_id}/{action}')
     async def mutate(run_id:str,action:str,body:Command,background:BackgroundTasks):
         if action in ('ai_explain','ai_edit'):
@@ -166,7 +176,7 @@ def create_app(data_dir=None):
                 async with workflow_lock:
                     await workflow.resume(run_id)
             background.add_task(execute_and_resume)
-        elif action in ('approve','edit','reject','stop','advance','source_change','resume_monitor'):
+        elif action in ('approve','edit','reject','stop','advance','source_change','source_update','resume_monitor','clarify'):
             async with workflow_lock:
                 run=await workflow.resume(run_id)
         return run

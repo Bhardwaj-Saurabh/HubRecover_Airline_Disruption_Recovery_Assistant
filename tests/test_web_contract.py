@@ -10,6 +10,7 @@ def test_shipped_design_tokens_preserved_and_dom_controls_exist():
     js=Path('hubrecover/web/app.js').read_text()
     ids=set(re.findall(r'id="([^"]+)"',html))
     referenced=set(re.findall(r"\$\('([^']+)'\)",js))
-    assert referenced-ids=={'execute'}  # this button is rendered only after approval
+    dynamic_ids=set(re.findall(r'id="([^"$]+)"',js))
+    assert not referenced-ids-dynamic_ids  # generated controls must also have declared IDs
     assert 'data-skin="ops"' in html
     assert '<script src="/assets/app.js" defer>' in html
