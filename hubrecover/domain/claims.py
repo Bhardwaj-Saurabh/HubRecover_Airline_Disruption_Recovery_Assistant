@@ -33,7 +33,9 @@ def context(plans,generation):
         for index,value in enumerate(p['ranking']):
             facts[f"{p['id']}:m{index}"]=dict(plan_id=p['id'],metric=METRICS[index],value=value,cohort='REFERENCE_300')
         facts[f"{p['id']}:dependencies"]=dict(plan_id=p['id'],metric='pending prerequisites',value=len(p['prerequisites']),cohort='REFERENCE_300')
-    data=dict(generation=generation,plan_ids=[p['id'] for p in plans],facts=facts,eligible_precedents=[])
+    data=dict(generation=generation,plan_ids=[p['id'] for p in plans],facts=facts,
+              eligible_precedents=sorted({v['id'] for p in plans for v in p.get('precedents',[])})[:4],
+              plan_precedents={p['id']:[v['id'] for v in p.get('precedents',[])] for p in plans})
     data['context_digest']=digest(data)
     return data
 
@@ -41,10 +43,12 @@ def context(plans,generation):
 def validate_explanations(batch:ExplanationBatch,ctx):
     if batch.context_digest!=ctx['context_digest'] or sorted(p.plan_id for p in batch.plans)!=sorted(ctx['plan_ids']):
         raise ValueError('Wrong explanation context or plan set')
+    if sum(len(p.precedent_ids) for p in batch.plans)>4:
+        raise ValueError('At most four precedent citations per batch')
     rendered={}
     for plan in batch.plans:
-        if plan.precedent_ids:
-            raise ValueError('No eligible precedent supplied in the synthetic reference')
+        if any(p not in ctx['eligible_precedents'] or p not in ctx['plan_precedents'][plan.plan_id] for p in plan.precedent_ids):
+            raise ValueError('Ineligible or wrong-strategy precedent')
         lines=[]
         for claim in plan.claims:
             facts=[ctx['facts'].get(i) for i in claim.fact_ids]
@@ -80,5 +84,6 @@ def validate_explanations(batch:ExplanationBatch,ctx):
                 if reason.code=='ARRIVAL_DELAY_TRADEOFF' and not facts[0]['value']>facts[1]['value']:
                     raise ValueError('Delay tradeoff predicate false')
                 lines.append(f"{metric.capitalize()}: {facts[0]['value']} versus {facts[1]['value']} in option {facts[1]['plan_id']}.")
-        rendered[plan.plan_id]=' '.join(lines)+' LIMITED_PRECEDENT. Passed configured demo checks only; approval and execution guards remain required.'
+        coverage='GROUNDED fictional precedent' if ctx['plan_precedents'][plan.plan_id] else 'LIMITED_PRECEDENT'
+        rendered[plan.plan_id]=' '.join(lines)+f' {coverage}. Passed configured demo checks only; approval and execution guards remain required.'
     return rendered

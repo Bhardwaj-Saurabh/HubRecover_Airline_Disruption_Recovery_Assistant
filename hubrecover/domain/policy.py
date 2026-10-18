@@ -12,6 +12,8 @@ class Policy:
     card_validity_seconds: int = 300
     regeneration_limit: int = 2
     enumeration_seconds: int = 20
+    next_day_warning_percent: int = 25
+    unresolved_warning_percent: int = 10
 
 
 POLICY = Policy()

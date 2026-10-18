@@ -6,6 +6,7 @@ import json
 import time
 
 from .allocation import allocate
+from .evidence import retrieve, warnings
 from .gate import validate_operations
 from .invariants import MINUTE, TURNAROUND
 from .schemas import Flight
@@ -114,11 +115,22 @@ def satisfies(constraints, seed, flights, allocations):
     return True
 
 
+def compatible_spares(scenario):
+    assigned={f.tail_id for f in scenario.seed.flights}
+    flights={f.id:f for f in scenario.current}
+    return {root:[a.id for a in sorted(scenario.seed.aircraft,key=lambda a:a.id)
+                  if a.id not in assigned and a.aircraft_type==flights[root].aircraft_type
+                  and a.initial_location==flights[root].origin
+                  and a.available.start_ms<=flights[root].departure_ms<a.available.end_ms
+                  and not any(u.start_ms<=flights[root].departure_ms<u.end_ms for u in a.unavailable)][:2]
+            for root in scenario.roots}
+
+
 def build_plans(scenario, constraints=(), rejected=(), clock=time.monotonic, deadline_seconds=20):
     seed = scenario.seed
     validate_constraints(constraints, seed)
     started = clock()
-    universe = select_descriptors(scenario.roots, {})
+    universe = select_descriptors(scenario.roots, compatible_spares(scenario))
     viable, failures, seen = [], [], set()
     for descriptor in universe.selected:
         if clock()-started >= deadline_seconds:
@@ -147,13 +159,15 @@ def build_plans(scenario, constraints=(), rejected=(), clock=time.monotonic, dea
                 failures.append(dict(descriptor=asdict(descriptor), reasons=[dict(code='DUPLICATE_OR_REJECTED', detail='Unchanged action fingerprint excluded')]))
                 continue
             seen.add(fingerprint)
+            precedents=retrieve(seed,scenario.restrictions,descriptor.kind,limited=scenario.name=='limited')
             viable.append(dict(id=fingerprint[:16], fingerprint=fingerprint, descriptor=asdict(descriptor),
                 ranking=allocation.ranking, operations=operations, flights=[f.model_dump() for f in proposed],
                 allocations=[asdict(a) for a in allocation.allocations], inventory_after=dict(allocation.occupied_after),
                 prerequisites=['AIRCRAFT_CONTROLLER', 'CREW_CONTROLLER', 'DISPATCHER', 'PASSENGER_OPERATIONS'],
                 explanation='Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required.',
                 evidence=['SYN-SCHEDULE', 'SYN-CREW', 'SYN-AIRCRAFT', 'SYN-DISPATCH', 'SYN-INVENTORY'],
-                warnings=['Synthetic operations only', 'LIMITED_PRECEDENT', 'Approval does not mean recovery is complete']))
+                precedents=precedents,evidence_status='GROUNDED' if precedents else 'LIMITED_PRECEDENT',
+                warnings=warnings(allocation.ranking,len(seed.passengers),precedents)))
         except ValueError as exc:
             failures.append(dict(descriptor=asdict(descriptor), reasons=[dict(code='INVALID_CANDIDATE', detail=str(exc))]))
     if clock()-started >= deadline_seconds:
