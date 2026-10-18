@@ -53,6 +53,28 @@ class RecoveryService:
                     run['revision']+=1
                     self.store.save(db,run)
 
+    def reclaim_interrupted_execution(self):
+        """Claim one abandoned execution from the durable ledger, never renew its budget."""
+        with self.store.transaction() as db:
+            for row in db.execute('SELECT body FROM runs ORDER BY rowid').fetchall():
+                run=json.loads(row['body'])
+                if run['status']!='EXECUTING' or self.clock()<run['lease_until']:
+                    continue
+                try:
+                    self.guard(db,run,approval=True)
+                    if self.now(run)>=run['execution_deadline']:
+                        raise Refusal('Execution deadline expired during recovery')
+                except Refusal as exc:
+                    self.handoff(run,str(exc),'PASSENGER_OPERATIONS' if run['receipts'] else 'DUTY_MANAGER')
+                else:
+                    run['fence']+=1
+                    run['lease_until']=self.clock()+15
+                    self.trace(run,'WORKER_RECLAIMED',dict(fence=run['fence'],deadline=run['execution_deadline']))
+                run['revision']+=1
+                self.store.save(db,run)
+                return run
+        return None
+
     def now(self, run):
         return self.clock()+run.get('clock_offset', 0)
 

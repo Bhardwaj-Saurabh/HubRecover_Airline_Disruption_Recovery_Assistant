@@ -18,12 +18,14 @@ Updated 18 October 2026. **The local Python/Google ADK synthetic prototype is ru
 
 | Check | Actual evidence |
 | --- | --- |
-| Python regression | **113 passed**, two third-party deprecation warnings; no provider credentials used |
+| Python regression | **120 passed** in the regression run, plus the subsequently added server-restart integration test passed separately; two third-party deprecation warnings; no provider credentials used |
 | Reference fixture | 24 flights and 300 passengers; invariant checks pass |
 | Independent oracle | All 18 selected reference descriptors agree on feasibility, party allocations and ranking; separate cap-selection oracle covers 279 raw descriptors |
 | Development demonstrations | 18/18 implemented subvariants pass automatic diagnostics; learner verdicts remain null |
 | Held-out deterministic variants | 20/20 pass. This suite was exposed during implementation and is conformance evidence, not a blind model-quality holdout |
 | Local HTTP integration | Through actual FastAPI and durable ADK: protect connection → fresh review → approve → four acknowledgements → 150 party receipts and 300 sent mock messages → COMPLETED |
+| Handoff lifecycle | Return, coordinator reassignment, owner acceptance and evidence-backed manual handling survive restart; stale/wrong-role requests and authority revival are refused |
+| Automatic execution recovery | Server restart resumes from one committed party to 150 receipts/300 mock messages; original deadlines, fencing, Stop/source/disable boundaries verified |
 | Rebooking transaction | A next-day option produces two superseded booking records, preserves shared-leg occupancy and creates a care handoff |
 | Timing | 30/30 rules-only qualifying runs produce a card, zero failed/handoff runs; local trigger-to-card p95 0.1593 seconds. No inference of human time savings |
 | JavaScript / launch checks | `node --check`, shell syntax, Python compilation, design-block preservation and DOM-control contract checks |
@@ -42,7 +44,7 @@ Detailed reports are in `evaluation/results/`. Every real-AI stand-in test runs 
 - Local, single-process, synthetic-only deployment with simulated roles; no shared authentication, live airline adapters, production audit claim or LMS ZIP.
 - Source updates conservatively invalidate and hand off. The complete generic adapter envelope/field-level update protocol in architecture section 19 is not implemented. The synthetic ledger is coherent, and matching operational commits and own-batch inventory changes are guarded.
 - Monitoring conservatively requests classification for late effective-time changes rather than reconstructing arbitrary consistent multi-authority history. The UI provides the declared scripted trigger/brief-lift paths.
-- Execution has persisted state, leases/fences and resumable receipts; it does not implement the full generic durable stage-job scheduler or every cross-system crash-recovery row. An interrupted execution is resumed explicitly through the guarded control after its lease expires.
+- Execution now automatically reclaims expired worker leases from the durable ledger on server startup and while running. Recovery preserves original deadlines and receipts, rechecks authority and fences old workers. The full generic scheduler for every planning/model stage and every cross-system crash row remain unimplemented.
 - Handoffs now support assigned-owner acceptance/return, coordinator reassignment and evidence-backed manual-handling records, with immutable history and frozen receipt/communication evidence. These records never change passenger outcomes or revive execution authority; verified external outcome adapters remain outside the synthetic profile.
 - The independent calculation oracle covers the reference graph. General spare-tail/network oracle coverage, a richer approved precedent corpus, all warning thresholds and all architecture A1–A9 acceptance evidence remain broader work.
 

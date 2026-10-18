@@ -58,3 +58,7 @@ Observed evidence and remaining verification limits are in [BUILD-STATUS.md](BUI
 - This Python backend is separate from the LMS browser ZIP profile. No LMS ZIP is produced by this application.
 
 [PRD.md](PRD.md) and [ARCHITECTURE-ADK.md](ARCHITECTURE-ADK.md) remain the design baseline. Some broader design acceptance checks require additional evidence; see the explicit limitations in BUILD-STATUS.md. Development instructions live in [AGENT.md](AGENT.md).
+
+Handoffs support simulated owner acceptance, return, coordinator reassignment and evidence-backed manual-handling records. Their evidence/history is exportable; recording manual handling never changes booking or delivery outcomes.
+
+If the local server stops during execution, restarting it automatically reclaims the abandoned worker after its 15-second lease expires. Recovery retains the original approval and execution deadlines and preserves committed receipts. Expired or invalid authority produces a manual handoff instead of further effects.

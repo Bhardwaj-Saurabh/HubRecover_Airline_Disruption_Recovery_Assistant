@@ -224,3 +224,35 @@ def test_handoff_stale_version_and_partial_evidence(service):
     with pytest.raises(Refusal):
         cmd(service,run,'return_handoff',handoff_id=packet['id'],note='Stale return')
     assert service.get(run['id'])['handoffs']==accepted['handoffs']
+
+
+def test_automatic_execution_reclaim_preserves_budget_and_fences_old_worker(tmp_path):
+    now=[1000.0]
+    service=RecoveryService(tmp_path/'recovery.sqlite',clock=lambda:now[0])
+    run=ready(service);run=cmd(service,run,'execute');old_fence=run['fence']
+    run=service.work_step(run['id'],old_fence)
+    deadline=run['execution_deadline'];receipt=run['receipts'].copy()
+    restarted=RecoveryService(service.store.path,clock=lambda:now[0])
+    assert restarted.reclaim_interrupted_execution() is None
+    now[0]+=15
+    claimed=restarted.reclaim_interrupted_execution()
+    assert claimed['execution_deadline']==deadline and claimed['receipts']==receipt
+    assert claimed['fence']>old_fence
+    with pytest.raises(Refusal): service.work_step(run['id'],old_fence)
+    assert restarted.reclaim_interrupted_execution() is None
+    final=restarted.execute(run['id'],claimed['fence'])
+    assert final['status']=='COMPLETED' and len(final['receipts'])==150
+    assert all(final['receipts'][k]==v for k,v in receipt.items())
+
+
+@pytest.mark.parametrize('failure',['deadline','disabled','stopped','source'])
+def test_recovery_cannot_revive_invalid_execution(tmp_path,failure):
+    now=[1000.0];service=RecoveryService(tmp_path/'recovery.sqlite',clock=lambda:now[0])
+    run=ready(service);run=cmd(service,run,'execute')
+    if failure=='disabled': service.control('disable')
+    elif failure=='stopped': run=cmd(service,run,'stop')
+    elif failure=='source': run=cmd(service,run,'source_change')
+    now[0]+=120 if failure=='deadline' else 15
+    service.reclaim_interrupted_execution()
+    final=service.get(run['id'])
+    assert final['status']=='MANUAL_HANDOFF' and not final['receipts']

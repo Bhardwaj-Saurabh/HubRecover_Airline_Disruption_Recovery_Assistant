@@ -70,10 +70,34 @@ def create_app(data_dir=None):
     ai=BoundedAI(service)
     eval_state={'running':False,'completed':0,'total':len(CASES),'error':None}
 
+    async def recovery_worker(stopping):
+        while not stopping.is_set():
+            recovered=await asyncio.to_thread(service.reclaim_interrupted_execution)
+            if recovered:
+                if recovered['status']=='EXECUTING':
+                    try:
+                        await asyncio.to_thread(service.execute,recovered['id'],recovered['fence'])
+                    except Refusal:
+                        pass  # A newer command fenced this worker.
+                async with workflow_lock:
+                    await workflow.resume(recovered['id'])
+            try:
+                await asyncio.wait_for(stopping.wait(),timeout=1)
+            except asyncio.TimeoutError:
+                pass
+
     @asynccontextmanager
     async def lifespan(app):
-        yield
-        await workflow.close()
+        stopping=asyncio.Event()
+        worker=asyncio.create_task(recovery_worker(stopping))
+        try:
+            yield
+        finally:
+            stopping.set()
+            try:
+                await worker
+            finally:
+                await workflow.close()
     app=FastAPI(title='HubRecover synthetic recovery',lifespan=lifespan)
     app.state.service=service
 
