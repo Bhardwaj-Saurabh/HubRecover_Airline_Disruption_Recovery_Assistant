@@ -36,6 +36,14 @@ When configured, the review panel enables bounded explanation and edit interpret
 
 **Real-provider calls were not run in this environment:** neither the Gemini key nor model identifier is configured. Stand-in tests do not establish real-model correctness or usefulness. Confirm model availability and run the real-AI evaluation before claiming provider compatibility or quality.
 
+Run the explicit provider conformance check after configuring the environment:
+
+```sh
+uv run python -m evaluation.live_ai
+```
+
+This makes up to nine bounded model requests (three repeats each for explanation, supported edit and ambiguity). It uses isolated temporary ledgers and never approves or executes passenger actions. The report is written to `.hubrecover/evaluation/live-ai.json`; missing configuration records `NOT_RUN` and exits 2, a failed check exits 1, and passing conformance exits 0. Human verdicts remain blank. This is not a blind quality evaluation or a measurement of benefit/cost. Use `--repeats 1` for an initial three-request check.
+
 ## Verify
 
 ```sh

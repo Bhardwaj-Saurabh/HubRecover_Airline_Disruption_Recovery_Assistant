@@ -18,7 +18,7 @@ The implementation uses a serialized SQLite transaction for pure planning rather
 
 ## Checks that still require access or independent observations
 
-1. Configure `GOOGLE_API_KEY` and an exact `HUBRECOVER_GEMINI_MODEL` in the server environment, then run repeated real-model explanation/edit evaluation. No credentials are accepted in chat or stored in the repository.
+1. Configure `GOOGLE_API_KEY` and an exact `HUBRECOVER_GEMINI_MODEL` in the server environment, then run `uv run python -m evaluation.live_ai` for repeated explanation/edit/clarification conformance. The isolated runner never approves a plan, records missing configuration as `NOT_RUN`, and leaves human verdicts blank. No credentials are accepted in chat or stored in the repository.
 2. Inspect the running UI in an available browser: narrow and wide screens, keyboard navigation, review/edit/clarification, acknowledgements, execution, handoffs and evaluations. Computer-use currently returns no available browser and a native startup failure.
 3. Collect the PRD's reviewer scores and matched manual/rules-only/AI comparisons. Reviewers must enter their own observations; no benefit or approval is prefilled.
 4. Independently freeze a fresh quality holdout and complete the full PRD matrix before acceptance. The exposed 20-case deterministic suite is conformance evidence, not a blind quality study.

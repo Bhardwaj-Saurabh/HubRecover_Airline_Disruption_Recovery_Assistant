@@ -39,6 +39,7 @@ Detailed reports are in `evaluation/results/`. Every real-AI stand-in test runs 
 
 ## Unrun or broader acceptance work
 
+- A repeatable live-provider evaluator is available at `python -m evaluation.live_ai`: up to nine bounded requests, isolated ledgers, explicit NOT_RUN/FAIL/PASS, no passenger effects and blank human verdicts. Missing configuration, stand-in labelling/isolation and exception redaction have automated checks.
 - **Real Gemini calls are unrun:** neither `GOOGLE_API_KEY` nor `HUBRECOVER_GEMINI_MODEL` is configured. Exact provider/model availability, token counting, structured responses, repeated quality/cost evaluation and real-AI usefulness still need observation.
 - **Browser visual/interaction QA is unrun:** the latest computer-use inventory returned no apps/browsers and a native startup failure. HTTP integration, JS syntax and DOM-contract checks passed; they do not substitute for a rendered-browser inspection.
 - Human/proxy comprehension scoring, matched manual/rules-only/AI task comparisons and actual benefit claims require user/reviewer observations. No verdict or business benefit has been invented.
