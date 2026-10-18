@@ -8,7 +8,7 @@ The local synthetic application and its restart/exception workflows are implemen
 | A2 passenger effects | Whole-party allocation, net-seat atomic replacement, immutable history, unique receipts, separate outbox retries | Allocation/service tests; injected pre-commit crash; actual HTTP completion |
 | A3 source ownership | Typed synthetic source commands, revisions, material comparison, frozen snapshots, classified expected changes | Source tests for seven adapters; snapshots readable through API |
 | A4 durability | Transactional planning, current approval guards, execution leases/fences, durable ADK continuation jobs, persisted wait deadlines | Restart, missing mapping, takeover, stale result, retry ceiling and rollback tests |
-| A5 bounded AI | Schema-only claims, scoped citations and predicate witnesses, explicit edit clarification, no operational tools | Stand-in and rejection tests only; real provider remains unverified |
+| A5 bounded AI | Schema-only claims, scoped citations and predicate witnesses, explicit edit clarification, no operational tools | Stand-in/rejection tests plus live 3/3 smoke; repeated 6/9 with quota errors, so acceptance remains open |
 | A6 manual ownership | Acceptance, return, reassignment and evidence-backed manual handling; immutable history | Wrong-role, stale version, restart and no-fabricated-outcome tests |
 | A7 evaluation | Isolated development/conformance runners, independent bounded oracle, reviewer forms and observed timing | 18/18 and 20/20 deterministic observations; human verdicts remain blank |
 | A8 budgets | Persisted model reservations, token preflight, time/call limits, no unknown-outcome budget reset | Stand-in failure/budget tests; actual provider cost remains unmeasured |
@@ -18,7 +18,7 @@ The implementation uses a serialized SQLite transaction for pure planning rather
 
 ## Checks that still require access or independent observations
 
-1. Configure `GOOGLE_API_KEY` and an exact `HUBRECOVER_GEMINI_MODEL` in the server environment, then run `uv run python -m evaluation.live_ai` for repeated explanation/edit/clarification conformance. The isolated runner never approves a plan, records missing configuration as `NOT_RUN`, and leaves human verdicts blank. No credentials are accepted in chat or stored in the repository.
+1. The local `.env` now supplies `GOOGLE_API_KEY` and `HUBRECOVER_GEMINI_MODEL`. Initial live smoke passed 3/3; repeated evaluation passed 6/9 with free-tier quota errors and remains incomplete. Once quota is available, run `uv run python -m evaluation.live_ai` for repeated explanation/edit/clarification conformance. The isolated runner never approves a plan, records missing configuration as `NOT_RUN`, and leaves human verdicts blank. The local `.env` is ignored by Git; no credentials are accepted in chat or committed.
 2. Inspect the running UI in an available browser: narrow and wide screens, keyboard navigation, review/edit/clarification, acknowledgements, execution, handoffs and evaluations. Computer-use currently returns no available browser and a native startup failure.
 3. Collect the PRD's reviewer scores and matched manual/rules-only/AI comparisons. Reviewers must enter their own observations; no benefit or approval is prefilled.
 4. Independently freeze a fresh quality holdout and complete the full PRD matrix before acceptance. The exposed 20-case deterministic suite is conformance evidence, not a blind quality study.

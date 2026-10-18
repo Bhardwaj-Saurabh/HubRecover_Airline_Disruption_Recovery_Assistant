@@ -1,11 +1,11 @@
 {
   "date": "2026-10-18",
   "mode": "SYNTHETIC_RULES_ONLY",
-  "source_digest": "9c4e63ccbfdb79f950dd9e408f558b4b9e16af9be767f45f4148b36e99a149d5",
+  "source_digest": "5f2695aee389d3d30361aa47f8f37d81ce5dca8a8528e6266600cf8ba5ae6613",
   "regression": {
-    "passed": 146,
+    "passed": 154,
     "failed": 0,
-    "seconds": 68.88,
+    "seconds": 72.97,
     "warnings": 2
   },
   "subsequent_focused_job_suite": {
@@ -49,5 +49,18 @@
     "Human comprehension and matched value comparison",
     "Complete PRD acceptance matrix"
   ],
-  "note": "The source digest describes delivered code. The last full suite preceded the final job-attempt cap; the affected job suite passed afterward."
+  "note": "Full regression preceded the final reason-catalog and error-code changes; affected AI/configuration/evidence suite passed afterward. Live repeated evaluation remains incomplete due to observed quota errors.",
+  "subsequent_focused_ai_suite": {
+    "passed": 17,
+    "failed": 0
+  },
+  "live_provider": {
+    "model": "gemini-3.8-flash",
+    "initial_smoke_passed": 3,
+    "initial_smoke_total": 3,
+    "repeated_passed": 6,
+    "repeated_total": 9,
+    "status": "FAIL",
+    "provider_quota_errors_observed": true
+  }
 }

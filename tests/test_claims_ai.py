@@ -77,3 +77,20 @@ def test_ambiguous_edit_requires_versioned_clarification_without_renewing_wait(t
         assert not result.get('clarification') and result['approval'] is None
         assert result['ai_budget']['calls']==1
     asyncio.run(exercise())
+
+
+def test_edit_context_contains_only_exact_user_referenced_targets(tmp_path):
+    import json
+    from hubrecover.domain.claims import EditProposal
+    async def exercise():
+        service=RecoveryService(tmp_path/'context.sqlite');run=service.create()
+        ai=BoundedAI(service);ai.enabled=True;ai.model='STANDIN_TEST_ONLY'
+        async def generate(schema,payload,role):
+            assert payload['allowed_targets']==['SYN-PARTY-0-00']
+            assert payload['allowed_flights']==[]
+            assert len(json.dumps(payload))<500
+            return EditProposal(kind='maxArrivalDelay',target='SYN-PARTY-0-00',minutes=60)
+        ai.generate=generate
+        result=await ai.request(run['id'],run['revision'],'edit',text='Limit SYN-PARTY-0-00 to 60 minutes arrival delay.')
+        assert result['generation']==2 and result['status']=='AWAITING_APPROVAL'
+    asyncio.run(exercise())

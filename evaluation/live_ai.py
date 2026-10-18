@@ -67,6 +67,7 @@ async def evaluate(repeats=3, *, test_factory=None):
                     source_snapshot_id=final.get('snapshot_id'),card_digest=final.get('card_digest'),
                     explanations=[dict(plan_id=p['id'],text=p['explanation']) for p in final['search'].get('plans',[])],
                     failure_types=[t['detail'].get('error_type') for t in final['trace'] if t['action']=='AI_FAILED'],
+                    failure_codes=[t['detail'].get('error_code') for t in final['trace'] if t['action']=='AI_FAILED'],
                     human_verdict=None))
     report['passed']=sum(r['diagnostic']=='PASS' for r in report['results'])
     report['status']='PASS' if report['passed']==report['requested'] else 'FAIL'

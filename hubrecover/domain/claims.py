@@ -27,6 +27,18 @@ class EditProposal(Record):
 
 METRICS=['unresolved passengers','next-day arrivals','passenger arrival-delay minutes','cancelled flights','flight departure-delay minutes']
 
+REASON_CATALOG={
+    'UNRESOLVED_REDUCTION':dict(metric=METRICS[0],witnesses=2,comparison='LT'),
+    'OVERNIGHT_REDUCTION':dict(metric=METRICS[1],witnesses=2,comparison='LT'),
+    'ARRIVAL_DELAY_TRADEOFF':dict(metric=METRICS[2],witnesses=2,comparison='GT'),
+    'CANCELLATION_TRADEOFF':dict(metric=METRICS[3],witnesses=2,comparison='GT'),
+    'DEPENDENCY_PENDING':dict(metric='pending prerequisites',witnesses=1,comparison='GT',value=0),
+    'PROTECTED_CONNECTION_MET':dict(metric='protected connection passengers',witnesses=1,comparison='EQ',value=50),
+    'PARTY_PRESERVED':dict(metric='unsplit parties',witnesses=1,comparison='EQ',value=150),
+    'LIMITED_PRECEDENT_NOTICE':dict(metric='eligible precedents',witnesses=1,comparison='EQ',value=0),
+}
+
+
 def context(plans,generation):
     facts={}
     for p in plans:
@@ -38,7 +50,7 @@ def context(plans,generation):
         for key,(metric,value) in extras.items():
             facts[f"{p['id']}:{key}"]=dict(plan_id=p['id'],metric=metric,value=value,cohort='REFERENCE_300')
         facts[f"{p['id']}:dependencies"]=dict(plan_id=p['id'],metric='pending prerequisites',value=len(p['prerequisites']),cohort='REFERENCE_300')
-    data=dict(generation=generation,plan_ids=[p['id'] for p in plans],facts=facts,
+    data=dict(generation=generation,reason_catalog=REASON_CATALOG,plan_ids=[p['id'] for p in plans],facts=facts,
               eligible_precedents=sorted({v['id'] for p in plans for v in p.get('precedents',[])})[:4],
               plan_precedents={p['id']:[v['id'] for v in p.get('precedents',[])] for p in plans})
     data['context_digest']=digest(data)

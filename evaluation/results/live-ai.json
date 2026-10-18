@@ -1,0 +1,398 @@
+{
+  "suite": "LIVE_AI_CONFORMANCE_V1",
+  "recorded_at": "2026-10-18T19:10:59.442912+00:00",
+  "mode": "REAL_AI",
+  "status": "FAIL",
+  "model": "gemini-3.8-flash",
+  "requested": 9,
+  "results": [
+    {
+      "task": "explanation",
+      "repeat": 1,
+      "diagnostic": "PASS",
+      "status": "AWAITING_APPROVAL",
+      "generation": 1,
+      "no_passenger_effects": true,
+      "error_type": null,
+      "elapsed_seconds": 4.215988375013694,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 14048,
+        "rounds": {
+          "1:explanation": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "3b51b62cb0b1aef76646bb4aef637236067a74ddd5a2b8b9acaca6abbcbbe434",
+      "card_digest": "6ae4c29dc7059cc93153c5b2a2b08db498012a11e4bdbe05ef87404160b2a9d4",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        }
+      ],
+      "failure_types": [],
+      "human_verdict": null
+    },
+    {
+      "task": "explanation",
+      "repeat": 2,
+      "diagnostic": "PASS",
+      "status": "AWAITING_APPROVAL",
+      "generation": 1,
+      "no_passenger_effects": true,
+      "error_type": null,
+      "elapsed_seconds": 5.019562708039302,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 14048,
+        "rounds": {
+          "1:explanation": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "f32f3a8c2aeb7d9505e96f2f73209e72cb6ee295984e4323617ab6a27e2f3f6a",
+      "card_digest": "6ae4c29dc7059cc93153c5b2a2b08db498012a11e4bdbe05ef87404160b2a9d4",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        }
+      ],
+      "failure_types": [],
+      "human_verdict": null
+    },
+    {
+      "task": "explanation",
+      "repeat": 3,
+      "diagnostic": "PASS",
+      "status": "AWAITING_APPROVAL",
+      "generation": 1,
+      "no_passenger_effects": true,
+      "error_type": null,
+      "elapsed_seconds": 4.294846459000837,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 14048,
+        "rounds": {
+          "1:explanation": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "e0e28e7c9ae3ebdafe8edd215193d0035a00a7e9ab8ebf008b615963a2cf3d74",
+      "card_digest": "6ae4c29dc7059cc93153c5b2a2b08db498012a11e4bdbe05ef87404160b2a9d4",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        }
+      ],
+      "failure_types": [],
+      "human_verdict": null
+    },
+    {
+      "task": "supported_edit",
+      "repeat": 1,
+      "diagnostic": "PASS",
+      "status": "AWAITING_APPROVAL",
+      "generation": 2,
+      "no_passenger_effects": true,
+      "error_type": null,
+      "elapsed_seconds": 2.331075125024654,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 4608,
+        "rounds": {
+          "1:edit": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "66a860ed1536deeca048bc838736ac61756f1a8a702b66086cf7558c6f35f92c",
+      "card_digest": "c4edbcad272b10850726ec6b92655a956e0433e5abc5a6a1cc2a8502e2d22d8d",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        }
+      ],
+      "failure_types": [],
+      "human_verdict": null
+    },
+    {
+      "task": "supported_edit",
+      "repeat": 2,
+      "diagnostic": "PASS",
+      "status": "AWAITING_APPROVAL",
+      "generation": 2,
+      "no_passenger_effects": true,
+      "error_type": null,
+      "elapsed_seconds": 4.29940041602822,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 4608,
+        "rounds": {
+          "1:edit": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "729dfe661dfffe9eee4d13dbce8b90b8150e5cb5199b54439a2cb837ad6ac1a4",
+      "card_digest": "c4edbcad272b10850726ec6b92655a956e0433e5abc5a6a1cc2a8502e2d22d8d",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        }
+      ],
+      "failure_types": [],
+      "human_verdict": null
+    },
+    {
+      "task": "supported_edit",
+      "repeat": 3,
+      "diagnostic": "FAIL",
+      "status": "MANUAL_HANDOFF",
+      "generation": 1,
+      "no_passenger_effects": true,
+      "error_type": "Refusal",
+      "elapsed_seconds": 0.29920183401554823,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 4608,
+        "rounds": {
+          "1:edit": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "eb8fb6fff61d538f259f46ec7c3e4bcfbaf9c099fcbb75f8bfb7cc25c3cee14f",
+      "card_digest": "c4edbcad272b10850726ec6b92655a956e0433e5abc5a6a1cc2a8502e2d22d8d",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        }
+      ],
+      "failure_types": [
+        "Refusal"
+      ],
+      "human_verdict": null
+    },
+    {
+      "task": "ambiguous_edit",
+      "repeat": 1,
+      "diagnostic": "PASS",
+      "status": "NEEDS_CLARIFICATION",
+      "generation": 1,
+      "no_passenger_effects": true,
+      "error_type": null,
+      "elapsed_seconds": 3.1895934590138495,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 4608,
+        "rounds": {
+          "1:edit": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "3632d9be5592fcc6a3904631e5a700813c79a08dc78e2cc2169ed16b6cd6acc8",
+      "card_digest": "c4edbcad272b10850726ec6b92655a956e0433e5abc5a6a1cc2a8502e2d22d8d",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        }
+      ],
+      "failure_types": [],
+      "human_verdict": null
+    },
+    {
+      "task": "ambiguous_edit",
+      "repeat": 2,
+      "diagnostic": "FAIL",
+      "status": "MANUAL_HANDOFF",
+      "generation": 1,
+      "no_passenger_effects": true,
+      "error_type": "Refusal",
+      "elapsed_seconds": 0.2553242089925334,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 4608,
+        "rounds": {
+          "1:edit": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "32bb2ee6067f740428d742a53577594ec8aaece8608f63a22a06612ecc2caf93",
+      "card_digest": "c4edbcad272b10850726ec6b92655a956e0433e5abc5a6a1cc2a8502e2d22d8d",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        }
+      ],
+      "failure_types": [
+        "Refusal"
+      ],
+      "human_verdict": null
+    },
+    {
+      "task": "ambiguous_edit",
+      "repeat": 3,
+      "diagnostic": "FAIL",
+      "status": "MANUAL_HANDOFF",
+      "generation": 1,
+      "no_passenger_effects": true,
+      "error_type": "Refusal",
+      "elapsed_seconds": 0.3359454999445006,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 4608,
+        "rounds": {
+          "1:edit": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "7a996fd9b9374c153f12ed57398602b2377d92c12388edd94cd078494053d673",
+      "card_digest": "c4edbcad272b10850726ec6b92655a956e0433e5abc5a6a1cc2a8502e2d22d8d",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        }
+      ],
+      "failure_types": [
+        "Refusal"
+      ],
+      "human_verdict": null
+    }
+  ],
+  "human_verdict": null,
+  "limitations": [
+    "Exposed conformance tasks, not a blind model-quality holdout",
+    "Human comprehension, business benefit and actual cost are unmeasured",
+    "No booking or messaging execution is authorised by these checks"
+  ],
+  "passed": 6,
+  "manifest_digest": "ca6df9e1c2a8c9c20644f18a3ac3b2c46b2409dddc3fc2d12952845797842727",
+  "provider_error_summary": {
+    "observed_codes": [
+      "RESOURCE_EXHAUSTED"
+    ],
+    "quota_metric": "generate_content_free_tier_requests",
+    "note": "Provider logs reported free-tier quota exhaustion during the repeated run. Exact per-result codes were not captured in this first report; subsequent evaluations record them."
+  },
+  "implementation_notes": [
+    "Corrected ADK root mode with maximum one model call",
+    "Used JSON Schema transport with inlined references; array limits remain mandatory in local validation",
+    "Reduced edit context to exact referenced identifiers",
+    "Supplied reason predicate catalog to the explanation model",
+    "No passenger effects or automatic provider retries"
+  ]
+}

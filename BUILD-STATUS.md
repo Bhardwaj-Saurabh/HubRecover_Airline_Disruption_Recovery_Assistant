@@ -20,7 +20,7 @@ Ambiguous AI edits now enter a version-bound clarification wait, with a supporte
 
 | Check | Actual evidence |
 | --- | --- |
-| Python regression | **146 passed** in the final regression run (68.88 seconds), followed by **3/3** focused durable-job checks including the newly added retry-budget test; two third-party deprecation warnings; no provider credentials used |
+| Python regression | **154 passed** in the latest full regression run (72.97 seconds); **17/17** focused AI/configuration/evidence checks passed after the final fixes. Unit tests use isolated test credentials/transports, not the real provider |
 | Reference fixture | 24 flights and 300 passengers; invariant checks pass |
 | Independent oracle | All 18 selected reference descriptors agree on feasibility, party allocations and ranking; separate cap-selection oracle covers 279 raw descriptors |
 | Development demonstrations | 18/18 implemented subvariants pass automatic diagnostics; learner verdicts remain null |
@@ -33,6 +33,7 @@ Ambiguous AI edits now enter a version-bound clarification wait, with a supporte
 | Automatic execution recovery | Server restart resumes from one committed party to 150 receipts/300 mock messages; original deadlines, fencing, Stop/source/disable boundaries verified |
 | Rebooking transaction | A next-day option produces two superseded booking records, preserves shared-leg occupancy and creates a care handoff |
 | Timing | 30/30 rules-only qualifying runs produce a card, zero failed/handoff runs; local trigger-to-card p95 0.1523 seconds. No inference of human time savings |
+| Live Gemini | Initial 3/3 smoke; repeated suite 6/9 with quota errors; no passenger effects. Not full provider acceptance |
 | JavaScript / launch checks | `node --check`, shell syntax, Python compilation, design-block preservation and DOM-control contract checks |
 
 Detailed reports are in `evaluation/results/`. Every real-AI stand-in test runs in an isolated test ledger; these tests are not provider evidence. Third-party OpenTelemetry and Starlette deprecation warnings do not fail the suite.
@@ -40,7 +41,7 @@ Detailed reports are in `evaluation/results/`. Every real-AI stand-in test runs 
 ## Unrun or broader acceptance work
 
 - A repeatable live-provider evaluator is available at `python -m evaluation.live_ai`: up to nine bounded requests, isolated ledgers, explicit NOT_RUN/FAIL/PASS, no passenger effects and blank human verdicts. Missing configuration, stand-in labelling/isolation and exception redaction have automated checks.
-- **Real Gemini calls are unrun:** neither `GOOGLE_API_KEY` nor `HUBRECOVER_GEMINI_MODEL` is configured. Exact provider/model availability, token counting, structured responses, repeated quality/cost evaluation and real-AI usefulness still need observation.
+- **Real Gemini calls now have evidence:** repository-local `.env` settings load without being printed or committed. A three-task smoke passed 3/3 on `gemini-3.8-flash`; the subsequent three-repeat run passed 6/9, including all three explanation checks, with provider `RESOURCE_EXHAUSTED` free-tier quota errors observed. The repeated suite is recorded as FAIL, not full acceptance. See `evaluation/results/live-ai.json`. Stop further calls until quota is available; quality, human usefulness and actual cost remain unmeasured.
 - **Browser visual/interaction QA is unrun:** the latest computer-use inventory returned no apps/browsers and a native startup failure. HTTP integration, JS syntax and DOM-contract checks passed; they do not substitute for a rendered-browser inspection.
 - Human/proxy comprehension scoring, matched manual/rules-only/AI task comparisons and actual benefit claims require user/reviewer observations. No verdict or business benefit has been invented.
 - The 18 development observations each cover one executable subvariant. They do not establish all subvariants, crash rows and acceptance thresholds in TEST-PLAN.md. A fresh independently held-out quality set is needed before final model acceptance.
