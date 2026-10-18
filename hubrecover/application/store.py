@@ -3,6 +3,7 @@ from contextlib import contextmanager
 import json
 from pathlib import Path
 import sqlite3
+from .jobs import enqueue
 
 
 class Store:
@@ -18,6 +19,9 @@ class Store:
             CREATE TABLE IF NOT EXISTS research(id TEXT PRIMARY KEY, body TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS observations(id TEXT PRIMARY KEY, body TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS snapshots(id TEXT PRIMARY KEY, run_id TEXT NOT NULL, body TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS jobs(id TEXT PRIMARY KEY, run_id TEXT NOT NULL, generation INTEGER NOT NULL,
+                stage TEXT NOT NULL, status TEXT NOT NULL, fence INTEGER NOT NULL, lease_until REAL NOT NULL,
+                attempts INTEGER NOT NULL, error TEXT);
             ''')
             db.execute('INSERT OR IGNORE INTO control VALUES(1,?)', (json.dumps(dict(
                 mode='SYNTHETIC', writes_enabled=True, version=1, history=[])),))
@@ -45,6 +49,7 @@ class Store:
         return json.loads(row['body'])
 
     def save(self, db, run):
+        enqueue(db,run)
         for snapshot in run.get('snapshots',[]):
             if 'content' in snapshot:
                 db.execute('INSERT OR IGNORE INTO snapshots VALUES(?,?,?)',

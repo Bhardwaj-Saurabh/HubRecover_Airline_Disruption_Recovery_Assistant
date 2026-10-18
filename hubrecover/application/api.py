@@ -61,6 +61,8 @@ class ResearchRecord(Body):
         return self
 
 
+from . import jobs
+
 def create_app(data_dir=None):
     folder=Path(data_dir or os.environ.get('HUBRECOVER_DATA_DIR','.hubrecover')).resolve()
     service=RecoveryService(folder/'business.sqlite')
@@ -85,6 +87,24 @@ def create_app(data_dir=None):
                         pass  # A newer command fenced this worker.
                 async with workflow_lock:
                     await workflow.resume(recovered['id'])
+            async with workflow_lock:
+                job=await asyncio.to_thread(jobs.claim,service.store)
+                if job:
+                    async def heartbeat():
+                        while True:
+                            await asyncio.sleep(5)
+                            if not await asyncio.to_thread(jobs.renew,service.store,job): return
+                    pulse=asyncio.create_task(heartbeat())
+                    try:
+                        await workflow.resume(job['run_id'],job=job)
+                    except Exception as exc:
+                        await asyncio.to_thread(jobs.finish,service.store,job,type(exc).__name__)
+                    else:
+                        await asyncio.to_thread(jobs.finish,service.store,job)
+                    finally:
+                        pulse.cancel()
+                        try: await pulse
+                        except asyncio.CancelledError: pass
             try:
                 await asyncio.wait_for(stopping.wait(),timeout=1)
             except asyncio.TimeoutError:
@@ -145,6 +165,8 @@ def create_app(data_dir=None):
     @app.get('/api/runs/{run_id}')
     def get_run(run_id:str):
         run=service.get(run_id)
+        with service.store.connect() as db:
+            run['jobs']=[dict(row) for row in db.execute('SELECT * FROM jobs WHERE run_id=?',(run_id,))]
         for plan in run.get('search',{}).get('plans',[]):
             plan['operations_digest']=digest(plan['operations'])
         return run

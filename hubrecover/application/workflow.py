@@ -8,7 +8,8 @@ from google.adk.sessions import DatabaseSessionService
 from google.adk.workflow import START, Workflow
 from google.genai import types
 
-from .service import TERMINAL
+from .service import TERMINAL, Refusal
+from . import jobs
 
 
 class RecoveryWorkflow:
@@ -42,7 +43,8 @@ class RecoveryWorkflow:
         graph=Workflow(name='hubrecover_v1',edges=[(START,prepare,human_review,wait_for_reconciliation,summary)],max_concurrency=1)
         self.runner=Runner(node=graph,app_name='hubrecover',session_service=self.sessions)
 
-    async def start(self, scenario='happy', run_id=None):
+    async def start(self, scenario='happy', run_id=None, job=None):
+        expected=jobs.target(self.service.get(run_id)) if run_id else None
         state=dict(scenario=scenario)
         if run_id:
             state['domain_run_id']=run_id
@@ -50,7 +52,7 @@ class RecoveryWorkflow:
         await self._run(session.id,types.Content(role='user',parts=[types.Part(text='Start synthetic recovery')]))
         session=await self.sessions.get_session(app_name='hubrecover',user_id='local-synthetic',session_id=session.id)
         run_id=session.state['domain_run_id']
-        await self._record(run_id,session.id)
+        await self._record(run_id,session.id,expected,job)
         return self.service.get(run_id)
 
     async def _run(self, session_id, message, invocation_id=None):
@@ -58,7 +60,7 @@ class RecoveryWorkflow:
                                              new_message=message,invocation_id=invocation_id):
             pass
 
-    async def _record(self, run_id, session_id):
+    async def _record(self, run_id, session_id, expected=None, job=None):
         session=await self.sessions.get_session(app_name='hubrecover',user_id='local-synthetic',session_id=session_id)
         pending=None
         # The most recent model request is the current interrupt, unless answered.
@@ -70,20 +72,25 @@ class RecoveryWorkflow:
                     pending=None
         with self.service.store.transaction() as db:
             run=self.service.store.load(db,run_id)
-            run['adk']=dict(session_id=session_id,pending=pending,workflow_version='hubrecover_v1')
+            if (expected and jobs.target(run)!=expected) or (job and (not jobs.valid(db,job) or job['id']!=jobs.target(run))):
+                raise Refusal('Stale workflow continuation cannot publish a review mapping')
+            run['adk']=dict(session_id=session_id,pending=pending,workflow_version='hubrecover_v1',domain_target=jobs.target(run))
             self.service.store.save(db,run)
 
-    async def resume(self, run_id):
+    async def resume(self, run_id, job=None):
         run=self.service.get(run_id)
         mapping=run.get('adk')
         if not mapping:
-            return await self.start(run['scenario']['name'],run_id=run_id)
+            return await self.start(run['scenario']['name'],run_id=run_id,job=job)
+        expected=jobs.target(run)
         pending=mapping['pending']
         if pending:
             message=types.Content(role='user',parts=[types.Part(function_response=types.FunctionResponse(
                 id=pending['id'],name='adk_request_input',response=dict(status=run['status'])))])
             await self._run(mapping['session_id'],message,pending['invocation_id'])
-            await self._record(run_id,mapping['session_id'])
+            await self._record(run_id,mapping['session_id'],expected,job)
+        else:
+            await self._record(run_id,mapping['session_id'],expected,job)
         return self.service.get(run_id)
 
     async def close(self):
