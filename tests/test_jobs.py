@@ -40,3 +40,17 @@ def test_job_takeover_rejects_old_mapping_and_supersedes_stopped_work(tmp_path):
             assert current['id']==jobs.target(stopped)
         finally: await workflow.close()
     asyncio.run(exercise())
+
+
+def test_reconciliation_retry_budget_survives_restarts(tmp_path):
+    service=RecoveryService(tmp_path/'business.sqlite');run=service.create()
+    for attempt in range(1,4):
+        job=jobs.claim(service.store)
+        assert job['attempts']==attempt
+        jobs.finish(service.store,job,'SIMULATED_ADK_UNAVAILABLE')
+        service=RecoveryService(service.store.path)
+    assert jobs.claim(service.store) is None
+    with service.store.connect() as db:
+        row=db.execute('SELECT * FROM jobs WHERE id=?',(job['id'],)).fetchone()
+        assert row['status']=='FAILED' and row['attempts']==3
+    assert service.get(run['id'])['expires_at']==run['expires_at']

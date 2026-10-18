@@ -267,3 +267,47 @@ def test_wait_deadline_expires_after_restart_without_incoming_command(tmp_path):
     assert restarted.expire_waiting_work()==[]
     final=restarted.get(run['id'])
     assert final['status']=='MANUAL_HANDOFF' and not final['receipts']
+
+
+def test_monitor_history_classification_rechecks_trigger_without_authority(service):
+    run=service.create('near_miss')
+    start=run['scenario']['seed']['day_start_ms']+5*3600000
+    event=dict(event_id='SYN-AUTHORITY',version=2,effective_ms=start+60*60000,received_ms=start+60*60000,
+               kind='GROUND_STOP',active=True,applicable=True,confirmed=False,weather=True)
+    run=cmd(service,run,'monitor_event',event=event)
+    assert run['status']=='NEEDS_CLARIFICATION'
+    with pytest.raises(Refusal): cmd(service,run,'execute')
+    with pytest.raises(Refusal):
+        cmd(service,run,'classify_monitor',request_id=run['request_id'],history=[event],now_ms=start+61*60000,evidence='SYN-CORRECTION')
+    corrected=dict(event,version=1,effective_ms=start,received_ms=start,confirmed=True)
+    run=cmd(service,run,'classify_monitor',request_id=run['request_id'],history=[corrected],now_ms=start+61*60000,evidence='SYN-CORRECTION')
+    assert run['status']=='AWAITING_APPROVAL' and run['generation']==1
+    assert run['approval'] is None and not run['receipts']
+
+
+def test_crash_before_receipt_commit_rolls_back_entire_party(service,monkeypatch):
+    run=ready(service);run=cmd(service,run,'execute');before=service.get(run['id'])
+    save=service.store.save
+    def fail(*args): raise RuntimeError('Simulated process failure before commit')
+    monkeypatch.setattr(service.store,'save',fail)
+    with pytest.raises(RuntimeError): service.work_step(run['id'],run['fence'])
+    monkeypatch.setattr(service.store,'save',save)
+    after=service.get(run['id'])
+    for key in ('inventory','bookings','receipts','outbox','booking_history','source_updates'):
+        assert after[key]==before[key]
+    retried=service.work_step(run['id'],run['fence'])
+    assert len(retried['receipts'])==1 and len(retried['outbox'])==2
+
+
+def test_legacy_active_run_requires_fresh_episode_on_source_protocol_upgrade(service):
+    run=service.create()
+    with service.store.transaction() as db:
+        saved=service.store.load(db,run['id'])
+        for key in ('sources','expected_material','snapshots','source_updates'):
+            saved.pop(key,None)
+        service.store.save(db,saved)
+    restarted=RecoveryService(service.store.path)
+    migrated=restarted.get(run['id'])
+    assert migrated['status']=='MANUAL_HANDOFF'
+    assert migrated['handoffs'][-1]['reason']=='SOURCE_PROTOCOL_UPGRADE_REQUIRES_NEW_EPISODE'
+    assert not migrated['receipts']

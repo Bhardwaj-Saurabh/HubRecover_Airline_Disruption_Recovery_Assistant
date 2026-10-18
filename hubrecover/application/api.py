@@ -74,10 +74,7 @@ def create_app(data_dir=None):
 
     async def recovery_worker(stopping):
         while not stopping.is_set():
-            expired=await asyncio.to_thread(service.expire_waiting_work)
-            for run_id in expired:
-                async with workflow_lock:
-                    await workflow.resume(run_id)
+            await asyncio.to_thread(service.expire_waiting_work)
             recovered=await asyncio.to_thread(service.reclaim_interrupted_execution)
             if recovered:
                 if recovered['status']=='EXECUTING':
@@ -85,8 +82,6 @@ def create_app(data_dir=None):
                         await asyncio.to_thread(service.execute,recovered['id'],recovered['fence'])
                     except Refusal:
                         pass  # A newer command fenced this worker.
-                async with workflow_lock:
-                    await workflow.resume(recovered['id'])
             async with workflow_lock:
                 job=await asyncio.to_thread(jobs.claim,service.store)
                 if job:
@@ -198,7 +193,7 @@ def create_app(data_dir=None):
                 async with workflow_lock:
                     await workflow.resume(run_id)
             background.add_task(execute_and_resume)
-        elif action in ('approve','edit','reject','stop','advance','source_change','source_update','resume_monitor','clarify'):
+        elif action in ('approve','edit','reject','stop','advance','source_change','source_update','resume_monitor','clarify','monitor_event','classify_monitor'):
             async with workflow_lock:
                 run=await workflow.resume(run_id)
         return run

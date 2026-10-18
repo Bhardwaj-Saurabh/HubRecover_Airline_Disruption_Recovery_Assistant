@@ -26,6 +26,9 @@ def claim(store,now=None):
             if target(run)!=row['id'] or run.get('adk',{}).get('domain_target')==row['id']:
                 db.execute("UPDATE jobs SET status='SUPERSEDED' WHERE id=?",(row['id'],))
                 continue
+            if row['attempts']>=3:
+                db.execute("UPDATE jobs SET status='FAILED',error='Lease attempts exhausted' WHERE id=?",(row['id'],))
+                continue
             fence=row['fence']+1
             db.execute("UPDATE jobs SET status='RUNNING',fence=?,lease_until=?,attempts=attempts+1 WHERE id=?",
                        (fence,now+15,row['id']))

@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-18",
+  "mode": "SYNTHETIC_RULES_ONLY",
+  "source_digest": "9c4e63ccbfdb79f950dd9e408f558b4b9e16af9be767f45f4148b36e99a149d5",
+  "regression": {
+    "passed": 146,
+    "failed": 0,
+    "seconds": 68.88,
+    "warnings": 2
+  },
+  "subsequent_focused_job_suite": {
+    "passed": 3,
+    "failed": 0,
+    "includes_new_retry_budget_test": true
+  },
+  "development": {
+    "passed": 18,
+    "total": 18
+  },
+  "deterministic_conformance": {
+    "passed": 20,
+    "total": 20,
+    "blind_holdout": false
+  },
+  "http_smoke": {
+    "mode": "RULES_ONLY",
+    "transport": "ACTUAL_LOOPBACK_HTTP",
+    "status": "COMPLETED",
+    "parties": 150,
+    "messages_sent": 300,
+    "generation": 2,
+    "immutable_snapshot_verified": true,
+    "provider_configured": false,
+    "browser_visual_qa": "NOT_RUN",
+    "limitations": [
+      "Synthetic local server only; no real operational or provider calls"
+    ]
+  },
+  "static_checks": [
+    "JavaScript syntax",
+    "Launcher shell syntax",
+    "Python compilation",
+    "Git whitespace check",
+    "Preserved design tokens and DOM control IDs"
+  ],
+  "unverified": [
+    "Real Gemini provider and model quality",
+    "Rendered browser appearance and interactions",
+    "Human comprehension and matched value comparison",
+    "Complete PRD acceptance matrix"
+  ],
+  "note": "The source digest describes delivered code. The last full suite preceded the final job-attempt cap; the affected job suite passed afterward."
+}

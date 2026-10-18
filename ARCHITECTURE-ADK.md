@@ -1,6 +1,6 @@
 # HubRecover architecture with Google ADK
 
-**Design baseline:** 11 October 2026. **Implementation update, 17 October 2026:** a local ADK prototype, synthetic dataset and deterministic evidence now exist. BUILD-STATUS.md records the implemented subset and outstanding architecture acceptance work; this document remains the full design target.
+**Design baseline:** 11 October 2026. **Implementation update, 18 October 2026:** a local ADK prototype, synthetic dataset and deterministic evidence now exist. BUILD-STATUS.md records the implemented subset and outstanding architecture acceptance work; this document remains the full design target.
 
 **Review revision:** Findings A1–A9 from [ARCHITECTURE-REVIEW.md](ARCHITECTURE-REVIEW.md) are addressed by the design contracts in sections 17–25. They still require implementation and the verification listed in section 26. PRD sections 14, 15, 20, 23, and 24 carry the shared product decisions; the extra backend resource and recovery mechanisms are specific to this ADK profile.
 

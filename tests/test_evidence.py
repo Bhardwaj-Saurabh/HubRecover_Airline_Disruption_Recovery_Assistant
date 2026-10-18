@@ -29,3 +29,15 @@ def test_precedent_citations_are_strategy_scoped_and_do_not_remove_warnings():
     raw['plans'][0]['precedent_ids']=['SYN-PLAYBOOK-DRAFT']
     with pytest.raises(ValueError): validate_explanations(ExplanationBatch.model_validate(raw),ctx)
     assert all('LIMITED_PRECEDENT' in p['warnings'] for p in build_plans(create_scenario('limited'))['plans'])
+
+
+def test_catalog_reason_predicates_require_matching_verified_counts():
+    plans=build_plans(create_scenario('limited'))['plans'];ctx=context(plans,1);raw=batch(ctx)
+    pid=plans[0]['id']
+    raw['plans'][0]['reasons']=[dict(code='PROTECTED_CONNECTION_MET',fact_ids=[pid+':protected']),
+        dict(code='PARTY_PRESERVED',fact_ids=[pid+':parties']),
+        dict(code='LIMITED_PRECEDENT_NOTICE',fact_ids=[pid+':precedents'])]
+    rendered=validate_explanations(ExplanationBatch.model_validate(raw),ctx)
+    assert 'All 150 reference parties remain unsplit' in rendered[pid]
+    raw['plans'][0]['reasons'][0]['fact_ids']=[pid+':m0']
+    with pytest.raises(ValueError): validate_explanations(ExplanationBatch.model_validate(raw),ctx)

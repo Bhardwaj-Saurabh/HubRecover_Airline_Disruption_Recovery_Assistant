@@ -44,6 +44,17 @@ class RecoveryService:
     def __init__(self, path, clock=time.time):
         self.store = Store(path)
         self.clock = clock
+        with self.store.transaction() as db:
+            for row in db.execute('SELECT body FROM runs').fetchall():
+                run=json.loads(row['body'])
+                if 'sources' not in run:
+                    sources.initialize(run,run['source_verified_at'])
+                    if run['status'] not in TERMINAL:
+                        self.handoff(run,'SOURCE_PROTOCOL_UPGRADE_REQUIRES_NEW_EPISODE')
+                        run['revision']+=1
+                    self.store.save(db,run)
+                elif 'domain_target' not in run.get('adk',{}):
+                    self.store.save(db,run)
 
     def recover_interrupted_ai(self):
         with self.store.transaction() as db:
@@ -250,7 +261,7 @@ class RecoveryService:
             try:
                 if type(revision) is not int or run['revision']!=revision:
                     raise Refusal('Stale episode version; refresh before acting')
-                if action in ('approve','edit','reject','stop','advance','source_change','source_update','fault','resume_monitor','clarify') and role!='DUTY_MANAGER':
+                if action in ('approve','edit','reject','stop','advance','source_change','source_update','fault','resume_monitor','clarify','monitor_event','classify_monitor') and role!='DUTY_MANAGER':
                     raise Refusal('Duty Manager role required')
                 if action in ('approve','edit','reject'):
                     if run['status']!='AWAITING_APPROVAL':
@@ -350,6 +361,44 @@ class RecoveryService:
                         run['faults']['booking_fail_after']=count
                     else:
                         run['faults'][payload['kind']]=True
+                elif action=='monitor_event':
+                    if run['status']!='MONITORING': raise Refusal('Monitoring episode required')
+                    event=RestrictionEvent(**payload['event'])
+                    monitor,decision=ingest(Monitor(**run['monitor']['state']),event)
+                    run['monitor']['state']=asdict(monitor)
+                    run['monitor']['decision']=decision.value
+                    if decision==Decision.CLASSIFY:
+                        run['status']='NEEDS_CLARIFICATION'
+                        run['clarification']='RESTRICTION_HISTORY_REQUIRES_CLASSIFICATION'
+                        run['clarification_resume']='MONITORING'
+                        run['request_id']=uuid.uuid4().hex
+                        run['expires_at']=self.now(run)+300
+                        run['clarification_deadline']=run['expires_at']
+                        run['monitor']['unclassified_event']=asdict(event)
+                elif action=='classify_monitor':
+                    if run['status']!='NEEDS_CLARIFICATION' or run.get('clarification_resume')!='MONITORING':
+                        raise Refusal('No monitoring classification is pending')
+                    if payload.get('request_id')!=run['request_id'] or self.now(run)>=run['clarification_deadline']:
+                        raise Refusal('Classification request expired or changed')
+                    control=self.store.control(db)
+                    if not control['writes_enabled'] or control['version']!=run['control_version']:
+                        raise Refusal('Application control changed')
+                    history=payload.get('history');note=payload.get('evidence')
+                    if not isinstance(history,list) or not 1<=len(history)<=100 or not isinstance(note,str) or not note.strip() or len(note)>2000:
+                        raise Refusal('Bounded verified history and classification evidence required')
+                    monitor=Monitor()
+                    for raw in history:
+                        monitor,decision=ingest(monitor,RestrictionEvent(**raw))
+                        if decision==Decision.CLASSIFY: raise Refusal('Replacement history is still contradictory or unverified')
+                    monitor,decision=tick(monitor,payload.get('now_ms'),downline_flights=run['monitor']['downline_flights'],
+                        crew_conflict=False,precheck_verified=run['scenario']['sources_verified'])
+                    run['monitor'].update(state=asdict(monitor),decision=decision.value,classification_evidence=note)
+                    run.pop('clarification',None);run.pop('clarification_resume',None)
+                    if decision==Decision.TRIGGER: self.plan(run)
+                    elif decision==Decision.MANUAL_HANDOFF: self.handoff(run,'REQUIRED_PRECHECK_UNAVAILABLE')
+                    else:
+                        run['status']='MONITORING'
+                        run.pop('expires_at',None)
                 elif action=='resume_monitor':
                     if run['status']!='MONITORING':
                         raise Refusal('Not monitoring')
@@ -365,7 +414,7 @@ class RecoveryService:
                     handoff_transition(packet,action,role,payload,self.now(run))
                 else:
                     raise Refusal('Unknown command')
-            except (ValueError, Refusal) as exc:
+            except (ValueError, TypeError, KeyError, Refusal) as exc:
                 error=Refusal(str(exc))
                 # Reload so rejected commands cannot leave partially mutated authority.
                 run=self.store.load(db,run_id)

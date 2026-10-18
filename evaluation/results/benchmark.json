@@ -3,190 +3,190 @@
   "requested_runs": 30,
   "successful_cards": 30,
   "failed_or_handoff": 0,
-  "p95_seconds": 0.15925192832946777,
+  "p95_seconds": 0.1523289680480957,
   "includes": "Actual local elapsed trigger-to-first-card; excludes human waiting and execution",
   "model_requests": 0,
   "business_value": "UNPROVEN",
   "runs": [
     {
       "repeat": 1,
-      "run_id": "8b33fa82c6894bf281b2a6395096c468",
+      "run_id": "1240367d05bd4a868d98f3cbc9fb65e8",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.14852499961853027
+      "seconds": 0.1496129035949707
     },
     {
       "repeat": 2,
-      "run_id": "e6517eaf80354cafb9b74de5b1afab5f",
+      "run_id": "84dcfc8c617e4ff8be8705531872caa9",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.14821887016296387
+      "seconds": 0.14783310890197754
     },
     {
       "repeat": 3,
-      "run_id": "fb3f9b95fba94f8fb0cb3460d90a5c1c",
+      "run_id": "0b806eeed3be48a9baba09c759783ec4",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.17680001258850098
+      "seconds": 0.14774084091186523
     },
     {
       "repeat": 4,
-      "run_id": "f098f7487deb418f863feb780a6e900f",
+      "run_id": "7766d33d1271446e95d7b9254e9d9886",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.15039896965026855
+      "seconds": 0.1457991600036621
     },
     {
       "repeat": 5,
-      "run_id": "7c61042073324149a88179f603b894f3",
+      "run_id": "3d247282c6a14ac0b29eb3f2409b019d",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.15120506286621094
+      "seconds": 0.15178370475769043
     },
     {
       "repeat": 6,
-      "run_id": "c8feed60ebf544f0898d71abc5911ef0",
+      "run_id": "e51b947d12324bbc8bf38f36b2b7e856",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.1521310806274414
+      "seconds": 0.14794397354125977
     },
     {
       "repeat": 7,
-      "run_id": "c9ba7b3af486413abbcae76677c52e9f",
+      "run_id": "5848c9b47a7243819c063b01d418823f",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.14993691444396973
+      "seconds": 0.14720487594604492
     },
     {
       "repeat": 8,
-      "run_id": "c6c7b3c4e7054e79aef3e602a84961e7",
+      "run_id": "167f44645f5f477e86065f1831b8e8d4",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.15016818046569824
+      "seconds": 0.14740467071533203
     },
     {
       "repeat": 9,
-      "run_id": "087ccf8eeece4b3b9551237aa60904ea",
+      "run_id": "661828e7d4334359b9f96b8baedc3125",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.1496436595916748
+      "seconds": 0.15206122398376465
     },
     {
       "repeat": 10,
-      "run_id": "b4f4419f5ddd4c48b311303470f43420",
+      "run_id": "688b15fe8f1247968ef3bdd68299295f",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.14875507354736328
+      "seconds": 0.14690685272216797
     },
     {
       "repeat": 11,
-      "run_id": "a4ca6a378ba5476fb23a066c98f4b5c3",
+      "run_id": "65d87f3f4b494be99d49f1a68e492cd1",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.15325593948364258
+      "seconds": 0.14725995063781738
     },
     {
       "repeat": 12,
-      "run_id": "1e275365f8d34394aac623668c2c5e37",
+      "run_id": "0f95f04876034d4a9c7b4d0b53ad4966",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.15051579475402832
+      "seconds": 0.14977192878723145
     },
     {
       "repeat": 13,
-      "run_id": "3b5ba66dbe8d4a2281fbb48be2ebc5b7",
+      "run_id": "8bb40fc57232472b97a1ecae7cbd6e34",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.15136408805847168
+      "seconds": 0.14759397506713867
     },
     {
       "repeat": 14,
-      "run_id": "30473918744c4a23826b42147b42c8bc",
+      "run_id": "8f1a450895e34ed49327078d37c387e5",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.15105414390563965
+      "seconds": 0.1480879783630371
     },
     {
       "repeat": 15,
-      "run_id": "16a35e8128ae4e81a8780f46c3e97f3a",
+      "run_id": "d971479618774e73ad8a113e75a3938f",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.14997196197509766
+      "seconds": 0.1513841152191162
     },
     {
       "repeat": 16,
-      "run_id": "a7bd13809ce54db4ad861543a5813a8d",
+      "run_id": "e4c1cc0eaf38440da96cb9c208a6326f",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.1491258144378662
+      "seconds": 0.14748477935791016
     },
     {
       "repeat": 17,
-      "run_id": "3137ba2064004ec4ba070aed5f02c783",
+      "run_id": "2fe2af5c67c749908c8603d62ac4a5cf",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.15018010139465332
+      "seconds": 0.1467151641845703
     },
     {
       "repeat": 18,
-      "run_id": "e239e80b96c64077be2f2bb29218d6c6",
+      "run_id": "3b82bcd6972441fa9a46796cb7f57317",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.14950990676879883
+      "seconds": 0.14707303047180176
     },
     {
       "repeat": 19,
-      "run_id": "6a27f27c5b3c46659e72bdeb6fea1c1e",
+      "run_id": "f0361bf0eb724dbf85cd0bfee1a6cb3a",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.15009689331054688
+      "seconds": 0.14641308784484863
     },
     {
       "repeat": 20,
-      "run_id": "a2797f5e0d24472c8c1e2587ac261dca",
+      "run_id": "21c32a4576da4654a5549a3f74193ecb",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.14820194244384766
+      "seconds": 0.14626526832580566
     },
     {
       "repeat": 21,
-      "run_id": "91fcba96f53f4ce885ae0afda578467a",
+      "run_id": "85e5525a8a6940359b366ae81e414282",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.15096020698547363
+      "seconds": 0.1462719440460205
     },
     {
       "repeat": 22,
-      "run_id": "e58f0c885f45424eb5f666b4405f6f4c",
+      "run_id": "085d29bc55d6499fb5b2220c6421251b",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.1507129669189453
+      "seconds": 0.1466689109802246
     },
     {
       "repeat": 23,
-      "run_id": "ce54ccf317f44af9adf534d391f6012a",
+      "run_id": "ddb2743f57084c22b1e53353b4bb033e",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.14969372749328613
+      "seconds": 0.14786696434020996
     },
     {
       "repeat": 24,
-      "run_id": "b092eea41c7d4cb6867d339ce9b8594c",
+      "run_id": "8242ec07acd84b98b20c0fe24808691c",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.14848899841308594
+      "seconds": 0.15232610702514648
     },
     {
       "repeat": 25,
-      "run_id": "5ed5cabd09dd4c2c864de409e947bc78",
+      "run_id": "f4d277a1304d4d8f80cc81fcf5a6d0e7",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.1505720615386963
+      "seconds": 0.15085196495056152
     },
     {
       "repeat": 26,
-      "run_id": "d29071ba5af64848836f627401ac0075",
+      "run_id": "92f3465181734fd496386d04600ae457",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.1557309627532959
+      "seconds": 0.14828181266784668
     },
     {
       "repeat": 27,
-      "run_id": "5585c9ffd3824aa3bc01f5175569adb3",
+      "run_id": "558e3cf4328f4d46b54390e2487b0bde",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.15925192832946777
+      "seconds": 0.1477220058441162
     },
     {
       "repeat": 28,
-      "run_id": "b053ecb16d1748bba06ad6b064858c57",
+      "run_id": "e3f8b288f3c64b80a3a47109973c0a48",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.14897608757019043
+      "seconds": 0.1523289680480957
     },
     {
       "repeat": 29,
-      "run_id": "1b2f0f8db82d49f49f407d8d0abaf15d",
+      "run_id": "fe9f5be5f7264703bf07db99f2a8e877",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.14961004257202148
+      "seconds": 0.15581798553466797
     },
     {
       "repeat": 30,
-      "run_id": "af1844be76b147b7a0322ca22b9dcc1b",
+      "run_id": "b97978bd71a64f9a84ff2bce4116ec13",
       "status": "AWAITING_APPROVAL",
-      "seconds": 0.15569710731506348
+      "seconds": 0.14859294891357422
     }
   ]
 }

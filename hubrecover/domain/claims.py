@@ -9,7 +9,7 @@ class Claim(Record):
     fact_ids: list[str]=Field(min_length=1,max_length=2)
     comparator: Literal['LT','EQ','GT'] | None=None
 class Reason(Record):
-    code: Literal['UNRESOLVED_REDUCTION','OVERNIGHT_REDUCTION','ARRIVAL_DELAY_TRADEOFF','DEPENDENCY_PENDING']
+    code: Literal['UNRESOLVED_REDUCTION','OVERNIGHT_REDUCTION','ARRIVAL_DELAY_TRADEOFF','DEPENDENCY_PENDING','CANCELLATION_TRADEOFF','PROTECTED_CONNECTION_MET','PARTY_PRESERVED','LIMITED_PRECEDENT_NOTICE']
     fact_ids: list[str]=Field(min_length=1,max_length=4)
 class PlanExplanation(Record):
     plan_id: str
@@ -32,6 +32,11 @@ def context(plans,generation):
     for p in plans:
         for index,value in enumerate(p['ranking']):
             facts[f"{p['id']}:m{index}"]=dict(plan_id=p['id'],metric=METRICS[index],value=value,cohort='REFERENCE_300')
+        extras={'protected':('protected connection passengers',sum(len(a['passenger_ids']) for a in p['allocations'] if a['party_id'].startswith('SYN-PARTY-0-') and tuple(a['itinerary'] or ())==('SYN-F-0-1-0','SYN-F-0-1-1'))),
+                'parties':('unsplit parties',len(p['allocations'])),
+                'precedents':('eligible precedents',len(p.get('precedents',[])))}
+        for key,(metric,value) in extras.items():
+            facts[f"{p['id']}:{key}"]=dict(plan_id=p['id'],metric=metric,value=value,cohort='REFERENCE_300')
         facts[f"{p['id']}:dependencies"]=dict(plan_id=p['id'],metric='pending prerequisites',value=len(p['prerequisites']),cohort='REFERENCE_300')
     data=dict(generation=generation,plan_ids=[p['id'] for p in plans],facts=facts,
               eligible_precedents=sorted({v['id'] for p in plans for v in p.get('precedents',[])})[:4],
@@ -75,13 +80,22 @@ def validate_explanations(batch:ExplanationBatch,ctx):
                 if len(facts)!=1 or facts[0]['metric']!='pending prerequisites' or facts[0]['value']<=0:
                     raise ValueError('Dependency predicate failed')
                 lines.append('Matching operational acknowledgements remain required.')
+            elif reason.code in ('PROTECTED_CONNECTION_MET','PARTY_PRESERVED','LIMITED_PRECEDENT_NOTICE'):
+                metric,value,template={
+                    'PROTECTED_CONNECTION_MET':('protected connection passengers',50,'All 50 reference connection passengers retain the verified connection.'),
+                    'PARTY_PRESERVED':('unsplit parties',150,'All 150 reference parties remain unsplit; this does not imply every itinerary is resolved.'),
+                    'LIMITED_PRECEDENT_NOTICE':('eligible precedents',0,'No eligible fictional precedent supports this strategy.')
+                }[reason.code]
+                if len(facts)!=1 or facts[0]['metric']!=metric or facts[0]['value']!=value:
+                    raise ValueError('Reason predicate failed')
+                lines.append(template)
             else:
-                metric={'UNRESOLVED_REDUCTION':METRICS[0],'OVERNIGHT_REDUCTION':METRICS[1],'ARRIVAL_DELAY_TRADEOFF':METRICS[2]}[reason.code]
+                metric={'UNRESOLVED_REDUCTION':METRICS[0],'OVERNIGHT_REDUCTION':METRICS[1],'ARRIVAL_DELAY_TRADEOFF':METRICS[2],'CANCELLATION_TRADEOFF':METRICS[3]}[reason.code]
                 if len(facts)!=2 or any(f['metric']!=metric or f['cohort']!='REFERENCE_300' for f in facts):
                     raise ValueError('Reason metric/cardinality mismatch')
                 if reason.code.endswith('REDUCTION') and not facts[0]['value']<facts[1]['value']:
                     raise ValueError('Reduction predicate false')
-                if reason.code=='ARRIVAL_DELAY_TRADEOFF' and not facts[0]['value']>facts[1]['value']:
+                if reason.code in ('ARRIVAL_DELAY_TRADEOFF','CANCELLATION_TRADEOFF') and not facts[0]['value']>facts[1]['value']:
                     raise ValueError('Delay tradeoff predicate false')
                 lines.append(f"{metric.capitalize()}: {facts[0]['value']} versus {facts[1]['value']} in option {facts[1]['plan_id']}.")
         coverage='GROUNDED fictional precedent' if ctx['plan_precedents'][plan.plan_id] else 'LIMITED_PRECEDENT'

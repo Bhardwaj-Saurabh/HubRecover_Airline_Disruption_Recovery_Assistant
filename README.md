@@ -43,6 +43,7 @@ uv run pytest -q
 uv run python -m hubrecover.fixtures.reference
 uv run python -m evaluation.held_out
 uv run python -m evaluation.benchmark
+uv run python -m evaluation.smoke
 node --check hubrecover/web/app.js
 ```
 
@@ -62,3 +63,7 @@ Observed evidence and remaining verification limits are in [BUILD-STATUS.md](BUI
 Handoffs support simulated owner acceptance, return, coordinator reassignment and evidence-backed manual-handling records. Their evidence/history is exportable; recording manual handling never changes booking or delivery outcomes.
 
 If the local server stops during execution, restarting it automatically reclaims the abandoned worker after its 15-second lease expires. Recovery retains the original approval and execution deadlines and preserves committed receipts. Expired or invalid authority produces a manual handoff instead of further effects.
+
+The Context panel includes typed synthetic source updates and restriction-history classification. Successful source verification never extends card expiry. Original planning snapshots can be read at `/api/runs/{run_id}/snapshots/{snapshot_id}`. Failed ADK continuation jobs are visible in the context inspection with their retry counts; the domain ledger remains authoritative.
+
+On upgrading a ledger created before the typed source protocol, an active older episode is handed off with its receipts preserved. Start a fresh episode through Reset. Completed historical records remain available.

@@ -475,13 +475,13 @@ These eighteen labelled families are planned tests, not passed results. Each nee
 17. **Edge case — parties, assistance, and contact:** Too few seats for a whole party cannot split it automatically. Unacknowledged required assistance prevents the affected allocation. Missing contacts and exhausted channel retries become manual-contact work, with no invented delivered status. All passenger outcomes and care handoffs remain visible. Verify the evidence packet, primary/fallback owner, simulated acceptance/reassignment, completed receipts and remaining parties; accepting a packet cannot mark a passenger resolved or a message delivered.
 18. **Judgment case — ranking and value trade-off:** Seed a faster aircraft option that strands more passengers and a slower option with a better configured passenger tuple; the latter ranks first. Recompute after a supported edit. Exact metric ties use the canonical tie-breaker. Match selected descriptors, fingerprints and result with the independent oracle, including the cap-bound case, and use it in manual/rules-only comparisons. Persist actual timings, reviewer scores/expertise, version-linked feedback and exports; learner verdicts remain empty until entered by a human.
 
-The final evaluation adds twenty frozen held-out variants of these mechanisms. Section 20's gates determine acceptance; case count alone does not prove rigor. Every run records mode, versions, expected/actual results, processing/waiting times, source and gate evidence, human decisions, passenger counts, and communication state. The prototype has not yet been run, and no verdict is prefilled.
+The final evaluation adds twenty frozen held-out variants of these mechanisms. Section 20's gates determine acceptance; case count alone does not prove rigor. Every run records mode, versions, expected/actual results, processing/waiting times, source and gate evidence, human decisions, passenger counts, and communication state. The local prototype has deterministic run evidence recorded in BUILD-STATUS.md; human verdicts are not prefilled.
 
 ### 25. What happened in testing
 
 **Question:** What happened when you tested the agent? Where did it pass, fail, or need a human?
 
-The local synthetic ADK profile has observed deterministic evidence: 18 development demonstrations, 20 exposed deterministic boundary variants, an independent reference oracle, transaction/API regression tests and a completed HTTP recovery loop. Thirty rules-only runs produced 30 cards with local p95 trigger-to-card time of 0.1593 seconds. See BUILD-STATUS.md and evaluation/results/ for exact scope. No real-AI quality, human benefit, airline business improvement or full acceptance is claimed.
+The local synthetic ADK profile has observed deterministic evidence: 18 development demonstrations, 20 exposed deterministic boundary variants, an independent reference oracle, transaction/API regression tests and a completed HTTP recovery loop. Thirty rules-only runs produced 30 cards with local p95 trigger-to-card time of 0.1523 seconds. See BUILD-STATUS.md and evaluation/results/ for exact scope. No real-AI quality, human benefit, airline business improvement or full acceptance is claimed.
 
 After implementation, report each development and held-out case's mode, input/configuration versions, independent expected result, actual result, diagnostic checks, learner verdict, trace evidence, latency, and human intervention. Separate sample/stand-in verification from real-AI evidence and explicitly list failures and unrun cases.
 
@@ -501,7 +501,7 @@ After testing, record each actual change as failing evidence → cause → chang
 
 **Question:** What does the prototype not do yet? Be honest and specific.
 
-The local synthetic ADK profile is runnable. BUILD-STATUS.md distinguishes delivered behaviour from unimplemented generic source/job/handoff contracts and unrun provider, browser and human acceptance.
+The local synthetic ADK profile is runnable. BUILD-STATUS.md records the implemented source-update, durable continuation, handoff and clarification workflows, bounded oracle coverage, and unrun provider, browser and human acceptance.
 
 The intended prototype covers one synthetic weather episode at one hub. It uses embedded data, in-memory adapters, a browser approval card, local playbook retrieval, simulated operational acknowledgements, mock passenger writes/messages, and downloadable logs. These do not demonstrate Azure AI Search, Teams/Copilot Studio, a production PSS, enterprise identity, or durable audit integration.
 

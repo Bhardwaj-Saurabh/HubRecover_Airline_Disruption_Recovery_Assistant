@@ -2,7 +2,7 @@
   "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
   "results": [
     {
-      "id": "1a36d5666e504be781400921c9aca692",
+      "id": "e1bf8ed6c0094f6ab69ce69bb86ab5d9",
       "case": "H01",
       "title": "crew rest one minute short",
       "suite": "held_out_v1",
@@ -15,7 +15,7 @@
         "passed": false
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.003228333021979779,
+      "elapsed_seconds": 0.003073291969485581,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -25,7 +25,7 @@
       ]
     },
     {
-      "id": "ea8a4798044e498ab510c99888fb86c0",
+      "id": "52a227d14b3f4133b25494cfd7fbab33",
       "case": "H02",
       "title": "crew duty one minute over",
       "suite": "held_out_v1",
@@ -38,7 +38,7 @@
         "passed": false
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.003046667028684169,
+      "elapsed_seconds": 0.003041416988708079,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -48,7 +48,7 @@
       ]
     },
     {
-      "id": "d3f3cbce5c64494fa3dc738a3c9a69f4",
+      "id": "e894811a94ff497284f2310769c2489b",
       "case": "H03",
       "title": "wrong type qualification",
       "suite": "held_out_v1",
@@ -61,7 +61,7 @@
         "passed": false
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.002495833032298833,
+      "elapsed_seconds": 0.0027246660320088267,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -71,7 +71,7 @@
       ]
     },
     {
-      "id": "28359cc99482483cae8dbb67d70a0eb7",
+      "id": "46c76836305046719c476df6c4f4c15a",
       "case": "H04",
       "title": "maintenance on the second rotation",
       "suite": "held_out_v1",
@@ -84,7 +84,7 @@
         "passed": false
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.0025522499927319586,
+      "elapsed_seconds": 0.002612208016216755,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -94,7 +94,7 @@
       ]
     },
     {
-      "id": "7f327f909efd4eaba966f43e9b7a64ae",
+      "id": "cb29f9991692468db934ed26e37b66a7",
       "case": "H05",
       "title": "swapped origin locations on two resource graphs",
       "suite": "held_out_v1",
@@ -107,7 +107,7 @@
         "passed": false
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.0024592920090071857,
+      "elapsed_seconds": 0.002571707998868078,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -117,7 +117,7 @@
       ]
     },
     {
-      "id": "a050edace2ea45ff9d56ef1a3a13bcd1",
+      "id": "ffe83ab78bcd48c098f4dd1f63be480b",
       "case": "H06",
       "title": "unavailable next-day aircraft",
       "suite": "held_out_v1",
@@ -130,7 +130,7 @@
         "passed": false
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.002857874962501228,
+      "elapsed_seconds": 0.0027630419936031103,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -140,7 +140,7 @@
       ]
     },
     {
-      "id": "4e21ebecd40b4ef1b4686d0db2ee5684",
+      "id": "4adefef397fb4c6bbc79e5c61b2d7c16",
       "case": "H07",
       "title": "changed verified block duration",
       "suite": "held_out_v1",
@@ -153,7 +153,7 @@
         "passed": false
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.002780374954454601,
+      "elapsed_seconds": 0.002607917005661875,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -163,7 +163,7 @@
       ]
     },
     {
-      "id": "6c21dc8cdb8541be946cff25f1d5f98e",
+      "id": "bc8437b8692c489db6efc6e422318449",
       "case": "H08",
       "title": "invented crew reassignment",
       "suite": "held_out_v1",
@@ -178,7 +178,7 @@
         "passed": false
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.0027782919933088124,
+      "elapsed_seconds": 0.0024912499939091504,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -188,7 +188,7 @@
       ]
     },
     {
-      "id": "0aafa5cd85f1498791c57d5d2ffe5c71",
+      "id": "b997abcae01b481b94de9ddf3a25465d",
       "case": "H09",
       "title": "cancel middle leg without relocation",
       "suite": "held_out_v1",
@@ -201,7 +201,7 @@
         "passed": false
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.002544208022300154,
+      "elapsed_seconds": 0.0025411249953322113,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -211,7 +211,7 @@
       ]
     },
     {
-      "id": "a39ec795aba84ab2bd521f5a163e0906",
+      "id": "582f9bd32a1d46ca84420f1cf429e934",
       "case": "H10",
       "title": "runway arrival blocked at boundary",
       "suite": "held_out_v1",
@@ -224,7 +224,7 @@
         "passed": false
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.0027009170153178275,
+      "elapsed_seconds": 0.0028484580107033253,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -234,7 +234,7 @@
       ]
     },
     {
-      "id": "4201d40af8a5479c8ec309abfb290c24",
+      "id": "4a2e7364dd2140d49ce4921ab190df93",
       "case": "H11",
       "title": "forecast release cannot clear",
       "suite": "held_out_v1",
@@ -247,7 +247,7 @@
         "passed": false
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.0026359169860370457,
+      "elapsed_seconds": 0.002677417011000216,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -257,7 +257,7 @@
       ]
     },
     {
-      "id": "ab03e8c216c54ca898350395e050d840",
+      "id": "5373e7ffdbf34d349ff69de6bec62152",
       "case": "H12",
       "title": "missing dispatch for next-day leg",
       "suite": "held_out_v1",
@@ -270,7 +270,7 @@
         "passed": false
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.0024877500254660845,
+      "elapsed_seconds": 0.0025116249453276396,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -280,7 +280,7 @@
       ]
     },
     {
-      "id": "448e60c5ce944351a7ea086e50269bf8",
+      "id": "f49b6f3e99ae44fdb057aa81567371e1",
       "case": "H13",
       "title": "exact confirmed release",
       "suite": "held_out_v1",
@@ -291,7 +291,7 @@
         "passed": true
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.0025563330273143947,
+      "elapsed_seconds": 0.0026416669716127217,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -301,7 +301,7 @@
       ]
     },
     {
-      "id": "a4687aebc5e0466eb04cce232befd24e",
+      "id": "510f075c192544c89febc53d0db8e164",
       "case": "H14",
       "title": "unrelated flight scope",
       "suite": "held_out_v1",
@@ -312,7 +312,7 @@
         "passed": true
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.005843583028763533,
+      "elapsed_seconds": 0.00639674998819828,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -322,7 +322,7 @@
       ]
     },
     {
-      "id": "b94c8e047f034af6bb4ee8a367f075c5",
+      "id": "e73e69d114d74f5fa4038d6df62f3ed7",
       "case": "H15",
       "title": "stop before first effect",
       "suite": "held_out_v1",
@@ -333,7 +333,7 @@
         "parties": 0
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.18922804202884436,
+      "elapsed_seconds": 0.22192495898343623,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -343,7 +343,7 @@
       ]
     },
     {
-      "id": "c65c9642ccae4e1f8db13c9dd94e38a2",
+      "id": "516d1e7629f94cb2b1cd73bc996abfb4",
       "case": "H16",
       "title": "stop after two effects",
       "suite": "held_out_v1",
@@ -354,7 +354,7 @@
         "parties": 2
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.22071516700088978,
+      "elapsed_seconds": 0.2608326659537852,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -364,7 +364,7 @@
       ]
     },
     {
-      "id": "a08e838dc9614c6289a2d36cc7bd60c5",
+      "id": "311cf205d8d44051a133cb5b5c483b8f",
       "case": "H17",
       "title": "disable after one effect across restart",
       "suite": "held_out_v1",
@@ -375,7 +375,7 @@
         "parties": 1
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.20516445802059025,
+      "elapsed_seconds": 0.2460712090251036,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -385,7 +385,7 @@
       ]
     },
     {
-      "id": "fb0c7155f6df4351a81e5f7ec40fe5b6",
+      "id": "19d0ec296eb24d38acb29e5efec33a55",
       "case": "H18",
       "title": "expired card at exact TTL",
       "suite": "held_out_v1",
@@ -396,7 +396,7 @@
         "parties": 0
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.19453091599280015,
+      "elapsed_seconds": 0.2224486250197515,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -406,7 +406,7 @@
       ]
     },
     {
-      "id": "dce5565e156c41508fac2b38b8f65334",
+      "id": "6324cf545877440089cae3c58dd1eafa",
       "case": "H19",
       "title": "new control revision cannot revive authority",
       "suite": "held_out_v1",
@@ -417,7 +417,7 @@
         "parties": 0
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.20542737504001707,
+      "elapsed_seconds": 0.24094945803517476,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
@@ -427,7 +427,7 @@
       ]
     },
     {
-      "id": "8c798504d834469d9168b7158a58f169",
+      "id": "69cb1aad450a4b46aaacec0559122db0",
       "case": "H20",
       "title": "wrong-request replay",
       "suite": "held_out_v1",
@@ -438,7 +438,7 @@
         "parties": 0
       },
       "diagnostic": "PASS",
-      "elapsed_seconds": 0.19227895903168246,
+      "elapsed_seconds": 0.18838033295469359,
       "verdict": null,
       "verdict_history": [],
       "manifest_digest": "e6b287387ff0736868a21b6a56c01c14df53b37e630e3f38f556f931840c46ff",
