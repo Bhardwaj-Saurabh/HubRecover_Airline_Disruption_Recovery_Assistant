@@ -1,6 +1,6 @@
 # HubRecover build status
 
-Updated 17 October 2026. **The local Python/Google ADK synthetic prototype is runnable. Full PRD/architecture acceptance and pilot readiness are not claimed.**
+Updated 18 October 2026. **The local Python/Google ADK synthetic prototype is runnable. Full PRD/architecture acceptance and pilot readiness are not claimed.**
 
 ## Delivered application
 
@@ -43,7 +43,7 @@ Detailed reports are in `evaluation/results/`. Every real-AI stand-in test runs 
 - Source updates conservatively invalidate and hand off. The complete generic adapter envelope/field-level update protocol in architecture section 19 is not implemented. The synthetic ledger is coherent, and matching operational commits and own-batch inventory changes are guarded.
 - Monitoring conservatively requests classification for late effective-time changes rather than reconstructing arbitrary consistent multi-authority history. The UI provides the declared scripted trigger/brief-lift paths.
 - Execution has persisted state, leases/fences and resumable receipts; it does not implement the full generic durable stage-job scheduler or every cross-system crash-recovery row. An interrupted execution is resumed explicitly through the guarded control after its lease expires.
-- Handoffs record ownership, acceptance, remaining work and receipts. The full reassignment/manual-resolution workflow remains outside this local demonstration; acceptance cannot resolve a passenger or message.
+- Handoffs now support assigned-owner acceptance/return, coordinator reassignment and evidence-backed manual-handling records, with immutable history and frozen receipt/communication evidence. These records never change passenger outcomes or revive execution authority; verified external outcome adapters remain outside the synthetic profile.
 - The independent calculation oracle covers the reference graph. General spare-tail/network oracle coverage, a richer approved precedent corpus, all warning thresholds and all architecture A1–A9 acceptance evidence remain broader work.
 
 These limits are deliberate boundaries of what is actually built, not claims that the complete architecture has been implemented. Production, business-value and full PRD safety/quality acceptance remain open.

@@ -178,3 +178,49 @@ def test_reset_idempotency_and_no_inherited_authority(service):
     assert child['id']==duplicate['id'] and child['id']!=run['id']
     assert child['approval'] is None and child['receipts']=={}
     with pytest.raises(Refusal):service.reset(run['id'],run['revision'],'reset-twice','DUTY_MANAGER')
+
+
+def test_handoff_return_reassignment_resolution_survives_restart(service):
+    run=service.create('missing');h=run['handoffs'][0];hid=h['id']
+    assert len(h['remaining_parties'])==150 and len(h['affected_passengers'])==300
+    with pytest.raises(Refusal):
+        cmd(service,run,'accept_handoff',role='OCC_OPERATIONS_LEAD',handoff_id=hid)
+    run=cmd(service,run,'return_handoff',handoff_id=hid,note='Requires source specialist')
+    with pytest.raises(Refusal): cmd(service,run,'accept_handoff',handoff_id=hid)
+    with pytest.raises(Refusal):
+        cmd(service,run,'assign_handoff',role='DISPATCHER',handoff_id=hid,owner='CREW_CONTROLLER',note='Check source')
+    run=cmd(service,run,'assign_handoff',role='OCC_OPERATIONS_LEAD',handoff_id=hid,owner='CREW_CONTROLLER',note='Check source')
+    with pytest.raises(Refusal): cmd(service,run,'accept_handoff',handoff_id=hid)
+    run=cmd(service,run,'accept_handoff',role='CREW_CONTROLLER',handoff_id=hid)
+    with pytest.raises(Refusal):
+        cmd(service,run,'resolve_handoff',role='CREW_CONTROLLER',handoff_id=hid,note='Reviewed')
+    before=service.get(run['id'])
+    args=dict(revision=run['revision'],key='manual-resolution',role='CREW_CONTROLLER',
+              payload=dict(handoff_id=hid,note='Recorded source issue for manual follow-up',evidence='SYN-MANUAL-001'))
+    run=service.command(run['id'],'resolve_handoff',**args)
+    restarted=RecoveryService(service.store.path)
+    replay=restarted.command(run['id'],'resolve_handoff',**args)
+    assert replay['revision']==run['revision']
+    assert replay['handoffs'][0]['status']=='RESOLVED_MANUALLY'
+    assert len(replay['handoffs'][0]['history'])==5
+    for field in ('status','bookings','receipts','outbox','approval','inventory'):
+        assert replay[field]==before[field]
+    with pytest.raises(Refusal): cmd(service,run,'execute')
+    with pytest.raises(Refusal):
+        cmd(service,run,'assign_handoff',handoff_id=hid,owner='DUTY_MANAGER',note='Reopen')
+
+
+def test_handoff_stale_version_and_partial_evidence(service):
+    run=ready(service)
+    run=cmd(service,run,'execute')
+    run=service.work_step(run['id'],run['fence'])
+    run=cmd(service,run,'stop')
+    packet=run['handoffs'][0]
+    assert len(packet['committed_parties'])==1
+    assert len(packet['remaining_parties'])==149
+    assert packet['evidence']['receipts']==run['receipts']
+    assert packet['evidence']['communication']==run['outbox']
+    accepted=cmd(service,run,'accept_handoff',handoff_id=packet['id'])
+    with pytest.raises(Refusal):
+        cmd(service,run,'return_handoff',handoff_id=packet['id'],note='Stale return')
+    assert service.get(run['id'])['handoffs']==accepted['handoffs']

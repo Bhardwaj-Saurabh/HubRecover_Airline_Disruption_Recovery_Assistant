@@ -1,3 +1,4 @@
+from .handoffs import packet as handoff_packet, transition as handoff_transition
 """Authoritative synthetic review, approval, execution and reconciliation service."""
 from collections import Counter
 from contextlib import nullcontext
@@ -63,10 +64,7 @@ class RecoveryService:
         run['status'] = 'PARTIAL_MANUAL' if run['receipts'] else 'MANUAL_HANDOFF'
         run['approval'] = None
         run['fence'] += 1
-        run['handoffs'].append(dict(id=uuid.uuid4().hex, reason=reason, owner=owner,
-            fallback='OCC_OPERATIONS_LEAD', status='OPEN', history=[], remaining_parties=[a['party_id'] for a in
-            self.selected(run).get('allocations', []) if a['party_id'] not in run['receipts']],
-            committed_parties=list(run['receipts']), required_action='Inspect receipts and reconcile remaining work; no new automated booking authority'))
+        run['handoffs'].append(handoff_packet(run, reason, owner, self.now(run)))
         self.trace(run, 'HANDOFF', reason)
 
     def selected(self, run):
@@ -294,12 +292,10 @@ class RecoveryService:
                     run['monitor'].update(duration_minutes=61,decision=decision.value,state=asdict(monitor))
                     if decision!=Decision.TRIGGER: raise Refusal('Trigger did not qualify')
                     self.plan(run)
-                elif action=='accept_handoff':
+                elif action in ('accept_handoff','assign_handoff','return_handoff','resolve_handoff'):
                     packet=next((h for h in run['handoffs'] if h['id']==payload.get('handoff_id')),None)
-                    if not packet or role not in (packet['owner'],packet['fallback']):
-                        raise Refusal('Assigned or fallback owner required')
-                    packet['status']='ACKNOWLEDGED'
-                    packet['history'].append(dict(actor=role,at=self.now(run),action='ACCEPTED'))
+                    if not packet: raise Refusal('Unknown handoff')
+                    handoff_transition(packet,action,role,payload,self.now(run))
                 else:
                     raise Refusal('Unknown command')
             except (ValueError, Refusal) as exc:
@@ -395,9 +391,9 @@ class RecoveryService:
         run['receipts'][pid]=dict(key=digest([run['id'],run['generation'],pid]),outcome=allocation['outcome'],
             passenger_ids=passenger_ids,legs=new_legs,deltas=deltas,at=self.now(run))
         if allocation['next_day']:
-            run['handoffs'].append(dict(id=uuid.uuid4().hex,reason='NEXT_DAY_PASSENGER_CARE',owner='PASSENGER_OPERATIONS',
-                fallback='OCC_OPERATIONS_LEAD',status='OPEN',history=[],remaining_parties=[],committed_parties=[pid],
-                required_action='Review overnight passenger-care needs. No compensation or paid service has been promised.'))
+            run['handoffs'].append(handoff_packet(run,'NEXT_DAY_PASSENGER_CARE','PASSENGER_OPERATIONS',
+                self.now(run),parties=[pid],required_action=
+                'Review overnight passenger-care needs. No compensation or paid service has been promised.'))
         run['expected_inventory']=digest(run['inventory'])
         self.trace(run,'PARTY_COMMITTED',dict(party_id=pid,outcome=allocation['outcome']))
 
