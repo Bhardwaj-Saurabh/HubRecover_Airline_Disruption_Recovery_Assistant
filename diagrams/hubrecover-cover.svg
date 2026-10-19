@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-labelledby="title desc">
+  <title id="title">HubRecover</title>
+  <desc id="desc">Passenger-aware recovery. Evidence before action. A synthetic airline operations AI case study.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#0b192b"/><stop offset="1" stop-color="#153b4c"/></linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+  </defs>
+  <rect width="1280" height="320" rx="20" fill="url(#bg)"/>
+  <rect width="1280" height="320" rx="20" fill="url(#grid)"/>
+  <path d="M880 80L1010 160L1150 70M1010 160L1160 250M1010 160L865 252" fill="none" stroke="#5ce0c1" stroke-opacity=".4" stroke-width="2"/>
+  <circle cx="1010" cy="160" r="62" fill="none" stroke="#5ce0c1" stroke-opacity=".16"/>
+  <circle cx="1010" cy="160" r="38" fill="#5ce0c1" fill-opacity=".1" stroke="#5ce0c1"/>
+  <path d="M995 160L1006 171L1027 147" fill="none" stroke="#8af2d7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#8af2d7"><circle cx="880" cy="80" r="6"/><circle cx="1150" cy="70" r="6"/><circle cx="1160" cy="250" r="6"/><circle cx="865" cy="252" r="6"/></g>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="64" y="69" fill="#8af2d7" font-size="13" font-weight="700" letter-spacing="3">AI SYSTEMS DESIGN / AIRLINE OPERATIONS</text>
+    <text x="60" y="151" fill="#f4f8fc" font-size="68" font-weight="700" letter-spacing="-2">HubRecover</text>
+    <text x="64" y="201" fill="#d8e7ef" font-size="24">Passenger-aware recovery. Evidence before action.</text>
+    <text x="64" y="264" fill="#96b2c3" font-size="14" letter-spacing="2">CALCULATE  /  EXPLAIN  /  APPROVE  /  RECONCILE</text>
+  </g>
+</svg>
