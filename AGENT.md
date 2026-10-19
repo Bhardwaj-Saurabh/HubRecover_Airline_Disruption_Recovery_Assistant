@@ -2,9 +2,9 @@
 
 ## Source of truth
 
-Read START-HERE.md, PRD.md, ARCHITECTURE-ADK.md, DESIGN.md and TEST-PLAN.md before changing behaviour. PRD.md owns product policy; ARCHITECTURE-ADK.md selects the backend and adds durable execution contracts. Review documents are historical. Preserve manifest.json as export provenance.
+Read PRD.md, ARCHITECTURE-ADK.md, DESIGN.md and TEST-PLAN.md before changing behaviour. PRD.md owns product policy; ARCHITECTURE-ADK.md selects the backend and adds durable execution contracts.
 
-Build the local Python/Google ADK profile first. The LMS browser ZIP is a separate deliverable, only when requested. Preserve the original starter and its design tokens; the web interface uses the Operations skin.
+Build the local Python/Google ADK profile first. The LMS browser ZIP is a separate deliverable, only when requested. Preserve the design tokens in hubrecover/web/design.css; the web interface uses the Operations skin.
 
 ## Implementation boundaries
 

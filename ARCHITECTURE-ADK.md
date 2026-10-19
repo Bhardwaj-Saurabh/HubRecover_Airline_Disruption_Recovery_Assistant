@@ -2,7 +2,7 @@
 
 **Design baseline:** 11 October 2026. **Implementation update, 18 October 2026:** a local ADK prototype, synthetic dataset and deterministic evidence now exist. BUILD-STATUS.md records the implemented subset and outstanding architecture acceptance work; this document remains the full design target.
 
-**Review revision:** Findings A1–A9 from [ARCHITECTURE-REVIEW.md](ARCHITECTURE-REVIEW.md) are addressed by the design contracts in sections 17–25. They still require implementation and the verification listed in section 26. PRD sections 14, 15, 20, 23, and 24 carry the shared product decisions; the extra backend resource and recovery mechanisms are specific to this ADK profile.
+**Design contracts:** Sections 17–25 address the architecture contracts A1–A9. They still require implementation and the verification listed in section 26. PRD sections 14, 15, 20, 23, and 24 carry the shared product decisions; the extra backend resource and recovery mechanisms are specific to this ADK profile.
 
 Build HubRecover as a Python application with a Google ADK graph workflow, a deterministic recovery engine, a Duty Manager web interface, and transactional mock passenger systems. ADK coordinates bounded tasks and human pauses. Application code owns operational truth, feasibility, ranking, authorisation, and writes.
 
@@ -22,7 +22,7 @@ There are two delivery profiles with the same product rules:
 | Opening/deployment | Start local server; optional separate cloud hosting | Double-click `index.html`; LMS ZIP upload |
 | Role checks | Explicit simulated roles locally; authenticated roles before shared use | Simulated roles only |
 
-The LMS frame cannot call this backend or run Python. An ADK application cannot be submitted as the existing `prototype.zip`. BUILD-PROMPT.txt, BUILD-INSTRUCTIONS.md, and HOSTING-CONTRACT.md govern only the LMS profile. Browser-specific PRD implementation statements describe that profile; the ADK profile replaces their runtime and persistence mechanisms, while preserving all behavioural controls and evaluation gates. Backend evaluation does not establish browser-profile correctness, or vice versa.
+The LMS frame cannot call this backend or run Python. An ADK application cannot be submitted as the existing `prototype.zip`. Legacy LMS build-kit instructions have been removed from this application repository. Browser-specific PRD implementation statements describe that profile; the ADK profile replaces their runtime and persistence mechanisms, while preserving all behavioural controls and evaluation gates. Backend evaluation does not establish browser-profile correctness, or vice versa.
 
 Build the ADK prototype first for the requested architecture. If an LMS artifact is later required, reuse versioned fixture exports, policy values, interface design, and independently specified test expectations. A JavaScript port must pass the same conformance cases; it does not inherit a Python test pass.
 

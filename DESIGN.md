@@ -1,10 +1,8 @@
-# Design: the look ships in the kit
+# HubRecover interface design
 
-A capstone prototype should look like a product on its first screen. Nobody chooses a font. starter/index.html carries a complete design block, between `PF-DESIGN-START` and `PF-DESIGN-END` in its styles: tokens for colour, type, spacing and shape, and ready-made parts. Build the learner's product from those.
+The application preserves the original design tokens and reusable components in `hubrecover/web/design.css`, between `PF-DESIGN-START` and `PF-DESIGN-END`. Application-specific layout rules live in `hubrecover/web/app.css`.
 
-For this kit, the product is **HubRecover** and PRD.md selects `<html data-skin="ops">` for the OCC audience. The generic starter demonstrates reusable parts, not the current airline workflow. Keep its design tokens unchanged while replacing its content and controls.
-
-These appearance and workflow-display rules also apply to the web interface in ARCHITECTURE-ADK.md. That interface is served by the ADK application's backend; LMS single-page packaging and PFAI instructions belong to the separate browser profile.
+HubRecover uses `<html data-skin="ops">` for its Operations Control Center audience. These appearance and workflow-display rules apply to the local web interface served by the Python backend.
 
 ## Rules
 
@@ -27,7 +25,7 @@ Pick by the product's audience (the specific user in PRD.md), not by taste.
 | Studio | `data-skin="studio"` | Light, clean | Customer-facing tools, business users, anything shown in daylight |
 | Terminal | `data-skin="term"` | Mono, green on black | Developer tools, data and infrastructure workflows |
 
-Tell the learner which one you chose and why in one line. Switch when they ask: it is one attribute.
+The Operations skin is selected for the OCC workflow.
 
 ## The tokens
 
@@ -69,4 +67,4 @@ HubRecover shows Input, Context, Decision, Output, and Review, then an execution
 
 Use the existing parts for prerequisite acknowledgements, expiry, final revalidation, Stop/Reset, mock bookings/communication, and trace download. An Approved badge means the decision was recorded, not that recovery is complete. Pending acknowledgements and unresolved communication retain their own statuses. COMPLETED and PARTIAL_MANUAL use the PRD definitions and remain visually distinct; rejected evidence is never selectable.
 
-The Evals view contains the 18 visible development families, recorded subvariants, a separate 20-case held-out section, automatic diagnostics, learner-entered verdicts, versions/modes, observed results, limitations, and any evidenced improvement. Do not prefill verdicts or fabricate an improvement. The starter's five support-tool cases and Escalate control are examples to replace.
+The Evals view contains the 18 visible development families, recorded subvariants, a separate 20-case held-out section, automatic diagnostics, learner-entered verdicts, versions/modes, observed results, limitations, and any evidenced improvement. Do not prefill verdicts or fabricate an improvement.

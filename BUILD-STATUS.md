@@ -62,3 +62,7 @@ The first 19 October regression run had one seat-accounting test fail because th
 ## Updated-key application verification
 
 The updated local key returned a response from `gemini-3.8-flash`. The subsequent application AI smoke passed 3/3 (explanation, supported edit and ambiguous-edit clarification), with no passenger effects; see `evaluation/results/live-ai-key-recheck.json`. This is one repeat per task, not a nine-request repeatability pass. The full regression suite passed 157/157 in 74.79 seconds (two dependency deprecation warnings). The actual loopback HTTP recovery workflow also completed with 150 party receipts, 300 simulated messages and an immutable source snapshot. Browser inspection and human acceptance remain unverified. Credentials remain ignored and uncommitted.
+
+## Repository cleanup
+
+Removed the unused LMS starter app, upload helper/checker, export manifest, build prompts/instructions and historical review documents. Current product, architecture, design, acceptance and evaluation documentation remains. The design-preservation test now checks the unchanged stylesheet against its recorded SHA-256 baseline instead of depending on the removed starter. Verification: 3 focused web/configuration tests passed, JavaScript syntax passed, root Markdown links resolve, and no references to the removed files remain. Application behaviour and recorded evaluation results are unchanged.
