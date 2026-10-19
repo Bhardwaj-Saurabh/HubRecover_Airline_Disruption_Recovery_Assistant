@@ -5,7 +5,7 @@
   "regression": {
     "passed": 157,
     "failed": 0,
-    "seconds": 73.37,
+    "seconds": 74.79,
     "warnings": 2
   },
   "subsequent_focused_job_suite": {
@@ -49,7 +49,7 @@
     "Human comprehension and matched value comparison",
     "Complete PRD acceptance matrix"
   ],
-  "note": "Full regression includes pacing/quota-stop tests and final AI integration fixes. Initial regression had a real-clock lease expiry in the seat-accounting test; fixed that test clock and reran the complete suite successfully. Latest live provider check failed on availability/timeouts.",
+  "note": "After the updated key passed a minimal generation request, all three application AI smoke tasks passed, the full regression passed 157/157, and the loopback HTTP workflow completed with 150 party receipts and 300 simulated messages. Nine-request repeatability, rendered UI inspection and human acceptance remain open.",
   "subsequent_focused_ai_suite": {
     "passed": 15,
     "failed": 0
@@ -69,6 +69,14 @@
       "status": "FAIL",
       "unavailable": 4,
       "timeouts": 5,
+      "no_passenger_effects": true
+    },
+    "latest_key_recheck": {
+      "report": "live-ai-key-recheck.json",
+      "status": "PASS",
+      "passed": 3,
+      "total": 3,
+      "repeats_per_task": 1,
       "no_passenger_effects": true
     }
   }

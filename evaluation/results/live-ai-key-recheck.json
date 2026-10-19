@@ -1,0 +1,144 @@
+{
+  "suite": "LIVE_AI_CONFORMANCE_V1",
+  "recorded_at": "2026-10-19T19:48:58.917447+00:00",
+  "mode": "REAL_AI",
+  "status": "PASS",
+  "model": "gemini-3.8-flash",
+  "requested": 3,
+  "results": [
+    {
+      "task": "explanation",
+      "repeat": 1,
+      "diagnostic": "PASS",
+      "status": "AWAITING_APPROVAL",
+      "generation": 1,
+      "no_passenger_effects": true,
+      "error_type": null,
+      "elapsed_seconds": 5.1241068340605125,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 14048,
+        "rounds": {
+          "1:explanation": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "c00c4f0a97e5bf81075fecec8175011fb92f71b7b05a062384990fb1d5ff2aa8",
+      "card_digest": "6ae4c29dc7059cc93153c5b2a2b08db498012a11e4bdbe05ef87404160b2a9d4",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "4 pending prerequisites. Matching operational acknowledgements remain required. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        }
+      ],
+      "failure_types": [],
+      "failure_codes": [],
+      "human_verdict": null
+    },
+    {
+      "task": "supported_edit",
+      "repeat": 1,
+      "diagnostic": "PASS",
+      "status": "AWAITING_APPROVAL",
+      "generation": 2,
+      "no_passenger_effects": true,
+      "error_type": null,
+      "elapsed_seconds": 2.736125999945216,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 4608,
+        "rounds": {
+          "1:edit": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "2fc4f1d791552db52f58a5fb150c504cba296e7a83146ad44a0206439f46810f",
+      "card_digest": "c4edbcad272b10850726ec6b92655a956e0433e5abc5a6a1cc2a8502e2d22d8d",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        }
+      ],
+      "failure_types": [],
+      "failure_codes": [],
+      "human_verdict": null
+    },
+    {
+      "task": "ambiguous_edit",
+      "repeat": 1,
+      "diagnostic": "PASS",
+      "status": "NEEDS_CLARIFICATION",
+      "generation": 1,
+      "no_passenger_effects": true,
+      "error_type": null,
+      "elapsed_seconds": 4.092993999947794,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 4608,
+        "rounds": {
+          "1:edit": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "04a8fb12d37545fe6ecdadd17bdee380c83c82af603e3395441e81058ca720a1",
+      "card_digest": "c4edbcad272b10850726ec6b92655a956e0433e5abc5a6a1cc2a8502e2d22d8d",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        }
+      ],
+      "failure_types": [],
+      "failure_codes": [],
+      "human_verdict": null
+    }
+  ],
+  "human_verdict": null,
+  "interval_seconds": 15,
+  "limitations": [
+    "Exposed conformance tasks, not a blind model-quality holdout",
+    "Human comprehension, business benefit and actual cost are unmeasured",
+    "No booking or messaging execution is authorised by these checks"
+  ],
+  "completed": 3,
+  "unrun": 0,
+  "passed": 3,
+  "manifest_digest": "ca6df9e1c2a8c9c20644f18a3ac3b2c46b2409dddc3fc2d12952845797842727"
+}

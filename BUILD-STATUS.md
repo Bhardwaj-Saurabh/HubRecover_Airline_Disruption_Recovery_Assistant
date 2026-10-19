@@ -20,7 +20,7 @@ Ambiguous AI edits now enter a version-bound clarification wait, with a supporte
 
 | Check | Actual evidence |
 | --- | --- |
-| Python regression | **157 passed** in the latest full regression run (73.37 seconds); **15/15** focused AI/configuration/evaluation checks passed. Unit tests use isolated test credentials/transports, not the real provider |
+| Python regression | **157 passed** in the latest full regression run (74.79 seconds); **15/15** focused AI/configuration/evaluation checks passed. Unit tests use isolated test credentials/transports, not the real provider |
 | Reference fixture | 24 flights and 300 passengers; invariant checks pass |
 | Independent oracle | All 18 selected reference descriptors agree on feasibility, party allocations and ranking; separate cap-selection oracle covers 279 raw descriptors |
 | Development demonstrations | 18/18 implemented subvariants pass automatic diagnostics; learner verdicts remain null |
@@ -33,7 +33,7 @@ Ambiguous AI edits now enter a version-bound clarification wait, with a supporte
 | Automatic execution recovery | Server restart resumes from one committed party to 150 receipts/300 mock messages; original deadlines, fencing, Stop/source/disable boundaries verified |
 | Rebooking transaction | A next-day option produces two superseded booking records, preserves shared-leg occupancy and creates a care handoff |
 | Timing | 30/30 rules-only qualifying runs produce a card, zero failed/handoff runs; local trigger-to-card p95 0.1523 seconds. No inference of human time savings |
-| Live Gemini | 18 October: 3/3 smoke, then 6/9 with quota errors. 19 October: 0/9, four UNAVAILABLE errors and five timeouts; no passenger effects. Provider acceptance remains open |
+| Live Gemini | 18 October: 3/3 smoke, then 6/9 with quota errors. 19 October: 0/9, four UNAVAILABLE errors and five timeouts; no passenger effects. Latest updated-key check: 3/3 passed. Repeated provider acceptance remains open |
 | JavaScript / launch checks | `node --check`, shell syntax, Python compilation, design-block preservation and DOM-control contract checks |
 
 Detailed reports are in `evaluation/results/`. Every real-AI stand-in test runs in an isolated test ledger; these tests are not provider evidence. Third-party OpenTelemetry and Starlette deprecation warnings do not fail the suite.
@@ -58,3 +58,7 @@ Detailed reports are in `evaluation/results/`. Every real-AI stand-in test runs 
 The local implementation is available for synthetic demonstration. Full architecture/PRD acceptance remains open until the broader test matrix, real-provider checks, rendered UI inspection and human/value reviews have evidence. Production integrations and the separate LMS ZIP are outside this build.
 
 The first 19 October regression run had one seat-accounting test fail because the real worker lease expired after 150 party receipts. Its isolated rerun passed. That accounting test now uses a fixed clock; dedicated lease-expiry tests remain unchanged. The subsequent complete suite passed 157/157.
+
+## Updated-key application verification
+
+The updated local key returned a response from `gemini-3.8-flash`. The subsequent application AI smoke passed 3/3 (explanation, supported edit and ambiguous-edit clarification), with no passenger effects; see `evaluation/results/live-ai-key-recheck.json`. This is one repeat per task, not a nine-request repeatability pass. The full regression suite passed 157/157 in 74.79 seconds (two dependency deprecation warnings). The actual loopback HTTP recovery workflow also completed with 150 party receipts, 300 simulated messages and an immutable source snapshot. Browser inspection and human acceptance remain unverified. Credentials remain ignored and uncommitted.
