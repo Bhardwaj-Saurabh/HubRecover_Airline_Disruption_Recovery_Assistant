@@ -1,7 +1,7 @@
 import asyncio
 import json
 from evaluation.live_ai import evaluate
-from hubrecover.application.ai import BoundedAI
+from hubrecover.application.ai import AIProviderFailure, BoundedAI
 from hubrecover.domain.claims import EditProposal, ExplanationBatch
 
 
@@ -44,3 +44,23 @@ def test_provider_failure_report_does_not_leak_exception_text():
     assert report['status']=='FAIL' and report['passed']==0
     assert 'SECRET-LIKE' not in json.dumps(report)
     assert all(r['status']=='MANUAL_HANDOFF' for r in report['results'])
+
+
+def test_quota_stops_remaining_calls():
+    def limited(service):
+        ai=factory(service)
+        async def generate(*args): raise AIProviderFailure('RESOURCE_EXHAUSTED')
+        ai.generate=generate
+        return ai
+    report=asyncio.run(evaluate(3,test_factory=limited))
+    assert report['status']=='FAIL' and report['stopped_on_quota']
+    assert report['completed']==1 and report['unrun']==8 and report['passed']==0
+    assert report['results'][0]['no_passenger_effects']
+
+
+def test_requests_are_paced(monkeypatch):
+    pauses=[]
+    async def sleep(seconds): pauses.append(seconds)
+    monkeypatch.setattr(asyncio,'sleep',sleep)
+    report=asyncio.run(evaluate(1,test_factory=factory,interval_seconds=15))
+    assert report['status']=='PASS' and pauses==[15,15]

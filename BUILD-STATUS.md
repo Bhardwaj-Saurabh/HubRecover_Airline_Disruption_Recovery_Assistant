@@ -1,6 +1,6 @@
 # HubRecover build status
 
-Updated 18 October 2026. **The local Python/Google ADK synthetic prototype is runnable. Full PRD/architecture acceptance and pilot readiness are not claimed.**
+Updated 19 October 2026. **The local Python/Google ADK synthetic prototype is runnable. Full PRD/architecture acceptance and pilot readiness are not claimed.**
 
 ## Delivered application
 
@@ -20,7 +20,7 @@ Ambiguous AI edits now enter a version-bound clarification wait, with a supporte
 
 | Check | Actual evidence |
 | --- | --- |
-| Python regression | **154 passed** in the latest full regression run (72.97 seconds); **17/17** focused AI/configuration/evidence checks passed after the final fixes. Unit tests use isolated test credentials/transports, not the real provider |
+| Python regression | **157 passed** in the latest full regression run (73.37 seconds); **15/15** focused AI/configuration/evaluation checks passed. Unit tests use isolated test credentials/transports, not the real provider |
 | Reference fixture | 24 flights and 300 passengers; invariant checks pass |
 | Independent oracle | All 18 selected reference descriptors agree on feasibility, party allocations and ranking; separate cap-selection oracle covers 279 raw descriptors |
 | Development demonstrations | 18/18 implemented subvariants pass automatic diagnostics; learner verdicts remain null |
@@ -33,15 +33,15 @@ Ambiguous AI edits now enter a version-bound clarification wait, with a supporte
 | Automatic execution recovery | Server restart resumes from one committed party to 150 receipts/300 mock messages; original deadlines, fencing, Stop/source/disable boundaries verified |
 | Rebooking transaction | A next-day option produces two superseded booking records, preserves shared-leg occupancy and creates a care handoff |
 | Timing | 30/30 rules-only qualifying runs produce a card, zero failed/handoff runs; local trigger-to-card p95 0.1523 seconds. No inference of human time savings |
-| Live Gemini | Initial 3/3 smoke; repeated suite 6/9 with quota errors; no passenger effects. Not full provider acceptance |
+| Live Gemini | 18 October: 3/3 smoke, then 6/9 with quota errors. 19 October: 0/9, four UNAVAILABLE errors and five timeouts; no passenger effects. Provider acceptance remains open |
 | JavaScript / launch checks | `node --check`, shell syntax, Python compilation, design-block preservation and DOM-control contract checks |
 
 Detailed reports are in `evaluation/results/`. Every real-AI stand-in test runs in an isolated test ledger; these tests are not provider evidence. Third-party OpenTelemetry and Starlette deprecation warnings do not fail the suite.
 
 ## Unrun or broader acceptance work
 
-- A repeatable live-provider evaluator is available at `python -m evaluation.live_ai`: up to nine bounded requests, isolated ledgers, explicit NOT_RUN/FAIL/PASS, no passenger effects and blank human verdicts. Missing configuration, stand-in labelling/isolation and exception redaction have automated checks.
-- **Real Gemini calls now have evidence:** repository-local `.env` settings load without being printed or committed. A three-task smoke passed 3/3 on `gemini-3.8-flash`; the subsequent three-repeat run passed 6/9, including all three explanation checks, with provider `RESOURCE_EXHAUSTED` free-tier quota errors observed. The repeated suite is recorded as FAIL, not full acceptance. See `evaluation/results/live-ai.json`. Stop further calls until quota is available; quality, human usefulness and actual cost remain unmeasured.
+- A repeatable live-provider evaluator is available at `python -m evaluation.live_ai`: up to nine bounded requests, isolated ledgers, explicit NOT_RUN/FAIL/PASS, no passenger effects and blank human verdicts. Requests are paced 15 seconds apart by default and quota errors stop remaining requests with an explicit unrun count. Missing configuration, stand-in labelling/isolation, pacing, quota stopping and exception redaction have automated checks.
+- **Real Gemini calls now have evidence:** repository-local `.env` settings load without being printed or committed. A three-task smoke passed 3/3 on `gemini-3.8-flash`; the subsequent three-repeat run passed 6/9, including all three explanation checks, with provider `RESOURCE_EXHAUSTED` free-tier quota errors observed. The repeated suite is recorded as FAIL, not full acceptance. See `evaluation/results/live-ai.json`. A paced retry on 19 October completed nine checks with 0/9 passing: four provider `UNAVAILABLE` errors and five timeouts. See `evaluation/results/live-ai-2026-10-19.json`. No further batch was retried. Quality, human usefulness and actual cost remain unmeasured.
 - **Browser visual/interaction QA is unrun:** the latest computer-use inventory returned no apps/browsers and a native startup failure. HTTP integration, JS syntax and DOM-contract checks passed; they do not substitute for a rendered-browser inspection.
 - Human/proxy comprehension scoring, matched manual/rules-only/AI task comparisons and actual benefit claims require user/reviewer observations. No verdict or business benefit has been invented.
 - The 18 development observations each cover one executable subvariant. They do not establish all subvariants, crash rows and acceptance thresholds in TEST-PLAN.md. A fresh independently held-out quality set is needed before final model acceptance.
@@ -56,3 +56,5 @@ Detailed reports are in `evaluation/results/`. Every real-AI stand-in test runs 
 - The independent oracle now also covers compatible spare-tail selection and resource/dispatch mutations. A frozen fictional playbook catalog filters approval status, dates, hub, strategy and policy; evidence is explicitly synthetic. Inclusive high-impact warning thresholds are implemented. This is bounded-network conformance, not a claim of global optimality or real airline precedent approval.
 
 The local implementation is available for synthetic demonstration. Full architecture/PRD acceptance remains open until the broader test matrix, real-provider checks, rendered UI inspection and human/value reviews have evidence. Production integrations and the separate LMS ZIP are outside this build.
+
+The first 19 October regression run had one seat-accounting test fail because the real worker lease expired after 150 party receipts. Its isolated rerun passed. That accounting test now uses a fixed clock; dedicated lease-expiry tests remain unchanged. The subsequent complete suite passed 157/157.

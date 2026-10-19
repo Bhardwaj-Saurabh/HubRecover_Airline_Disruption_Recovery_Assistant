@@ -1,11 +1,11 @@
 {
-  "date": "2026-10-18",
+  "date": "2026-10-19",
   "mode": "SYNTHETIC_RULES_ONLY",
   "source_digest": "5f2695aee389d3d30361aa47f8f37d81ce5dca8a8528e6266600cf8ba5ae6613",
   "regression": {
-    "passed": 154,
+    "passed": 157,
     "failed": 0,
-    "seconds": 72.97,
+    "seconds": 73.37,
     "warnings": 2
   },
   "subsequent_focused_job_suite": {
@@ -44,14 +44,14 @@
     "Preserved design tokens and DOM control IDs"
   ],
   "unverified": [
-    "Real Gemini provider and model quality",
+    "Repeatable live Gemini conformance and model quality",
     "Rendered browser appearance and interactions",
     "Human comprehension and matched value comparison",
     "Complete PRD acceptance matrix"
   ],
-  "note": "Full regression preceded the final reason-catalog and error-code changes; affected AI/configuration/evidence suite passed afterward. Live repeated evaluation remains incomplete due to observed quota errors.",
+  "note": "Full regression includes pacing/quota-stop tests and final AI integration fixes. Initial regression had a real-clock lease expiry in the seat-accounting test; fixed that test clock and reran the complete suite successfully. Latest live provider check failed on availability/timeouts.",
   "subsequent_focused_ai_suite": {
-    "passed": 17,
+    "passed": 15,
     "failed": 0
   },
   "live_provider": {
@@ -61,6 +61,15 @@
     "repeated_passed": 6,
     "repeated_total": 9,
     "status": "FAIL",
-    "provider_quota_errors_observed": true
+    "provider_quota_errors_observed": true,
+    "latest_retry": {
+      "report": "live-ai-2026-10-19.json",
+      "passed": 0,
+      "total": 9,
+      "status": "FAIL",
+      "unavailable": 4,
+      "timeouts": 5,
+      "no_passenger_effects": true
+    }
   }
 }

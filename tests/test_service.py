@@ -156,6 +156,9 @@ def test_handoff_acceptance_does_not_resolve_work(service):
 
 
 def test_actual_rebooking_net_seats_and_history(service):
+    # This checks seat accounting, not wall-clock lease expiry under host load.
+    instant=service.clock()
+    service.clock=lambda: instant
     run=service.create()
     run=cmd(service,run,'reject',request_id=run['request_id'],reason='Compare alternative passenger trade-offs')
     plan=next(p for p in run['search']['plans'] if any(a['outcome']=='REBOOKED_NEXT_DAY' for a in p['allocations']))

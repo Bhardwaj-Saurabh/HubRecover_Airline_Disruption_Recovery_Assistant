@@ -22,12 +22,14 @@ TASKS = (
 )
 
 
-async def evaluate(repeats=3, *, test_factory=None):
+async def evaluate(repeats=3, *, test_factory=None, interval_seconds=0):
     if type(repeats) is not int or not 1<=repeats<=3:
         raise ValueError('Use one to three repeats per task')
+    if not 0<=interval_seconds<=60:
+        raise ValueError('Interval must be between zero and 60 seconds')
     report=dict(suite='LIVE_AI_CONFORMANCE_V1',recorded_at=datetime.now(timezone.utc).isoformat(),
         mode='STANDIN_TEST_ONLY' if test_factory else 'REAL_AI',status='NOT_RUN',model=None,
-        requested=len(TASKS)*repeats,results=[],human_verdict=None,
+        requested=len(TASKS)*repeats,results=[],human_verdict=None,interval_seconds=interval_seconds,
         limitations=['Exposed conformance tasks, not a blind model-quality holdout',
                      'Human comprehension, business benefit and actual cost are unmeasured',
                      'No booking or messaging execution is authorised by these checks'])
@@ -38,7 +40,11 @@ async def evaluate(repeats=3, *, test_factory=None):
             return report
         report['model']='STANDIN_TEST_ONLY' if test_factory else probe.model
         for task,role,text in TASKS:
+            if report.get('stopped_on_quota'):
+                break
             for repeat in range(1,repeats+1):
+                if report['results'] and interval_seconds:
+                    await asyncio.sleep(interval_seconds)
                 service=RecoveryService(Path(directory)/f'{task}-{repeat}.sqlite')
                 run=service.create('happy')
                 ai=test_factory(service) if test_factory else BoundedAI(service)
@@ -69,6 +75,12 @@ async def evaluate(repeats=3, *, test_factory=None):
                     failure_types=[t['detail'].get('error_type') for t in final['trace'] if t['action']=='AI_FAILED'],
                     failure_codes=[t['detail'].get('error_code') for t in final['trace'] if t['action']=='AI_FAILED'],
                     human_verdict=None))
+                if any(code in ('RESOURCE_EXHAUSTED',429,'429') for code in report['results'][-1]['failure_codes']):
+                    report['stopped_on_quota']=True
+                    report['reason']='Provider quota exhausted; remaining requests were not attempted'
+                    break
+    report['completed']=len(report['results'])
+    report['unrun']=report['requested']-report['completed']
     report['passed']=sum(r['diagnostic']=='PASS' for r in report['results'])
     report['status']='PASS' if report['passed']==report['requested'] else 'FAIL'
     report['manifest_digest']=digest(TASKS)
@@ -78,11 +90,13 @@ async def evaluate(repeats=3, *, test_factory=None):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--repeats',type=int,choices=(1,2,3),default=3)
+    parser.add_argument('--interval-seconds',type=int,choices=range(61),default=15,
+                        help='Pause between requests (default: 15 seconds); stops on provider quota errors')
     parser.add_argument('--output',type=Path,default=Path('.hubrecover/evaluation/live-ai.json'))
     args=parser.parse_args()
     from hubrecover.config import load_local_environment
     load_local_environment()
-    report=asyncio.run(evaluate(args.repeats))
+    report=asyncio.run(evaluate(args.repeats,interval_seconds=args.interval_seconds))
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({k:report.get(k) for k in ('status','mode','model','requested','passed','reason')}))
