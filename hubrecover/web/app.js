@@ -1,9 +1,22 @@
 'use strict';
 let run=null, selected=null, busy=false, evaluation=null, aiConfigured=false;
+let seen=null; // Fingerprints of the previous generation, to show what an edit or rejection changed.
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pretty=value=>esc(JSON.stringify(value,null,2));
 const terminal=s=>['COMPLETED','PARTIAL_MANUAL','MANUAL_HANDOFF'].includes(s);
+const constraintLabel=c=>c.kind==='protectConnection'?'Protect international connection':c.kind==='protectFlight'?'Protect flight '+c.target+' from cancellation':c.kind==='maxArrivalDelay'?`Keep ${c.target} within ${c.minutes} min arrival delay`:c.kind;
+function changeNote(plans){
+ const ids=plans.map(p=>p.fingerprint);
+ if(!seen||seen.run!==run.id)seen={run:run.id,generation:run.generation,ids,diff:null};
+ else if(run.generation>seen.generation)seen={run:run.id,generation:run.generation,ids,diff:{removed:seen.ids.filter(i=>!ids.includes(i)).length,added:ids.filter(i=>!seen.ids.includes(i)).length,first:seen.ids[0]===ids[0]}};
+ const constraints=run.constraints||[],d=seen.diff;let text='';
+ if(constraints.length)text+=`Applied: ${constraints.map(constraintLabel).join('; ')}. Every option shown satisfies ${constraints.length>1?'these constraints':'this constraint'}. `;
+ if(d)text+=(d.removed||d.added?`Regeneration removed ${d.removed} earlier option${d.removed===1?'':'s'} and added ${d.added}.${d.first?'':' The ranked-first option changed.'} `:'No earlier option broke it, so the options and ranking are unchanged. ')+`Generation ${run.generation}: any earlier approval no longer applies.`;
+ else if(run.generation>1)text+=`Generation ${run.generation}: any earlier approval no longer applies.`;
+ if(run.status==='MANUAL_HANDOFF'&&run.trace.some(t=>t.detail==='WAIT_DEADLINE_EXPIRED'))text='The review card expired after 5 minutes without a decision, so the episode was handed off. Reset to start again.';
+ $('change-note').textContent=text;$('change-note').hidden=!text;
+}
 async function api(url,body){const response=await fetch('/api'+url,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const value=await response.json();if(!response.ok)throw new Error(typeof value.detail==='string'?value.detail:JSON.stringify(value.detail));return value;}
 function error(e){$('error').textContent=e.message||String(e);$('error').hidden=false;}
 async function task(fn){if(busy)return;busy=true;$('error').hidden=true;document.body.setAttribute('aria-busy','true');try{await fn();}catch(e){error(e);}finally{busy=false;document.body.removeAttribute('aria-busy');if(run)render();}}
@@ -16,7 +29,7 @@ function render(){
  $('state').textContent=run.status.replaceAll('_',' ');$('state').className='badge '+(run.status==='COMPLETED'?'ok':done?'danger':reviewing?'info':'warn');
  const seconds=run.expires_at?Math.max(0,Math.floor(run.expires_at-(run.server_now||Date.now()/1000))):null;
  $('clock').textContent=`Generation ${run.generation}/3 · Revision ${run.revision}`+(seconds!==null?` · Card expires in ${seconds}s`:'');
- $('start').disabled=!done;$('stop').disabled=done;$('reset').disabled=!done;
+ $('start').disabled=!done;$('stop').disabled=done;$('reset').disabled=!done;$('start-hint').hidden=done;$('start-hint').textContent='An episode is in progress. Stop it, then Reset, to start a different scenario.';
  $('ai-explain').disabled=!reviewing||!aiConfigured;$('ai-edit').disabled=!reviewing||!aiConfigured;
  $('approve').disabled=!reviewing||!selected||seconds===0;$('edit').disabled=(!reviewing&&run.clarification_resume!=='SUPPORTED_EDIT')||seconds===0;$('reject').disabled=!reviewing||seconds===0;
  $('tick').disabled=run.status!=='MONITORING';
@@ -32,6 +45,7 @@ function render(){
  $('source-replace').onclick=()=>task(()=>command('source_update',{source:$('source-name').value,operation:'replace',record_id:$('source-record').value,value:JSON.parse($('source-value').value)}));
  $('search-summary').textContent=run.search.selected?`${run.search.completed}/${run.search.selected} selected constructions checked · ${run.search.viable||0} viable`:run.status==='MONITORING'?'Trigger has not qualified':'No reviewable plan';
  $('plans').innerHTML=plans.map((p,index)=>`<article class="plan ${p.id===selected?'selected':''}"><div class="row"><span class="badge ${index===0?'ok':'neutral'}">${index===0?'Ranked first':'Option '+(index+1)}</span><span class="hint">${esc(p.descriptor.kind)}</span></div><h4>${esc(p.descriptor.roots.join(' + '))}</h4><p class="muted">${p.descriptor.delay_minutes?'Delay '+p.descriptor.delay_minutes+' minutes and propagate verified timings.':'Reconcile the proposed operational change.'}</p><div class="metric-row"><div class="metric"><div class="number">${p.ranking[0]}</div><div class="caption">Unresolved</div></div><div class="metric"><div class="number">${p.ranking[1]}</div><div class="caption">Next-day arrivals</div></div><div class="metric"><div class="number">${p.ranking[2].toLocaleString()}</div><div class="caption">Passenger delay min</div></div></div><p class="inline-note">${p.ranking[3]} cancelled flights · ${p.ranking[4]} total flight delay min</p><p class="inline-note">${esc(p.explanation)}</p><p class="boundary-note">${esc(p.warnings.join(' · '))}</p><details><summary>Actions, evidence & warnings</summary><pre>${pretty({operations:p.operations,evidence:p.evidence,warnings:p.warnings,precedents:p.precedents,evidence_status:p.evidence_status,ranking:p.ranking,fingerprint:p.fingerprint,constraints:run.constraints})}</pre></details><button class="btn full ${p.id===selected?'primary':''}" data-select="${esc(p.id)}" ${reviewing?'':'disabled'}>${p.id===selected?'Selected for review':'Review this option'}</button></article>`).join('')+(run.search.rejected||[]).map(p=>`<article class="plan rejected"><span class="badge danger">Rejected · cannot execute</span><p>${esc(p.descriptor.kind)} · ${esc(p.descriptor.roots.join(' + '))}</p><details><summary>Policy gate evidence</summary><pre>${pretty(p.reasons)}</pre></details><button class="btn" disabled>Not selectable</button></article>`).join('');
+ changeNote(plans);
  if(!plans.length)$('plans').innerHTML=`<div class="panel empty"><div class="headline">${done?'Manual review required':'Waiting for a qualifying trigger'}</div><p>No unchecked recovery option will be offered.</p></div>`;
  const chosen=plans.find(p=>p.id===selected);$('selection').textContent=run.clarification?'Clarification required: '+run.clarification.replaceAll('_',' '):chosen?`Selected option ${plans.indexOf(chosen)+1} · ${chosen.id}`:'No selectable plan';
  const approved=plans.find(p=>p.id===run.selected_plan);
