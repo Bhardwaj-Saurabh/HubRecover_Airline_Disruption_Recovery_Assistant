@@ -8,11 +8,13 @@ const terminal=s=>['COMPLETED','PARTIAL_MANUAL','MANUAL_HANDOFF'].includes(s);
 const constraintLabel=c=>c.kind==='protectConnection'?'Protect international connection':c.kind==='protectFlight'?'Protect flight '+c.target+' from cancellation':c.kind==='maxArrivalDelay'?`Keep ${c.target} within ${c.minutes} min arrival delay`:c.kind;
 function changeNote(plans){
  const ids=plans.map(p=>p.fingerprint);
- if(!seen||seen.run!==run.id)seen={run:run.id,generation:run.generation,ids,diff:null};
- else if(run.generation>seen.generation)seen={run:run.id,generation:run.generation,ids,diff:{removed:seen.ids.filter(i=>!ids.includes(i)).length,added:ids.filter(i=>!seen.ids.includes(i)).length,first:seen.ids[0]===ids[0]}};
- const constraints=run.constraints||[],d=seen.diff;let text='';
+ const viable=run.search?.viable??ids.length,constraints=run.constraints||[];
+ if(!seen||seen.run!==run.id)seen={run:run.id,generation:run.generation,ids,viable,constraints:constraints.length,diff:null};
+ else if(run.generation>seen.generation)seen={run:run.id,generation:run.generation,ids,viable,constraints:constraints.length,diff:{removed:seen.ids.filter(i=>!ids.includes(i)).length,added:ids.filter(i=>!seen.ids.includes(i)).length,first:seen.ids[0]===ids[0],excluded:constraints.length>seen.constraints?seen.viable-viable:0,before:seen.viable}};
+ const d=seen.diff;let text='';
  if(constraints.length)text+=`Applied: ${constraints.map(constraintLabel).join('; ')}. Every option shown satisfies ${constraints.length>1?'these constraints':'this constraint'}. `;
- if(d)text+=(d.removed||d.added?`Regeneration removed ${d.removed} earlier option${d.removed===1?'':'s'} and added ${d.added}.${d.first?'':' The ranked-first option changed.'} `:'No earlier option broke it, so the options and ranking are unchanged. ')+`Generation ${run.generation}: any earlier approval no longer applies.`;
+ if(d?.excluded>0)text+=`The search excluded ${d.excluded} of ${d.before} viable options that would break it; ${viable} remain. `;
+ if(d)text+=(d.removed||d.added?`The displayed list lost ${d.removed} option${d.removed===1?'':'s'} and gained ${d.added}.${d.first?'':' The ranked-first option changed.'} `:d.excluded>0?'The passenger-aware ranking had already placed the protecting options first, so the displayed list is unchanged. ':'The displayed options and ranking are unchanged. ')+`Generation ${run.generation}: any earlier approval no longer applies.`;
  else if(run.generation>1)text+=`Generation ${run.generation}: any earlier approval no longer applies.`;
  if(run.status==='MANUAL_HANDOFF'&&run.trace.some(t=>t.detail==='WAIT_DEADLINE_EXPIRED'))text='The review card expired after 5 minutes without a decision, so the episode was handed off. Reset to start again.';
  $('change-note').textContent=text;$('change-note').hidden=!text;
