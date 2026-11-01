@@ -1,0 +1,12 @@
+.env
+.env.*
+.venv/
+.hubrecover/
+.git/
+.pytest_cache/
+__pycache__/
+*.sqlite*
+*.db
+tests/
+evaluation/
+diagrams/

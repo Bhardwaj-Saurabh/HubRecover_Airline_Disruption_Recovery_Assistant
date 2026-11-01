@@ -67,3 +67,16 @@ def test_server_restart_recovers_abandoned_execution(tmp_path):
         assert len(final['receipts'])==150 and len(final['outbox'])==300
         assert all(final['receipts'][k]==v for k,v in first_receipts.items())
         assert any(t['action']=='WORKER_RECLAIMED' for t in final['trace'])
+
+
+def test_remote_host_requires_configured_password(tmp_path,monkeypatch):
+    monkeypatch.setenv('HUBRECOVER_ALLOWED_HOSTS','demo.example')
+    with TestClient(create_app(tmp_path/'open')) as client:
+        assert client.get('/health',headers={'Host':'demo.example'}).status_code==403
+    monkeypatch.setenv('HUBRECOVER_PASSWORD','s3cret')
+    with TestClient(create_app(tmp_path/'guarded'),base_url='https://demo.example') as client:
+        assert client.get('/health').status_code==401
+        assert client.get('/health',auth=('any','wrong')).status_code==401
+        assert client.get('/health',headers={'Authorization':'Basic !!!'}).status_code==401
+        assert client.get('/health',auth=('any','s3cret')).status_code==200
+        assert client.get('/health',auth=('any','s3cret'),headers={'Host':'other.example'}).status_code==403

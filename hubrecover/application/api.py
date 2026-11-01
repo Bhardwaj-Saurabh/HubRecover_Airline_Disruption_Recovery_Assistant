@@ -1,9 +1,11 @@
 """Loopback-only local demonstration API, with explicitly simulated roles."""
 import asyncio
+import base64
 from contextlib import asynccontextmanager
 import json
 import os
 from pathlib import Path
+import secrets
 from urllib.parse import urlparse
 import uuid
 
@@ -120,10 +122,24 @@ def create_app(data_dir=None):
     app=FastAPI(title='HubRecover synthetic recovery',lifespan=lifespan)
     app.state.service=service
 
+    # Remote hosts are honoured only behind a shared password; without one the demo stays loopback-only.
+    password=os.environ.get('HUBRECOVER_PASSWORD','')
+    hosts={'localhost','127.0.0.1','::1','testserver'}
+    if password:
+        hosts|={h.strip() for h in os.environ.get('HUBRECOVER_ALLOWED_HOSTS','').split(',') if h.strip()}
+
     @app.middleware('http')
     async def local_only(request,call_next):
-        if request.url.hostname not in ('localhost','127.0.0.1','::1','testserver'):
+        if request.url.hostname not in hosts:
             return JSONResponse({'detail':'Local synthetic demonstration only'},status_code=403)
+        if password:
+            scheme,_,token=request.headers.get('authorization','').partition(' ')
+            try:
+                supplied=base64.b64decode(token).decode().partition(':')[2] if scheme.lower()=='basic' else ''
+            except ValueError:
+                supplied=''
+            if not secrets.compare_digest(supplied.encode(),password.encode()):
+                return JSONResponse({'detail':'Password required'},status_code=401,headers={'WWW-Authenticate':'Basic realm="HubRecover"'})
         origin=request.headers.get('origin')
         if origin and origin.rstrip('/')!=str(request.base_url).rstrip('/'):
             return JSONResponse({'detail':'Cross-origin commands are disabled'},status_code=403)

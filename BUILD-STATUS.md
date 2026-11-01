@@ -26,6 +26,7 @@ Ambiguous AI edits now enter a version-bound clarification wait, with a supporte
 | Development demonstrations | 18/18 implemented subvariants pass automatic diagnostics; learner verdicts remain null |
 | Held-out deterministic variants | 20/20 pass. This suite was exposed during implementation and is conformance evidence, not a blind model-quality holdout |
 | Local HTTP integration | Through actual FastAPI and durable ADK: protect connection → fresh review → approve → four acknowledgements → 150 party receipts and 300 sent mock messages → COMPLETED |
+| Fly.io deployment | 1 November 2026: deployed to https://hubrecover.fly.dev (one machine, `lhr`, 1 GB volume at `/data`, rules-only). From outside: unauthenticated request 401; with password `/health` ok, page 200, 18 cases, new run reached AWAITING_APPROVAL. Full suite 158 passed locally; the Docker image was built only on the Fly remote builder |
 | Source and monitoring additions | 11 source/restart checks and 20 monitoring boundary checks passed; source snapshots stored separately from mutable execution records |
 | Evidence and spare tails | Warning thresholds, precedent scope/eligibility and spare-tail/resource oracle checks pass |
 | Durable ADK jobs | Missing-card mapping recovery preserves request/expiry; expired lease takeover and changed-state mapping rejection pass |

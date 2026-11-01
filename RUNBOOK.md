@@ -46,6 +46,10 @@ uv run python -m evaluation.live_ai
 
 This makes up to nine bounded model requests (three repeats each for explanation, supported edit and ambiguity), with a 15-second pause between requests. Quota errors stop the run and record the remaining checks as unrun. Use `--interval-seconds 0..60` to adjust pacing. It uses isolated temporary ledgers and never approves or executes passenger actions. The report is written to `.hubrecover/evaluation/live-ai.json`; missing configuration records `NOT_RUN` and exits 2, a failed check exits 1, and passing conformance exits 0. Human verdicts remain blank. This is not a blind quality evaluation or a measurement of benefit/cost. Use `--repeats 1` for an initial three-request check.
 
+## Fly.io deployment
+
+A password-protected copy runs at https://hubrecover.fly.dev on one machine with a persistent volume (`fly.toml`, `Dockerfile`). Remote hostnames are accepted only when the `HUBRECOVER_PASSWORD` secret is set; any username works with that password. Keep a single machine (`fly deploy --ha=false`) because the ledger is one SQLite file. Gemini stays off unless `GOOGLE_API_KEY` and `HUBRECOVER_GEMINI_MODEL` are set with `fly secrets set`. This is still a synthetic demo with simulated roles, not authenticated multi-user hosting.
+
 ## Verify
 
 ```sh
@@ -61,7 +65,7 @@ Observed evidence and remaining verification limits are in [BUILD-STATUS.md](BUI
 
 ## Boundaries
 
-- Local, single-process demo with explicitly simulated roles; not authenticated shared hosting.
+- Single-process demo with explicitly simulated roles; the Fly.io copy has one shared password, not per-user authentication.
 - No live airline/dispatch/PSS/messaging integration and no compensation commitments.
 - One active episode per ledger. Stop and global write disable preserve completed receipts. Restoration needs recorded incident, fix, regression and reviewer evidence; old approvals remain invalid.
 - The initial source is a validated synthetic snapshot. Material-change simulation conservatively hands off rather than claiming a complete production adapter protocol.
