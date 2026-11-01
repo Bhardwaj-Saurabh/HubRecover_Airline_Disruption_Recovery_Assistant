@@ -1,0 +1,144 @@
+{
+  "suite": "LIVE_AI_CONFORMANCE_V1",
+  "recorded_at": "2026-11-01T23:20:35.693518+00:00",
+  "mode": "REAL_AI",
+  "status": "PASS",
+  "model": "gemini-3.6-flash",
+  "requested": 3,
+  "results": [
+    {
+      "task": "explanation",
+      "repeat": 1,
+      "diagnostic": "PASS",
+      "status": "AWAITING_APPROVAL",
+      "generation": 1,
+      "no_passenger_effects": true,
+      "error_type": null,
+      "elapsed_seconds": 8.57531854195986,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 14048,
+        "rounds": {
+          "1:explanation": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "6b57996e3436a64f299290849a7eadea85d768bdb61a5b1023e3a0b4d9b4cb9e",
+      "card_digest": "75879a1eb2f49d1dbc77a49e15acc2665ef8d09590ba0cd7bc8e28d82465446a",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "2250 passenger arrival-delay minutes. 105 flight departure-delay minutes. All 150 reference parties remain unsplit; this does not imply every itinerary is resolved. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "3750 passenger arrival-delay minutes. 165 flight departure-delay minutes. Passenger arrival-delay minutes: 3750 versus 2250 in option f09af919e59811ca. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "5250 passenger arrival-delay minutes. 225 flight departure-delay minutes. Passenger arrival-delay minutes: 5250 versus 3750 in option 72515d51829df587. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "6750 passenger arrival-delay minutes. 285 flight departure-delay minutes. Passenger arrival-delay minutes: 6750 versus 5250 in option 1cb91d616707ec4d. GROUNDED fictional precedent. Passed configured demo checks only; approval and execution guards remain required."
+        }
+      ],
+      "failure_types": [],
+      "failure_codes": [],
+      "human_verdict": null
+    },
+    {
+      "task": "supported_edit",
+      "repeat": 1,
+      "diagnostic": "PASS",
+      "status": "AWAITING_APPROVAL",
+      "generation": 2,
+      "no_passenger_effects": true,
+      "error_type": null,
+      "elapsed_seconds": 1.5216226250631735,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 4608,
+        "rounds": {
+          "1:edit": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "f5943c8dd17cc9ebeaea93a1e1642f0fde0b2d67d452a9bd16f1ef9fb40696d9",
+      "card_digest": "c4edbcad272b10850726ec6b92655a956e0433e5abc5a6a1cc2a8502e2d22d8d",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        }
+      ],
+      "failure_types": [],
+      "failure_codes": [],
+      "human_verdict": null
+    },
+    {
+      "task": "ambiguous_edit",
+      "repeat": 1,
+      "diagnostic": "PASS",
+      "status": "NEEDS_CLARIFICATION",
+      "generation": 1,
+      "no_passenger_effects": true,
+      "error_type": null,
+      "elapsed_seconds": 5.074026874965057,
+      "budget": {
+        "calls": 1,
+        "reserved_tokens": 4608,
+        "rounds": {
+          "1:edit": 1
+        }
+      },
+      "policy_version": "HUBRECOVER-POLICY-001",
+      "source_snapshot_id": "53aff5d56e6a9ebe305b8371c8ac6ec48bc08d851e6d008cb9cc4992da104d3d",
+      "card_digest": "c4edbcad272b10850726ec6b92655a956e0433e5abc5a6a1cc2a8502e2d22d8d",
+      "explanations": [
+        {
+          "plan_id": "f09af919e59811ca",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "72515d51829df587",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "1cb91d616707ec4d",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        },
+        {
+          "plan_id": "8a213673f983f90b",
+          "text": "Calculated from synthetic schedule, crew, aircraft, inventory and passenger records. Passed the configured demo checks; operational acknowledgements and current approval are still required."
+        }
+      ],
+      "failure_types": [],
+      "failure_codes": [],
+      "human_verdict": null
+    }
+  ],
+  "human_verdict": null,
+  "interval_seconds": 15,
+  "limitations": [
+    "Exposed conformance tasks, not a blind model-quality holdout",
+    "Human comprehension, business benefit and actual cost are unmeasured",
+    "No booking or messaging execution is authorised by these checks"
+  ],
+  "completed": 3,
+  "unrun": 0,
+  "passed": 3,
+  "manifest_digest": "ca6df9e1c2a8c9c20644f18a3ac3b2c46b2409dddc3fc2d12952845797842727"
+}
